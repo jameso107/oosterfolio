@@ -1,7 +1,10 @@
 // Photo paths - dynamically load from images folder
+// This function returns all possible image paths. Images that don't exist will fail to load
+// and be hidden gracefully, so only available images will be displayed.
 function getPhotoPaths() {
-    // List of all image filenames that should be in the images folder
-    // These will be loaded dynamically - if an image fails to load, it's skipped
+    // List of all possible image filenames
+    // The code will try to load each one - if it exists on the server, it will display
+    // If it doesn't exist, it will be silently skipped
     const imageFiles = [
         '0.jpg',
         '467945468_10161669235112432_7486269392858657050_n.jpg',
@@ -28,6 +31,7 @@ function getPhotoPaths() {
     ];
     
     // Return paths relative to web root
+    // These paths will work on both GitHub Pages and Vercel
     return imageFiles.map(file => `images/${file}`);
 }
 
@@ -56,8 +60,17 @@ function initPhotoSliders() {
                 
                 // Handle image load errors gracefully
                 img.onerror = function() {
-                    // Silently hide broken images - they might not be in the repo
+                    // Image doesn't exist or failed to load - hide it silently
+                    // This allows the code to work with whatever images are available on GitHub
                     this.style.display = 'none';
+                    this.style.visibility = 'hidden';
+                };
+                
+                // Track successful loads
+                img.onload = function() {
+                    // Image loaded successfully from GitHub - make it visible
+                    this.style.display = '';
+                    this.style.visibility = 'visible';
                 };
                 
                 // Add random vertical offset for more dynamic look
