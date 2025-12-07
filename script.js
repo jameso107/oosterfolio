@@ -63,21 +63,12 @@ function initPhotoSliders() {
                 img.alt = 'Portfolio photo';
                 img.loading = 'lazy';
                 
-                let triedRoot = false;
-                let triedFolder = false;
-                
-                // Handle image load errors - try images/ folder as fallback
+                // Handle image load errors gracefully
+                // Images are in the repo root, so if they fail to load, they don't exist
                 img.onerror = function() {
-                    if (!triedRoot) {
-                        // First try failed - try images/ folder
-                        triedRoot = true;
-                        this.src = `images/${photoPath}`;
-                    } else if (!triedFolder) {
-                        // Both locations failed - hide it
-                        triedFolder = true;
-                        this.style.display = 'none';
-                        this.style.visibility = 'hidden';
-                    }
+                    // Image doesn't exist or failed to load - hide it silently
+                    this.style.display = 'none';
+                    this.style.visibility = 'hidden';
                 };
                 
                 // Track successful loads
