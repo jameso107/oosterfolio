@@ -1,7 +1,7 @@
 // Photo paths - dynamically load from images folder
-// We'll use a function to get all image files
 function getPhotoPaths() {
-    // List of image filenames from website pics folder
+    // List of all image filenames that should be in the images folder
+    // These will be loaded dynamically - if an image fails to load, it's skipped
     const imageFiles = [
         '0.jpg',
         '467945468_10161669235112432_7486269392858657050_n.jpg',
@@ -27,10 +27,8 @@ function getPhotoPaths() {
         'screenshot-2023-08-31-at-2-19-54-pm.png'
     ];
     
-    // Use images folder path (relative to web root)
-    return imageFiles.map(file => {
-        return `images/${file}`;
-    });
+    // Return paths relative to web root
+    return imageFiles.map(file => `images/${file}`);
 }
 
 // Initialize photo sliders
@@ -58,15 +56,8 @@ function initPhotoSliders() {
                 
                 // Handle image load errors gracefully
                 img.onerror = function() {
-                    console.warn(`Failed to load image: ${photoPath}`);
-                    console.warn(`Image src was: ${this.src}`);
-                    // Hide broken images
+                    // Silently hide broken images - they might not be in the repo
                     this.style.display = 'none';
-                };
-                
-                // Log successful loads for debugging
-                img.onload = function() {
-                    console.log(`Successfully loaded: ${photoPath}`);
                 };
                 
                 // Add random vertical offset for more dynamic look
