@@ -17,6 +17,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Images folder - uncomment if you don't want to commit images
-# images/
+# Images folder - don't commit large image files
+images/
+*.jpg
+*.png
+*.JPG
+*.PNG
+!Block_M-Hex.png
 
