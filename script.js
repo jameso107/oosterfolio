@@ -1,3 +1,127 @@
+// Photo paths - dynamically load from images folder
+// We'll use a function to get all image files
+function getPhotoPaths() {
+    // List of image filenames from website pics folder
+    const imageFiles = [
+        '0.jpg',
+        '467945468_10161669235112432_7486269392858657050_n.jpg',
+        '471615613_10161969345297432_554194538844078805_n.jpg',
+        '60885881_293523741556674_1007032946009309184_n.jpg',
+        '8e94b5dd-c7e8-4c7d-9d15-e8ab9e6ca8ac_orig.jpg',
+        'img-0273_orig.jpg',
+        'img-0859_orig.jpg',
+        'img-0867_orig.jpg',
+        'img-1006_orig.jpg',
+        'img-1230_orig.jpg',
+        'img-2095-1_orig.jpg',
+        'img-2341_orig.jpg',
+        'img-3434_orig.jpg',
+        'img-5776.jpg',
+        'img-7941-2_orig.jpg',
+        'img-7986_orig.jpg',
+        'img-9472_orig.jpg',
+        'img-9519_orig.jpg',
+        'img-9646_orig.jpg',
+        'img-9922_orig.jpg',
+        'Screenshot 2025-02-07 at 2.29.03 PM.png',
+        'screenshot-2023-08-31-at-2-19-54-pm.png'
+    ];
+    
+    // Use images folder path (relative to web root)
+    return imageFiles.map(file => {
+        return `images/${file}`;
+    });
+}
+
+// Initialize photo sliders
+function initPhotoSliders() {
+    const leftSlider = document.querySelector('.photo-slider-left');
+    const rightSlider = document.querySelector('.photo-slider-right');
+    
+    if (!leftSlider || !rightSlider) return;
+    
+    const photoPaths = getPhotoPaths();
+    
+    // Shuffle photos for variety
+    const shuffledPhotos = [...photoPaths].sort(() => Math.random() - 0.5);
+    
+    // Create multiple rows of photos for continuous scrolling
+    const createPhotoRow = (photos, slider) => {
+        // Create 3 sets of photos for seamless loop
+        for (let set = 0; set < 3; set++) {
+            photos.forEach((photoPath, index) => {
+                const img = document.createElement('img');
+                img.src = photoPath;
+                img.className = 'photo-item';
+                img.alt = 'Portfolio photo';
+                img.loading = 'lazy';
+                
+                // Handle image load errors gracefully
+                img.onerror = function() {
+                    console.warn(`Failed to load image: ${photoPath}`);
+                    // Hide broken images
+                    this.style.display = 'none';
+                };
+                
+                // Add random vertical offset for more dynamic look
+                const randomOffset = Math.random() * 100 - 50;
+                img.style.transform = `translateY(${randomOffset}px)`;
+                
+                // Vary sizes slightly
+                const randomScale = 0.8 + Math.random() * 0.4;
+                img.style.width = `${300 * randomScale}px`;
+                img.style.height = `${400 * randomScale}px`;
+                
+                slider.appendChild(img);
+            });
+        }
+    };
+    
+    // Split photos between left and right sliders
+    const midPoint = Math.ceil(shuffledPhotos.length / 2);
+    const leftPhotos = shuffledPhotos.slice(0, midPoint);
+    const rightPhotos = shuffledPhotos.slice(midPoint);
+    
+    createPhotoRow(leftPhotos, leftSlider);
+    createPhotoRow(rightPhotos, rightSlider);
+    
+    // Set varying animation speeds
+    const leftSpeed = 25 + Math.random() * 10; // 25-35s
+    const rightSpeed = 30 + Math.random() * 10; // 30-40s
+    
+    leftSlider.style.animationDuration = `${leftSpeed}s`;
+    rightSlider.style.animationDuration = `${rightSpeed}s`;
+}
+
+// Opening Animation Control
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('animation-overlay');
+    const body = document.body;
+    
+    // Initialize photo sliders
+    initPhotoSliders();
+    
+    // Add animating class to body to prevent scrolling
+    body.classList.add('animating');
+    
+    // Total animation sequence: ~4 seconds
+    // Block M slam: 0.1s delay + 1.2s duration = 1.3s
+    // Shake: 0.8s delay + 0.3s duration = 1.1s
+    // Ripples: 0.8s, 1.0s, 1.2s delays + 1.5s duration
+    // Text fade in: 1.2s delay + 1s duration = 2.2s
+    // Hold for a moment, then fade out
+    
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        body.classList.remove('animating');
+        
+        // Remove overlay from DOM after fade completes
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 800);
+    }, 4000); // Total animation time: 4 seconds
+});
+
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
@@ -61,16 +185,19 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe elements for animation
+// Observe elements for animation (delayed until after opening animation)
 document.addEventListener('DOMContentLoaded', () => {
-    const animateElements = document.querySelectorAll('.about-card, .project-card, .timeline-item');
-    
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
+    // Wait for opening animation to complete before setting up scroll animations
+    setTimeout(() => {
+        const animateElements = document.querySelectorAll('.about-card, .project-card, .timeline-item');
+        
+        animateElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    }, 4500); // Wait 4.5 seconds for opening animation to complete
 });
 
 // Add active state to navigation links based on scroll position
