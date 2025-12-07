@@ -17,11 +17,14 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Images folder - using Git LFS for large files
-# Allow images/ folder but track via LFS
-# *.jpg
-# *.png
-# *.JPG
-# *.PNG
+# Images - exclude all image files except Block_M-Hex.png
+*.jpg
+*.png
+*.JPG
+*.PNG
 !Block_M-Hex.png
+
+# Image folders
+images/
+:images/
 

@@ -53,8 +53,12 @@ function initPhotoSliders() {
     
     // Create multiple rows of photos for continuous scrolling
     const createPhotoRow = (photos, slider) => {
-        // Create 3 sets of photos for seamless loop
-        for (let set = 0; set < 3; set++) {
+        // Clear any existing content
+        slider.innerHTML = '';
+        
+        // Create exactly 4 sets of photos for seamless looping
+        // When animation completes one set, the next set is in identical position
+        for (let set = 0; set < 4; set++) {
             photos.forEach((photoPath, index) => {
                 const img = document.createElement('img');
                 // Try root directory first (if uploaded individually to repo root)
@@ -97,15 +101,25 @@ function initPhotoSliders() {
     const leftPhotos = shuffledPhotos.slice(0, midPoint);
     const rightPhotos = shuffledPhotos.slice(midPoint);
     
+    // Create duplicates for seamless looping
     createPhotoRow(leftPhotos, leftSlider);
     createPhotoRow(rightPhotos, rightSlider);
     
-    // Set varying animation speeds
-    const leftSpeed = 25 + Math.random() * 10; // 25-35s
-    const rightSpeed = 30 + Math.random() * 10; // 30-40s
-    
-    leftSlider.style.animationDuration = `${leftSpeed}s`;
-    rightSlider.style.animationDuration = `${rightSpeed}s`;
+    // Wait for images to load, then calculate animation
+    setTimeout(() => {
+        // Get the actual width of one set (quarter of total since we have 4 sets)
+        const leftSliderWidth = leftSlider.scrollWidth / 4;
+        const rightSliderWidth = rightSlider.scrollWidth / 4;
+        
+        // Calculate speed: pixels per second (much slower)
+        const pixelsPerSecond = 20; // Much slower speed
+        
+        const leftSpeed = leftSliderWidth / pixelsPerSecond;
+        const rightSpeed = rightSliderWidth / pixelsPerSecond;
+        
+        leftSlider.style.animationDuration = `${leftSpeed}s`;
+        rightSlider.style.animationDuration = `${rightSpeed}s`;
+    }, 100);
 }
 
 // Opening Animation Control
