@@ -1,9 +1,8 @@
-// Photo paths - dynamically load from images folder
-// This function returns all possible image paths. Images that don't exist will fail to load
-// and be hidden gracefully, so only available images will be displayed.
+// Photo paths - dynamically load from repo root
+// Images are uploaded individually to the GitHub repo root
 function getPhotoPaths() {
-    // List of all possible image filenames
-    // The code will try to load each one - if it exists on the server, it will display
+    // List of all image filenames that are in the repo root
+    // The code will try to load each one - if it exists, it will display
     // If it doesn't exist, it will be silently skipped
     const imageFiles = [
         '0.jpg',
@@ -30,9 +29,9 @@ function getPhotoPaths() {
         'screenshot-2023-08-31-at-2-19-54-pm.png'
     ];
     
-    // Return paths relative to web root
+    // Return paths relative to web root (images are in repo root, not in images/ folder)
     // These paths will work on both GitHub Pages and Vercel
-    return imageFiles.map(file => `images/${file}`);
+    return imageFiles.map(file => file);
 }
 
 // Initialize photo sliders
