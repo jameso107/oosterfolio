@@ -17,8 +17,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Images folder - don't commit large image files
-images/
+# Images folder - using Git LFS for large files
+# images/ - commented out to allow LFS tracking
 *.jpg
 *.png
 *.JPG
