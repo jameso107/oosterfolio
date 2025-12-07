@@ -1,0 +1,9 @@
+{
+  "name": "oosterfolio",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "git lfs pull || echo 'LFS pull failed, continuing...'",
+    "vercel-build": "git lfs pull || echo 'LFS pull failed, continuing...'"
+  }
+}
+

@@ -59,8 +59,14 @@ function initPhotoSliders() {
                 // Handle image load errors gracefully
                 img.onerror = function() {
                     console.warn(`Failed to load image: ${photoPath}`);
+                    console.warn(`Image src was: ${this.src}`);
                     // Hide broken images
                     this.style.display = 'none';
+                };
+                
+                // Log successful loads for debugging
+                img.onload = function() {
+                    console.log(`Successfully loaded: ${photoPath}`);
                 };
                 
                 // Add random vertical offset for more dynamic look
