@@ -18,10 +18,10 @@ Thumbs.db
 .idea/
 
 # Images folder - using Git LFS for large files
-# images/ - commented out to allow LFS tracking
-*.jpg
-*.png
-*.JPG
-*.PNG
+# Allow images/ folder but track via LFS
+# *.jpg
+# *.png
+# *.JPG
+# *.PNG
 !Block_M-Hex.png
 
