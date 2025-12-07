@@ -29,9 +29,14 @@ function getPhotoPaths() {
         'screenshot-2023-08-31-at-2-19-54-pm.png'
     ];
     
-    // Return paths relative to web root (images are in repo root, not in images/ folder)
-    // These paths will work on both GitHub Pages and Vercel
-    return imageFiles.map(file => file);
+    // Return paths - check if images are in root or in images/ folder
+    // Try root first, then images/ folder as fallback
+    return imageFiles.map(file => {
+        // Try root directory first (if uploaded individually)
+        return file;
+        // If that doesn't work, the onerror handler will hide the image
+        // Alternative: return `images/${file}` if images are in a folder
+    });
 }
 
 // Initialize photo sliders
@@ -52,22 +57,32 @@ function initPhotoSliders() {
         for (let set = 0; set < 3; set++) {
             photos.forEach((photoPath, index) => {
                 const img = document.createElement('img');
+                // Try root directory first (if uploaded individually to repo root)
                 img.src = photoPath;
                 img.className = 'photo-item';
                 img.alt = 'Portfolio photo';
                 img.loading = 'lazy';
                 
-                // Handle image load errors gracefully
+                let triedRoot = false;
+                let triedFolder = false;
+                
+                // Handle image load errors - try images/ folder as fallback
                 img.onerror = function() {
-                    // Image doesn't exist or failed to load - hide it silently
-                    // This allows the code to work with whatever images are available on GitHub
-                    this.style.display = 'none';
-                    this.style.visibility = 'hidden';
+                    if (!triedRoot) {
+                        // First try failed - try images/ folder
+                        triedRoot = true;
+                        this.src = `images/${photoPath}`;
+                    } else if (!triedFolder) {
+                        // Both locations failed - hide it
+                        triedFolder = true;
+                        this.style.display = 'none';
+                        this.style.visibility = 'hidden';
+                    }
                 };
                 
                 // Track successful loads
                 img.onload = function() {
-                    // Image loaded successfully from GitHub - make it visible
+                    // Image loaded successfully - make it visible
                     this.style.display = '';
                     this.style.visibility = 'visible';
                 };
