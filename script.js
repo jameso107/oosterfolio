@@ -251,3 +251,36 @@ window.addEventListener('scroll', () => {
     });
 });
 
+// Expand/Collapse functionality for project cards
+function toggleExpand(button) {
+    const projectCard = button.closest('.project-card');
+    const expandedContent = projectCard.querySelector('.project-expanded');
+    const isExpanded = expandedContent.style.display !== 'none';
+    
+    if (isExpanded) {
+        // Collapse
+        expandedContent.style.display = 'none';
+        button.textContent = 'Expand';
+        button.classList.remove('expanded');
+        projectCard.classList.remove('expanded');
+    } else {
+        // Expand
+        expandedContent.style.display = 'block';
+        button.textContent = 'Collapse';
+        button.classList.add('expanded');
+        projectCard.classList.add('expanded');
+        
+        // Smooth scroll to expanded content if needed
+        setTimeout(() => {
+            const rect = projectCard.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetY = rect.top + scrollTop - 100; // 100px offset for navbar
+            
+            window.scrollTo({
+                top: targetY,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+}
+

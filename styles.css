@@ -551,22 +551,41 @@ section {
     height: 100%;
     min-height: 300px;
     background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.tshirt-robot {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+.project-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+    z-index: 1;
 }
 
-.ballbot {
-    background: linear-gradient(135deg, var(--blue-light) 0%, var(--blue) 100%);
+.project-image .project-overlay {
+    position: relative;
+    z-index: 2;
 }
 
-.haunted-house {
-    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 100%);
+.tshirt-robot::before {
+    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+}
+
+.ballbot::before {
+    background: linear-gradient(135deg, rgba(0, 58, 107, 0.6) 0%, rgba(0, 39, 76, 0.6) 100%);
+}
+
+.haunted-house::before {
+    background: linear-gradient(135deg, rgba(0, 26, 51, 0.6) 0%, rgba(0, 39, 76, 0.6) 100%);
 }
 
 .project-overlay {
@@ -628,6 +647,62 @@ section {
     left: 0;
     color: var(--maize);
     font-weight: bold;
+}
+
+.expand-button {
+    margin-top: 1.5rem;
+    padding: 0.75rem 2rem;
+    background-color: var(--maize);
+    color: var(--blue);
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 203, 5, 0.3);
+}
+
+.expand-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.4);
+    background-color: #FFD700;
+}
+
+.expand-button.expanded {
+    background-color: var(--blue-light);
+    color: var(--maize);
+    border: 2px solid var(--maize);
+}
+
+.expand-button.expanded:hover {
+    background-color: var(--blue);
+}
+
+.project-expanded {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(255, 203, 5, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.project-card.expanded {
+    grid-template-rows: auto 1fr;
+}
+
+.project-card.expanded .project-content {
+    padding-bottom: 3rem;
 }
 
 /* Journey Section */
