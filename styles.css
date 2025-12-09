@@ -357,14 +357,14 @@ body.animating {
     height: 400px;
     object-fit: cover;
     border-radius: 10px;
-    opacity: 0.5;
+    opacity: 0.75;
     filter: grayscale(40%) brightness(0.7);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 .photo-item:hover {
-    opacity: 0.7;
+    opacity: 0.95;
     filter: grayscale(20%) brightness(0.8);
 }
 
