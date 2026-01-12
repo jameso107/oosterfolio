@@ -588,6 +588,10 @@ section {
     background: linear-gradient(135deg, rgba(0, 26, 51, 0.6) 0%, rgba(0, 39, 76, 0.6) 100%);
 }
 
+.robot-3-days::before {
+    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+}
+
 .project-overlay {
     text-align: center;
     color: var(--white);
