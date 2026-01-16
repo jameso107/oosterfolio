@@ -107,8 +107,8 @@
                                 <li><strong>Controls:</strong> FRC Control System (RoboRIO, Radio, PDP, VRM), Through-bore encoders, and limit switches</li>
                             </ul>
                         </div>
-                        <button class="expand-button" onclick="toggleExpand(this)">Expand</button>
-                        <div class="project-expanded" style="display: none;">
+                        <button class="expand-button" onclick="openProjectModal('project-1')">Expand</button>
+                        <div class="project-expanded" data-project-id="project-1" style="display: none;">
                             <div class="video-container">
                                 <iframe width="560" height="315" src="https://www.youtube.com/embed/EB0If7glSUw?si=2TOg7lxQEfwLh_hw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
@@ -133,8 +133,8 @@
                                 <li><strong>Controls:</strong> MBot control system using Raspberry Pi 4B and Pico microcontroller</li>
                             </ul>
                         </div>
-                        <button class="expand-button" onclick="toggleExpand(this)">Expand</button>
-                        <div class="project-expanded" style="display: none;">
+                        <button class="expand-button" onclick="openProjectModal('project-2')">Expand</button>
+                        <div class="project-expanded" data-project-id="project-2" style="display: none;">
                             <div class="linkedin-container">
                                 <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7407084655281287170?collapsed=1" height="917" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
                             </div>
@@ -162,8 +162,8 @@
                                 <li>Coordinated with talented actors (RAs)</li>
                             </ul>
                         </div>
-                        <button class="expand-button" onclick="toggleExpand(this)">Expand</button>
-                        <div class="project-expanded" style="display: none;">
+                        <button class="expand-button" onclick="openProjectModal('project-3')">Expand</button>
+                        <div class="project-expanded" data-project-id="project-3" style="display: none;">
                             <div class="video-container">
                                 <iframe width="560" height="315" src="https://www.youtube.com/embed/6TcMWkqsZzQ?si=h1kiuG4MnZrfGnak" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
@@ -191,8 +191,8 @@
                                 <li>West Coast Products Swerve X2 modules for holonomic control</li>
                             </ul>
                         </div>
-                        <button class="expand-button" onclick="toggleExpand(this)">Expand</button>
-                        <div class="project-expanded" style="display: none;">
+                        <button class="expand-button" onclick="openProjectModal('project-4')">Expand</button>
+                        <div class="project-expanded" data-project-id="project-4" style="display: none;">
                             <div class="video-container">
                                 <iframe width="560" height="315" src="https://www.youtube.com/embed/YR4UWzacF_8?si=MCvuIg_eLknkgzdp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
@@ -281,6 +281,21 @@
         <div class="container">
         </div>
     </footer>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="project-modal">
+        <div class="modal-backdrop" onclick="closeProjectModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProjectModal()" aria-label="Close modal">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 10L30 30M30 10L10 30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-body" id="modal-body">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

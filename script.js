@@ -1,3 +1,71 @@
+// Project Modal functionality - defined early to ensure availability
+function openProjectModal(projectId) {
+    const modal = document.getElementById('project-modal');
+    const modalBody = document.getElementById('modal-body');
+    const expandedContent = document.querySelector(`[data-project-id="${projectId}"]`);
+    
+    if (!expandedContent) return;
+    
+    const projectCard = expandedContent.closest('.project-card');
+    const projectTitle = projectCard.querySelector('.project-overlay h3')?.textContent || '';
+    const projectRole = projectCard.querySelector('.project-role')?.textContent || '';
+    const projectDescription = projectCard.querySelector('.project-description')?.textContent || '';
+    const projectSpecs = projectCard.querySelector('.project-specs')?.cloneNode(true);
+    
+    // Build modal content
+    modalBody.innerHTML = '';
+    
+    // Add title
+    if (projectTitle) {
+        const titleEl = document.createElement('h2');
+        titleEl.className = 'modal-title';
+        titleEl.textContent = projectTitle;
+        modalBody.appendChild(titleEl);
+    }
+    
+    // Add role
+    if (projectRole) {
+        const roleEl = document.createElement('div');
+        roleEl.className = 'modal-role';
+        roleEl.textContent = projectRole;
+        modalBody.appendChild(roleEl);
+    }
+    
+    // Add description
+    if (projectDescription) {
+        const descEl = document.createElement('p');
+        descEl.className = 'modal-description';
+        descEl.textContent = projectDescription;
+        modalBody.appendChild(descEl);
+    }
+    
+    // Add specs
+    if (projectSpecs) {
+        modalBody.appendChild(projectSpecs);
+    }
+    
+    // Clone and add expanded content
+    const contentClone = expandedContent.cloneNode(true);
+    contentClone.style.display = 'block';
+    modalBody.appendChild(contentClone);
+    
+    // Show modal with animation
+    document.body.style.overflow = 'hidden';
+    modal.classList.add('active');
+}
+
+function closeProjectModal() {
+    const modal = document.getElementById('project-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Clear modal content after animation
+    setTimeout(() => {
+        const modalBody = document.getElementById('modal-body');
+        modalBody.innerHTML = '';
+    }, 300);
+}
+
 // Photo paths - dynamically load from repo root
 // Images are uploaded individually to the GitHub repo root
 function getPhotoPaths() {
@@ -155,10 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -187,17 +257,19 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const navbar = document.querySelector('.navbar');
 let lastScroll = 0;
 
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
-    } else {
-        navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-    }
-    
-    lastScroll = currentScroll;
-});
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 100) {
+            navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+        } else {
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+}
 
 // Intersection Observer for fade-in animations
 const observerOptions = {
@@ -251,36 +323,14 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// Expand/Collapse functionality for project cards
-function toggleExpand(button) {
-    const projectCard = button.closest('.project-card');
-    const expandedContent = projectCard.querySelector('.project-expanded');
-    const isExpanded = expandedContent.style.display !== 'none';
-    
-    if (isExpanded) {
-        // Collapse
-        expandedContent.style.display = 'none';
-        button.textContent = 'Expand';
-        button.classList.remove('expanded');
-        projectCard.classList.remove('expanded');
-    } else {
-        // Expand
-        expandedContent.style.display = 'block';
-        button.textContent = 'Collapse';
-        button.classList.add('expanded');
-        projectCard.classList.add('expanded');
-        
-        // Smooth scroll to expanded content if needed
-        setTimeout(() => {
-            const rect = projectCard.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const targetY = rect.top + scrollTop - 100; // 100px offset for navbar
-            
-            window.scrollTo({
-                top: targetY,
-                behavior: 'smooth'
-            });
-        }, 100);
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('project-modal');
+        if (modal.classList.contains('active')) {
+            closeProjectModal();
+        }
     }
-}
+});
 
