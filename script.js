@@ -353,6 +353,7 @@ function closeResumeModal() {
 // Awards Carousel functionality
 let currentCarouselIndex = 0;
 let carouselInterval = null;
+let isTransitioning = false;
 const totalAwards = 8;
 
 function initAwardsCarousel() {
@@ -361,8 +362,29 @@ function initAwardsCarousel() {
     
     if (!carousel) return;
     
-    // Create dots - we can show overlapping groups, so totalAwards - 2 positions
-    const numDots = totalAwards - 2; // Show 3 at a time, so 6 positions (0-5)
+    // Clone cards for infinite loop
+    const cards = carousel.querySelectorAll('.award-card');
+    const firstCard = cards[0].cloneNode(true);
+    const secondCard = cards[1].cloneNode(true);
+    const lastCard = cards[cards.length - 1].cloneNode(true);
+    const secondLastCard = cards[cards.length - 2].cloneNode(true);
+    
+    // Add clones at the end
+    carousel.appendChild(lastCard.cloneNode(true));
+    carousel.appendChild(secondLastCard.cloneNode(true));
+    
+    // Add clones at the beginning
+    carousel.insertBefore(secondCard.cloneNode(true), cards[0]);
+    carousel.insertBefore(firstCard.cloneNode(true), cards[0]);
+    
+    // Start at the first real card (index 2 after clones)
+    const containerWidth = carousel.offsetWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3);
+    carousel.scrollLeft = 2 * cardWidth;
+    currentCarouselIndex = 0;
+    
+    // Create dots
+    const numDots = totalAwards;
     dotsContainer.innerHTML = '';
     for (let i = 0; i < numDots; i++) {
         const dot = document.createElement('button');
@@ -373,7 +395,10 @@ function initAwardsCarousel() {
     }
     
     // Initial update
-    updateCarousel();
+    updateCarouselCards();
+    
+    // Handle scroll for infinite loop
+    carousel.addEventListener('scroll', handleCarouselScroll);
     
     // Start auto-rotation
     startCarouselAutoRotate();
@@ -381,18 +406,56 @@ function initAwardsCarousel() {
     // Pause on hover
     carousel.addEventListener('mouseenter', stopCarouselAutoRotate);
     carousel.addEventListener('mouseleave', startCarouselAutoRotate);
+}
+
+function handleCarouselScroll() {
+    if (isTransitioning) return;
     
-    // Update on scroll
-    carousel.addEventListener('scroll', updateCarouselCards);
+    const carousel = document.getElementById('awards-carousel');
+    const cards = carousel.querySelectorAll('.award-card');
+    const containerWidth = carousel.offsetWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3);
+    const scrollLeft = carousel.scrollLeft;
+    
+    // If scrolled to the clones at the end, jump to the real ones at the beginning
+    if (scrollLeft >= (cards.length - 2) * cardWidth) {
+        isTransitioning = true;
+        carousel.style.scrollBehavior = 'auto';
+        carousel.scrollLeft = 2 * cardWidth + (scrollLeft - (cards.length - 2) * cardWidth);
+        setTimeout(() => {
+            carousel.style.scrollBehavior = 'smooth';
+            isTransitioning = false;
+        }, 50);
+        currentCarouselIndex = 0;
+    }
+    // If scrolled to the clones at the beginning, jump to the real ones at the end
+    else if (scrollLeft <= cardWidth) {
+        isTransitioning = true;
+        carousel.style.scrollBehavior = 'auto';
+        const realCardsStart = (cards.length - 4) * cardWidth;
+        carousel.scrollLeft = realCardsStart + scrollLeft;
+        setTimeout(() => {
+            carousel.style.scrollBehavior = 'smooth';
+            isTransitioning = false;
+        }, 50);
+        currentCarouselIndex = totalAwards - 1;
+    }
+    
+    updateCarouselCards();
+    updateCarouselDots();
 }
 
 function moveCarousel(direction) {
-    const maxIndex = totalAwards - 3; // Can show positions 0 through 5 (6 positions)
+    const carousel = document.getElementById('awards-carousel');
+    const containerWidth = carousel.offsetWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3);
+    
     currentCarouselIndex += direction;
     
+    // Loop around
     if (currentCarouselIndex < 0) {
-        currentCarouselIndex = maxIndex;
-    } else if (currentCarouselIndex > maxIndex) {
+        currentCarouselIndex = totalAwards - 1;
+    } else if (currentCarouselIndex >= totalAwards) {
         currentCarouselIndex = 0;
     }
     
@@ -401,36 +464,51 @@ function moveCarousel(direction) {
 }
 
 function goToCarouselIndex(index) {
-    const maxIndex = totalAwards - 3;
-    currentCarouselIndex = Math.max(0, Math.min(index, maxIndex));
+    currentCarouselIndex = Math.max(0, Math.min(index, totalAwards - 1));
     updateCarousel();
     resetCarouselAutoRotate();
+}
+
+function updateCarouselDots() {
+    const dots = document.querySelectorAll('.carousel-dot');
+    const carousel = document.getElementById('awards-carousel');
+    const cards = carousel.querySelectorAll('.award-card');
+    const containerWidth = carousel.offsetWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3);
+    const scrollLeft = carousel.scrollLeft;
+    
+    // Calculate which real card is in the center
+    const centerPosition = scrollLeft + (containerWidth / 2);
+    const cardIndex = Math.round((centerPosition - 2 * cardWidth) / cardWidth);
+    const realIndex = Math.max(0, Math.min(cardIndex, totalAwards - 1));
+    
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === realIndex);
+    });
 }
 
 function updateCarousel() {
     const carousel = document.getElementById('awards-carousel');
     const cards = carousel.querySelectorAll('.award-card');
-    const dots = document.querySelectorAll('.carousel-dot');
     
     if (!carousel || cards.length === 0) return;
     
     // Calculate scroll position - scroll to show the current index as the middle card
+    // Account for 2 cloned cards at the beginning
     const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3); // Account for gap
-    const scrollPosition = currentCarouselIndex * cardWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3);
+    const scrollPosition = (currentCarouselIndex + 2) * cardWidth;
     
     carousel.scrollTo({
         left: scrollPosition,
         behavior: 'smooth'
     });
     
-    // Update active dot
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentCarouselIndex);
-    });
-    
-    // Update card scaling after scroll
-    setTimeout(updateCarouselCards, 300);
+    // Update dots
+    setTimeout(() => {
+        updateCarouselDots();
+        updateCarouselCards();
+    }, 300);
 }
 
 function updateCarouselCards() {
