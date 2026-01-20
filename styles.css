@@ -725,6 +725,11 @@ section {
     border-radius: 10px;
 }
 
+.project-expanded > .video-container {
+    max-width: 100%;
+    width: 100%;
+}
+
 .cad-image-container {
     display: flex;
     align-items: center;
