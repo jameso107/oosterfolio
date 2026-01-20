@@ -351,9 +351,8 @@ function closeResumeModal() {
 }
 
 // Awards Carousel functionality
-let currentCarouselIndex = 0;
+let currentCarouselIndex = 1; // Start with card 2 highlighted (index 1, showing cards 1,2,3)
 let carouselInterval = null;
-let isTransitioning = false;
 const totalAwards = 8;
 
 function initAwardsCarousel() {
@@ -362,43 +361,18 @@ function initAwardsCarousel() {
     
     if (!carousel) return;
     
-    // Clone cards for infinite loop
-    const cards = carousel.querySelectorAll('.award-card');
-    const firstCard = cards[0].cloneNode(true);
-    const secondCard = cards[1].cloneNode(true);
-    const lastCard = cards[cards.length - 1].cloneNode(true);
-    const secondLastCard = cards[cards.length - 2].cloneNode(true);
-    
-    // Add clones at the end
-    carousel.appendChild(lastCard.cloneNode(true));
-    carousel.appendChild(secondLastCard.cloneNode(true));
-    
-    // Add clones at the beginning
-    carousel.insertBefore(secondCard.cloneNode(true), cards[0]);
-    carousel.insertBefore(firstCard.cloneNode(true), cards[0]);
-    
-    // Start at the first real card (index 2 after clones)
-    const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3);
-    carousel.scrollLeft = 2 * cardWidth;
-    currentCarouselIndex = 0;
-    
-    // Create dots
-    const numDots = totalAwards;
+    // Create dots for all 8 awards
     dotsContainer.innerHTML = '';
-    for (let i = 0; i < numDots; i++) {
+    for (let i = 0; i < totalAwards; i++) {
         const dot = document.createElement('button');
-        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.className = 'carousel-dot' + (i === 1 ? ' active' : ''); // Card 2 (index 1) is active initially
         dot.setAttribute('aria-label', `Go to awards ${i + 1}`);
         dot.onclick = () => goToCarouselIndex(i);
         dotsContainer.appendChild(dot);
     }
     
     // Initial update
-    updateCarouselCards();
-    
-    // Handle scroll for infinite loop
-    carousel.addEventListener('scroll', handleCarouselScroll);
+    updateCarousel();
     
     // Start auto-rotation
     startCarouselAutoRotate();
@@ -408,56 +382,12 @@ function initAwardsCarousel() {
     carousel.addEventListener('mouseleave', startCarouselAutoRotate);
 }
 
-function handleCarouselScroll() {
-    if (isTransitioning) return;
-    
-    const carousel = document.getElementById('awards-carousel');
-    const cards = carousel.querySelectorAll('.award-card');
-    const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3);
-    const scrollLeft = carousel.scrollLeft;
-    
-    // If scrolled to the clones at the end, jump to the real ones at the beginning
-    if (scrollLeft >= (cards.length - 2) * cardWidth) {
-        isTransitioning = true;
-        carousel.style.scrollBehavior = 'auto';
-        carousel.scrollLeft = 2 * cardWidth + (scrollLeft - (cards.length - 2) * cardWidth);
-        setTimeout(() => {
-            carousel.style.scrollBehavior = 'smooth';
-            isTransitioning = false;
-        }, 50);
-        currentCarouselIndex = 0;
-    }
-    // If scrolled to the clones at the beginning, jump to the real ones at the end
-    else if (scrollLeft <= cardWidth) {
-        isTransitioning = true;
-        carousel.style.scrollBehavior = 'auto';
-        const realCardsStart = (cards.length - 4) * cardWidth;
-        carousel.scrollLeft = realCardsStart + scrollLeft;
-        setTimeout(() => {
-            carousel.style.scrollBehavior = 'smooth';
-            isTransitioning = false;
-        }, 50);
-        currentCarouselIndex = totalAwards - 1;
-    }
-    
-    updateCarouselCards();
-    updateCarouselDots();
-}
-
 function moveCarousel(direction) {
-    const carousel = document.getElementById('awards-carousel');
-    const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3);
-    
+    // Move the highlighted card index (the middle card)
     currentCarouselIndex += direction;
     
-    // Loop around
-    if (currentCarouselIndex < 0) {
-        currentCarouselIndex = totalAwards - 1;
-    } else if (currentCarouselIndex >= totalAwards) {
-        currentCarouselIndex = 0;
-    }
+    // Loop around using modulo
+    currentCarouselIndex = ((currentCarouselIndex % totalAwards) + totalAwards) % totalAwards;
     
     updateCarousel();
     resetCarouselAutoRotate();
@@ -469,46 +399,42 @@ function goToCarouselIndex(index) {
     resetCarouselAutoRotate();
 }
 
-function updateCarouselDots() {
-    const dots = document.querySelectorAll('.carousel-dot');
-    const carousel = document.getElementById('awards-carousel');
-    const cards = carousel.querySelectorAll('.award-card');
-    const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3);
-    const scrollLeft = carousel.scrollLeft;
-    
-    // Calculate which real card is in the center
-    const centerPosition = scrollLeft + (containerWidth / 2);
-    const cardIndex = Math.round((centerPosition - 2 * cardWidth) / cardWidth);
-    const realIndex = Math.max(0, Math.min(cardIndex, totalAwards - 1));
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === realIndex);
-    });
-}
-
 function updateCarousel() {
     const carousel = document.getElementById('awards-carousel');
     const cards = carousel.querySelectorAll('.award-card');
+    const dots = document.querySelectorAll('.carousel-dot');
     
     if (!carousel || cards.length === 0) return;
     
-    // Calculate scroll position - scroll to show the current index as the middle card
-    // Account for 2 cloned cards at the beginning
-    const containerWidth = carousel.offsetWidth;
-    const cardWidth = (containerWidth / 3) + (32 / 3);
-    const scrollPosition = (currentCarouselIndex + 2) * cardWidth;
+    // Calculate which cards to show
+    // currentCarouselIndex is the middle card (highlighted)
+    const leftCardIndex = ((currentCarouselIndex - 1) % totalAwards + totalAwards) % totalAwards;
+    const centerCardIndex = currentCarouselIndex;
+    const rightCardIndex = ((currentCarouselIndex + 1) % totalAwards + totalAwards) % totalAwards;
     
-    carousel.scrollTo({
-        left: scrollPosition,
-        behavior: 'smooth'
+    // Update all cards
+    cards.forEach((card, index) => {
+        // Remove all classes
+        card.classList.remove('visible', 'center', 'side');
+        
+        if (index === centerCardIndex) {
+            // Center card - magnified
+            card.classList.add('visible', 'center');
+        } else if (index === leftCardIndex || index === rightCardIndex) {
+            // Side cards - smaller
+            card.classList.add('visible', 'side');
+        }
     });
     
-    // Update dots
-    setTimeout(() => {
-        updateCarouselDots();
-        updateCarouselCards();
-    }, 300);
+    // Update active dot
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === centerCardIndex);
+    });
+}
+
+function updateCarouselCards() {
+    // This function is no longer needed as CSS handles the styling
+    // But keeping it for compatibility
 }
 
 function updateCarouselCards() {

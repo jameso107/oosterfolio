@@ -1069,6 +1069,7 @@ section {
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
 .award-card {
@@ -1083,8 +1084,26 @@ section {
     scroll-snap-align: center;
     text-align: center;
     transform: scale(0.9);
-    opacity: 0.8;
+    opacity: 0;
     position: relative;
+    pointer-events: none;
+}
+
+.award-card.visible {
+    opacity: 0.8;
+    pointer-events: auto;
+}
+
+.award-card.center {
+    opacity: 1;
+    transform: scale(1.1);
+    border-color: var(--maize);
+    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.4);
+}
+
+.award-card.side {
+    opacity: 0.8;
+    transform: scale(0.9);
 }
 
 .award-icon {
