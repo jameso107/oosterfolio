@@ -429,6 +429,7 @@ function updateCarousel() {
     
     // Calculate which cards to show
     // currentCarouselIndex is the middle card (highlighted)
+    // Always show: (current-1), current, (current+1) with wrapping
     const leftCardIndex = ((currentCarouselIndex - 1) % totalAwards + totalAwards) % totalAwards;
     const centerCardIndex = currentCarouselIndex;
     const rightCardIndex = ((currentCarouselIndex + 1) % totalAwards + totalAwards) % totalAwards;
@@ -438,16 +439,32 @@ function updateCarousel() {
         card.classList.remove('visible', 'center', 'side');
     });
     
-    // Show and style the 3 cards we want to display
-    if (cards[leftCardIndex]) {
-        cards[leftCardIndex].classList.add('visible', 'side');
-    }
-    if (cards[centerCardIndex]) {
-        cards[centerCardIndex].classList.add('visible', 'center');
-    }
-    if (cards[rightCardIndex]) {
-        cards[rightCardIndex].classList.add('visible', 'side');
-    }
+    // Reorder cards in DOM to ensure proper visual order: left, center, right
+    // Store references
+    const leftCard = cards[leftCardIndex];
+    const centerCard = cards[centerCardIndex];
+    const rightCard = cards[rightCardIndex];
+    
+    // Remove all cards temporarily
+    const allCards = Array.from(cards);
+    allCards.forEach(card => carousel.removeChild(card));
+    
+    // Add them back in the correct visual order: left, center, right
+    carousel.appendChild(leftCard);
+    carousel.appendChild(centerCard);
+    carousel.appendChild(rightCard);
+    
+    // Add remaining cards (hidden) at the end
+    allCards.forEach((card) => {
+        if (card !== leftCard && card !== centerCard && card !== rightCard) {
+            carousel.appendChild(card);
+        }
+    });
+    
+    // Now show and style the 3 visible cards
+    leftCard.classList.add('visible', 'side');
+    centerCard.classList.add('visible', 'center');
+    rightCard.classList.add('visible', 'side');
     
     // Update active dot
     dots.forEach((dot, index) => {

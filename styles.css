@@ -1070,6 +1070,8 @@ section {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     position: relative;
+    justify-content: center;
+    align-items: center;
 }
 
 .award-card {
