@@ -1087,11 +1087,13 @@ section {
     opacity: 0;
     position: relative;
     pointer-events: none;
+    display: none;
 }
 
 .award-card.visible {
     opacity: 0.8;
     pointer-events: auto;
+    display: block;
 }
 
 .award-card.center {

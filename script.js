@@ -371,7 +371,7 @@ function initAwardsCarousel() {
         dotsContainer.appendChild(dot);
     }
     
-    // Initial update
+    // Initial update to show cards 1,2,3 with 2 highlighted
     updateCarousel();
     
     // Start auto-rotation
@@ -412,19 +412,21 @@ function updateCarousel() {
     const centerCardIndex = currentCarouselIndex;
     const rightCardIndex = ((currentCarouselIndex + 1) % totalAwards + totalAwards) % totalAwards;
     
-    // Update all cards
-    cards.forEach((card, index) => {
-        // Remove all classes
+    // Hide all cards first
+    cards.forEach((card) => {
         card.classList.remove('visible', 'center', 'side');
-        
-        if (index === centerCardIndex) {
-            // Center card - magnified
-            card.classList.add('visible', 'center');
-        } else if (index === leftCardIndex || index === rightCardIndex) {
-            // Side cards - smaller
-            card.classList.add('visible', 'side');
-        }
     });
+    
+    // Show and style the 3 cards we want to display
+    if (cards[leftCardIndex]) {
+        cards[leftCardIndex].classList.add('visible', 'side');
+    }
+    if (cards[centerCardIndex]) {
+        cards[centerCardIndex].classList.add('visible', 'center');
+    }
+    if (cards[rightCardIndex]) {
+        cards[rightCardIndex].classList.add('visible', 'side');
+    }
     
     // Update active dot
     dots.forEach((dot, index) => {
