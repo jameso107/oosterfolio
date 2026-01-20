@@ -371,6 +371,27 @@ function initAwardsCarousel() {
         dotsContainer.appendChild(dot);
     }
     
+    // Add click handlers to cards
+    const cards = carousel.querySelectorAll('.award-card');
+    cards.forEach((card, index) => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            // If clicking on left card, move left; right card, move right; center card, move forward
+            const leftCardIndex = ((currentCarouselIndex - 1) % totalAwards + totalAwards) % totalAwards;
+            const centerCardIndex = currentCarouselIndex;
+            const rightCardIndex = ((currentCarouselIndex + 1) % totalAwards + totalAwards) % totalAwards;
+            
+            if (index === leftCardIndex) {
+                moveCarousel(-1);
+            } else if (index === rightCardIndex) {
+                moveCarousel(1);
+            } else if (index === centerCardIndex) {
+                // Center card clicked - move forward
+                moveCarousel(1);
+            }
+        });
+    });
+    
     // Initial update to show cards 1,2,3 with 2 highlighted
     updateCarousel();
     
