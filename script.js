@@ -350,3 +350,141 @@ function closeResumeModal() {
     document.body.style.overflow = '';
 }
 
+// Awards Carousel functionality
+let currentCarouselIndex = 0;
+let carouselInterval = null;
+const totalAwards = 8;
+
+function initAwardsCarousel() {
+    const carousel = document.getElementById('awards-carousel');
+    const dotsContainer = document.getElementById('carousel-dots');
+    
+    if (!carousel) return;
+    
+    // Create dots - we can show overlapping groups, so totalAwards - 2 positions
+    const numDots = totalAwards - 2; // Show 3 at a time, so 6 positions (0-5)
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < numDots; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Go to awards ${i + 1}`);
+        dot.onclick = () => goToCarouselIndex(i);
+        dotsContainer.appendChild(dot);
+    }
+    
+    // Initial update
+    updateCarousel();
+    
+    // Start auto-rotation
+    startCarouselAutoRotate();
+    
+    // Pause on hover
+    carousel.addEventListener('mouseenter', stopCarouselAutoRotate);
+    carousel.addEventListener('mouseleave', startCarouselAutoRotate);
+    
+    // Update on scroll
+    carousel.addEventListener('scroll', updateCarouselCards);
+}
+
+function moveCarousel(direction) {
+    const maxIndex = totalAwards - 3; // Can show positions 0 through 5 (6 positions)
+    currentCarouselIndex += direction;
+    
+    if (currentCarouselIndex < 0) {
+        currentCarouselIndex = maxIndex;
+    } else if (currentCarouselIndex > maxIndex) {
+        currentCarouselIndex = 0;
+    }
+    
+    updateCarousel();
+    resetCarouselAutoRotate();
+}
+
+function goToCarouselIndex(index) {
+    const maxIndex = totalAwards - 3;
+    currentCarouselIndex = Math.max(0, Math.min(index, maxIndex));
+    updateCarousel();
+    resetCarouselAutoRotate();
+}
+
+function updateCarousel() {
+    const carousel = document.getElementById('awards-carousel');
+    const cards = carousel.querySelectorAll('.award-card');
+    const dots = document.querySelectorAll('.carousel-dot');
+    
+    if (!carousel || cards.length === 0) return;
+    
+    // Calculate scroll position - scroll to show the current index as the middle card
+    const containerWidth = carousel.offsetWidth;
+    const cardWidth = (containerWidth / 3) + (32 / 3); // Account for gap
+    const scrollPosition = currentCarouselIndex * cardWidth;
+    
+    carousel.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+    });
+    
+    // Update active dot
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentCarouselIndex);
+    });
+    
+    // Update card scaling after scroll
+    setTimeout(updateCarouselCards, 300);
+}
+
+function updateCarouselCards() {
+    const carousel = document.getElementById('awards-carousel');
+    const cards = carousel.querySelectorAll('.award-card');
+    
+    if (!carousel || cards.length === 0) return;
+    
+    cards.forEach((card) => {
+        const cardRect = card.getBoundingClientRect();
+        const carouselRect = carousel.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const carouselCenter = carouselRect.left + carouselRect.width / 2;
+        const distanceFromCenter = Math.abs(cardCenter - carouselCenter);
+        const threshold = carouselRect.width / 6; // Middle third of carousel
+        
+        if (distanceFromCenter < threshold) {
+            card.style.transform = 'scale(1.1)';
+            card.style.opacity = '1';
+            card.style.borderColor = 'var(--maize)';
+            card.style.boxShadow = '0 10px 30px rgba(255, 203, 5, 0.4)';
+        } else {
+            card.style.transform = 'scale(0.9)';
+            card.style.opacity = '0.8';
+            card.style.borderColor = 'rgba(255, 203, 5, 0.2)';
+            card.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.3)';
+        }
+    });
+}
+
+function startCarouselAutoRotate() {
+    stopCarouselAutoRotate();
+    carouselInterval = setInterval(() => {
+        moveCarousel(1);
+    }, 4000);
+}
+
+function stopCarouselAutoRotate() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+    }
+}
+
+function resetCarouselAutoRotate() {
+    stopCarouselAutoRotate();
+    startCarouselAutoRotate();
+}
+
+// Initialize carousel when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait for opening animation to complete
+    setTimeout(() => {
+        initAwardsCarousel();
+    }, 4500);
+});
+
