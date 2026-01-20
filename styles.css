@@ -1050,6 +1050,70 @@ section {
 }
 
 
+/* In the News Section */
+.news {
+    background-color: var(--blue);
+    padding: 5rem 0;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.news-card {
+    background-color: var(--blue-light);
+    padding: 2.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 203, 5, 0.2);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--white);
+}
+
+.news-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    border-color: var(--maize);
+}
+
+.news-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.news-card h3 {
+    color: var(--maize);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.news-card p {
+    color: var(--white);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.news-link {
+    color: var(--maize);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.news-card:hover .news-link {
+    color: #FFD700;
+}
+
 /* Contact Section */
 .contact {
     background-color: var(--blue);
@@ -1187,6 +1251,10 @@ section {
     }
 
     .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-grid {
         grid-template-columns: 1fr;
     }
 
