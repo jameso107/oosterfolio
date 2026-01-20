@@ -706,7 +706,7 @@ section {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-top: 1rem;
-    align-items: start;
+    align-items: center;
 }
 
 .video-container {
