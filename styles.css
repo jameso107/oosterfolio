@@ -1075,6 +1075,9 @@ section {
 .award-card {
     flex: 0 0 calc(33.333% - 1.33rem);
     min-width: 0;
+    width: calc(33.333% - 1.33rem);
+    height: auto;
+    min-height: 300px;
     background-color: var(--blue-light);
     padding: 2.5rem 2rem;
     border-radius: 15px;
@@ -1088,6 +1091,7 @@ section {
     position: relative;
     pointer-events: none;
     display: none;
+    box-sizing: border-box;
 }
 
 .award-card.visible {
@@ -1101,11 +1105,13 @@ section {
     transform: scale(1.1);
     border-color: var(--maize);
     box-shadow: 0 10px 30px rgba(255, 203, 5, 0.4);
+    z-index: 2;
 }
 
 .award-card.side {
     opacity: 0.8;
     transform: scale(0.9);
+    z-index: 1;
 }
 
 .award-icon {
