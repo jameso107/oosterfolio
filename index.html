@@ -322,6 +322,10 @@
                     <span class="contact-icon">💻</span>
                     <span>GitHub</span>
                 </a>
+                <a href="#" class="contact-link" onclick="openResumeModal(); return false;">
+                    <span class="contact-icon">📄</span>
+                    <span>Resume</span>
+                </a>
             </div>
         </div>
     </section>
@@ -343,6 +347,23 @@
             </button>
             <div class="modal-body" id="modal-body">
                 <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Modal -->
+    <div id="resume-modal" class="project-modal">
+        <div class="modal-backdrop" onclick="closeResumeModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeResumeModal()" aria-label="Close resume modal">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 10L30 30M30 10L10 30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-body resume-modal-body">
+                <div class="pdf-container resume-pdf-container">
+                    <iframe src="RESUME.pdf" frameborder="0" allowfullscreen="" title="Resume PDF"></iframe>
+                </div>
             </div>
         </div>
     </div>

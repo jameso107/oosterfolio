@@ -327,10 +327,26 @@ window.addEventListener('scroll', () => {
 // Close modal on Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        const modal = document.getElementById('project-modal');
-        if (modal.classList.contains('active')) {
+        const projectModal = document.getElementById('project-modal');
+        const resumeModal = document.getElementById('resume-modal');
+        if (projectModal.classList.contains('active')) {
             closeProjectModal();
+        } else if (resumeModal.classList.contains('active')) {
+            closeResumeModal();
         }
     }
 });
+
+// Resume Modal functionality
+function openResumeModal() {
+    const modal = document.getElementById('resume-modal');
+    document.body.style.overflow = 'hidden';
+    modal.classList.add('active');
+}
+
+function closeResumeModal() {
+    const modal = document.getElementById('resume-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
 
