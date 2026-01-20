@@ -742,11 +742,13 @@ section {
 
 .linkedin-container {
     position: relative;
-    padding-bottom: 181.9%; /* 917/504 aspect ratio */
+    padding-bottom: 79.2%; /* 399/504 aspect ratio for compact LinkedIn posts */
     height: 0;
     overflow: hidden;
     max-width: 100%;
     margin-top: 1rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .linkedin-container iframe {
@@ -756,6 +758,8 @@ section {
     width: 100%;
     height: 100%;
     border-radius: 10px;
+    max-width: 504px;
+    margin: 0 auto;
 }
 
 .pdf-container {
