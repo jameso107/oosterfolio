@@ -945,6 +945,26 @@ section {
     margin-top: 0;
 }
 
+.image-collage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.image-collage img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.modal-body .image-collage {
+    margin-top: 0;
+}
+
 .resume-modal-body {
     padding: 2rem;
 }
@@ -1268,6 +1288,10 @@ section {
         gap: 1.5rem;
     }
 
+    .image-collage {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .modal-content {
         width: 98%;
         max-height: 98vh;
@@ -1310,6 +1334,10 @@ section {
 
     .project-content {
         padding: 1.5rem;
+    }
+
+    .image-collage {
+        grid-template-columns: 1fr;
     }
 }
 
