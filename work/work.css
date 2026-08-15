@@ -69,10 +69,20 @@
     margin-bottom: 1rem;
 }
 
-.case-section a {
+.case-section a:not(.cta-button) {
     color: var(--maize);
     text-decoration: underline;
     text-underline-offset: 3px;
+}
+
+/* Buttons inside case sections keep their own button colors */
+.case-section a.cta-button {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+.case-section a.cta-button.cta-secondary {
+    color: var(--maize);
 }
 
 .case-figure {

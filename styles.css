@@ -1562,6 +1562,95 @@ section {
 }
 
 /* ============================================= */
+/* Case study content inside the shared modal    */
+/* ============================================= */
+
+.case-modal-kicker {
+    color: var(--maize);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.modal-body .case-title {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--maize);
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.modal-body .case-summary {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 1.25rem;
+}
+
+.modal-body .chip-row {
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.modal-body .case-section {
+    max-width: 720px;
+    margin: 0 auto 1.75rem;
+    padding: 0;
+}
+
+.modal-body .case-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--maize);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.modal-body .case-section p {
+    line-height: 1.8;
+    text-align: left;
+}
+
+.modal-body .case-figure {
+    margin: 2rem auto;
+    max-width: 860px;
+    background-color: var(--blue-dark);
+    border: 1px solid rgba(255, 203, 5, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.modal-body .case-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.modal-body .case-figure figcaption {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    text-align: center;
+}
+
+.modal-body .case-cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem 0 0.5rem;
+}
+
+/* ============================================= */
 /* Interaction polish                            */
 /* ============================================= */
 
@@ -1629,6 +1718,15 @@ section[id] {
     .expand-button:active,
     .contact-link:active,
     .ai-card-link:active {
+        transform: none;
+    }
+
+    .modal-content {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+
+    .project-modal.active .modal-content {
         transform: none;
     }
 }

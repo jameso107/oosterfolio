@@ -23,6 +23,8 @@ The internal TRIAGE was built at the JPL hackathon to disposition Mars Sample Re
 
 **The data.** The public Ingenuity (Mars 2020 helicopter) flight log: all 72 flights with per-flight duration, max altitude, distance, max groundspeed, and mission notes, compiled from NASA status reports via Wikipedia's List of Ingenuity flights. Bundled as a static file (`demo/flights-data.js`), so the demo needs zero API calls to work.
 
+**The experience.** A 3D replay of any of the 72 flights over procedural Mars-style terrain (hand-rolled canvas projection, zero dependencies), with playback at 0.25x to 4x, a scrubber, drag-to-orbit with momentum, and synchronized strip charts (altitude, groundspeed, distance) with fleet-envelope reference lines. Flight paths and channel curves are reconstructed from the recorded summaries: deterministic (seeded per flight), anchored to the recorded numbers, and always labeled with a RECONSTRUCTED badge, the same honesty rule the original flight deck used. Alarm banners (LINK LOST, EARLY TERMINATION, ENVELOPE EXCEEDANCE) fire from the deterministic flags during replay.
+
 **The architecture.**
 
 ```
@@ -32,15 +34,19 @@ deterministic layer (client-side, demo/triage.js)
   median + MAD robust z-scores per metric, |z| >= 2.5 flags,
   plus event flags mined from the record notes
         |
-narrative layer
-  cached mode: pre-computed outputs for every flight (demo/cached-narratives.js)
-  live mode:   POST /api/narrative -> Vercel function -> Anthropic API
-               (strict JSON schema out; the key never reaches the browser)
+flight reconstruction (client-side, seeded per flight)
+  3D replay over procedural terrain + synchronized strip charts,
+  labeled RECONSTRUCTED FROM SUMMARY DATA
+        |
+narrative layer (example GenAI narratives)
+  cached by default: pre-computed outputs for every flight
+  live option:  POST /api/narrative -> Vercel function -> Anthropic API
+                (strict JSON schema out; the key never reaches the browser)
         |
 human-in-the-loop review
   accept / edit / reject, every disposition recorded locally
         |
-evals tab
+evals (collapsed section)
   22-case golden set, exact match on category, LLM-as-judge scores,
   per-case traces (inputs, flags, prompt, output, reference, verdict)
 ```

@@ -106,7 +106,7 @@
             <p class="section-intro">I ship AI products end-to-end: problem definition with stakeholders, rapid prototyping, human-in-the-loop design, evaluation, and production deployment. Four examples below. One of them you can try yourself.</p>
             <div class="ai-grid">
                 <article class="ai-card">
-                    <h3><a href="/work/triage" class="ai-card-title-link">TRIAGE</a></h3>
+                    <h3><a href="/work/triage" class="ai-card-title-link" onclick="openCaseStudyModal('case-triage'); return false;">TRIAGE</a></h3>
                     <p class="ai-card-hook">Root cause analysis for a Mars helicopter.</p>
                     <div class="chip-row">
                         <span class="chip">JPL Mission Critical Award</span>
@@ -114,41 +114,41 @@
                         <span class="chip">Live public rebuild</span>
                     </div>
                     <div class="ai-card-links">
-                        <a href="/work/triage" class="ai-card-link">Case study</a>
+                        <a href="/work/triage" class="ai-card-link" onclick="openCaseStudyModal('case-triage'); return false;">Case study</a>
                         <a href="/demo/triage" class="ai-card-link ai-card-link-demo">Try the demo</a>
                     </div>
                 </article>
                 <article class="ai-card">
-                    <h3><a href="/work/specinator" class="ai-card-title-link">SPECINATOR</a></h3>
+                    <h3><a href="/work/specinator" class="ai-card-title-link" onclick="openCaseStudyModal('case-specinator'); return false;">SPECINATOR</a></h3>
                     <p class="ai-card-hook">AI decision support for an engineering BD team.</p>
                     <div class="chip-row">
                         <span class="chip">15 min to 4 min per document</span>
                         <span class="chip">92% to 98% accuracy</span>
                     </div>
                     <div class="ai-card-links">
-                        <a href="/work/specinator" class="ai-card-link">Case study</a>
+                        <a href="/work/specinator" class="ai-card-link" onclick="openCaseStudyModal('case-specinator'); return false;">Case study</a>
                     </div>
                 </article>
                 <article class="ai-card">
-                    <h3><a href="/work/koopsgpt" class="ai-card-title-link">KoopsGPT</a></h3>
+                    <h3><a href="/work/koopsgpt" class="ai-card-title-link" onclick="openCaseStudyModal('case-koopsgpt'); return false;">KoopsGPT</a></h3>
                     <p class="ai-card-hook">An agentic LLM suite in production at a manufacturer.</p>
                     <div class="chip-row">
                         <span class="chip">40+ daily users</span>
                         <span class="chip">4,000+ hours/year saved</span>
                     </div>
                     <div class="ai-card-links">
-                        <a href="/work/koopsgpt" class="ai-card-link">Case study</a>
+                        <a href="/work/koopsgpt" class="ai-card-link" onclick="openCaseStudyModal('case-koopsgpt'); return false;">Case study</a>
                     </div>
                 </article>
                 <article class="ai-card">
-                    <h3><a href="/work/jpl-research" class="ai-card-title-link">Do Experts Trust AI? (JPL Research)</a></h3>
+                    <h3><a href="/work/jpl-research" class="ai-card-title-link" onclick="openCaseStudyModal('case-jpl-research'); return false;">Do Experts Trust AI? (JPL Research)</a></h3>
                     <p class="ai-card-hook">Ethnographic study of GenAI in Mars operations.</p>
                     <div class="chip-row">
                         <span class="chip">67% expert/novice trust gap</span>
                         <span class="chip">NASA Shining Star Award (4 of 1,200+)</span>
                     </div>
                     <div class="ai-card-links">
-                        <a href="/work/jpl-research" class="ai-card-link">Case study</a>
+                        <a href="/work/jpl-research" class="ai-card-link" onclick="openCaseStudyModal('case-jpl-research'); return false;">Case study</a>
                     </div>
                 </article>
             </div>
@@ -485,6 +485,236 @@
             </nav>
         </div>
     </footer>
+
+    <!-- Case study modal templates (inert until cloned into the modal) -->
+    <template id="case-triage">
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">TRIAGE: root cause analysis for a Mars helicopter</h2>
+        <p class="case-summary">At the JPL hackathon, I solo-built a dashboard that helps engineers find out why a Mars Sample Return helicopter test did not behave as expected.</p>
+        <div class="chip-row">
+            <span class="chip">JPL Mission Critical Award</span>
+            <span class="chip">Solo build</span>
+            <span class="chip">Live public rebuild</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>Flight test data is repeatable but dense. Engineers burned time separating "expected variance" from "something is actually wrong," and a wrong call in either direction is expensive.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I built</h2>
+            <p>TRIAGE combines deterministic statistics with GenAI: the deterministic layer flags where telemetry deviates from expected envelopes, and fine-tuned internal local models turn those flags into plain-language root cause narratives an engineer can accept, edit, or reject. The human makes the call; the tool makes the call faster.</p>
+        </div>
+        <div class="case-section">
+            <h2>Outcome</h2>
+            <p>TRIAGE won the hackathon's Mission Critical Award for the best JPL solution.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I learned</h2>
+            <p>In a mission-critical review, trust comes from numbers people can re-derive. So the statistics stay deterministic, the language model only writes the narrative, and the engineer makes the final call. Every AI product I have shipped since follows that pattern.</p>
+        </div>
+        <div class="case-section">
+            <h2>Try it</h2>
+            <p>The internal tool stays at JPL, so I rebuilt the concept in public using open NASA flight data: a 3D replay of all 72 Ingenuity flights with synchronized charts and example GenAI narratives.</p>
+        </div>
+        <div class="case-cta-row">
+            <a href="/demo/triage" class="cta-button">Run the live demo</a>
+            <a href="/work/triage" class="cta-button cta-secondary">Open the full page</a>
+        </div>
+    </template>
+
+    <template id="case-specinator">
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">SPECINATOR: reading specs so engineers don't have to</h2>
+        <p class="case-summary">An AI decision-support tool I built through SYZYGY for an electrical engineering firm's business development team.</p>
+        <div class="chip-row">
+            <span class="chip">15 min to 4 min per document</span>
+            <span class="chip">92% to 98% accuracy</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>Every inbound opportunity meant manually reading long specification documents to decide fit. Intake took about 15 minutes per document at 92% accuracy, and the misses cost real bids.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I built</h2>
+            <p>A pipeline that ingests each document, extracts the decision-relevant requirements, and presents a structured recommendation with the source passages attached, so the BD team verifies instead of hunts. Under the hood it is prompt design plus retrieval (RAG) over the firm's specification library. Humans stay in the loop on every accept/reject decision.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SPECINATOR pipeline: intake, extraction, structured recommendation, then human review, with review decisions feeding the next release.">
+                <defs>
+                    <marker id="spec-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#FFCB05"/>
+                    </marker>
+                </defs>
+                <rect x="16" y="70" width="190" height="110" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="111" y="108" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Intake</text>
+                <text x="111" y="134" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">Inbound specification</text>
+                <text x="111" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">document</text>
+                <rect x="252" y="70" width="190" height="110" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="347" y="108" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Extraction</text>
+                <text x="347" y="134" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">Decision-relevant</text>
+                <text x="347" y="152" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">requirements</text>
+                <rect x="488" y="70" width="190" height="110" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="583" y="102" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Recommendation</text>
+                <text x="583" y="128" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">Structured fit call with</text>
+                <text x="583" y="146" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">source passages attached</text>
+                <rect x="724" y="70" width="180" height="110" rx="12" fill="#00274C" stroke="#FFCB05" stroke-width="2.5"/>
+                <text x="814" y="102" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Human review</text>
+                <text x="814" y="128" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">BD engineer verifies,</text>
+                <text x="814" y="146" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">accepts or rejects</text>
+                <line x1="206" y1="125" x2="245" y2="125" stroke="#FFCB05" stroke-width="2" marker-end="url(#spec-arrow-m)"/>
+                <line x1="442" y1="125" x2="481" y2="125" stroke="#FFCB05" stroke-width="2" marker-end="url(#spec-arrow-m)"/>
+                <line x1="678" y1="125" x2="717" y2="125" stroke="#FFCB05" stroke-width="2" marker-end="url(#spec-arrow-m)"/>
+                <path d="M 814 180 L 814 232 L 347 232 L 347 187" fill="none" stroke="#FFCB05" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#spec-arrow-m)"/>
+                <text x="580" y="252" text-anchor="middle" fill="#FFFFFF" opacity="0.8" font-family="Inter, sans-serif" font-size="12">Every accept/reject decision feeds the next release</text>
+            </svg>
+            <figcaption>SPECINATOR's pipeline. Built for a client's internal use, so this shows architecture rather than screenshots.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>How I tested it</h2>
+            <p>Before each release I scored outputs with LLM-as-judge evaluation and traced failures back through the pipeline to their root cause, then re-ran until the failure mode was closed.</p>
+        </div>
+        <div class="case-section">
+            <h2>Outcome</h2>
+            <p>Intake time dropped from 15 to 4 minutes per document. Accuracy rose from 92% to 98%. The business outcome: the team screens every inbound opportunity instead of triaging which documents get read.</p>
+        </div>
+        <div class="case-cta-row">
+            <a href="/work/specinator" class="cta-button cta-secondary">Open the full page</a>
+        </div>
+    </template>
+
+    <template id="case-koopsgpt">
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">KoopsGPT: an LLM suite a manufacturer actually uses</h2>
+        <p class="case-summary">A custom agentic LLM suite I proposed, built, and shipped at Koops Automation Systems. It runs in production for 40+ employees.</p>
+        <div class="chip-row">
+            <span class="chip">40+ daily users</span>
+            <span class="chip">4,000+ hours/year saved</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>Quoting, contract review, and risk analysis at an automation builder meant hours inside dense documents and tribal knowledge. I was an intern; I pitched leadership on building this and then built it.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I built</h2>
+            <p>KoopsGPT wires LLM APIs and retrieval (RAG) over Koops's enterprise data so the BD team can quote faster, review contracts against past precedent, and flag risk earlier. Adoption was designed in from day one: I trained the team, gathered feedback in person, and shipped what they asked for next.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="KoopsGPT architecture: enterprise data sources feed a retrieval layer, three agents for quoting, contract review, and risk analysis draw on it, and the team works through one chat surface.">
+                <defs>
+                    <marker id="koops-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#FFCB05"/>
+                    </marker>
+                </defs>
+                <rect x="16" y="240" width="888" height="74" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="460" y="270" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="15" font-weight="600">Enterprise data sources</text>
+                <text x="460" y="294" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">Quote history &#183; contracts &#183; project records &#183; engineering documents</text>
+                <rect x="16" y="152" width="888" height="60" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="460" y="178" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="15" font-weight="600">Retrieval layer (RAG)</text>
+                <text x="460" y="198" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12.5">Grounds every answer in the company's own precedent</text>
+                <rect x="16" y="64" width="280" height="60" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="156" y="90" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="14.5" font-weight="600">Quoting agent</text>
+                <text x="156" y="110" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12">Drafts against past wins</text>
+                <rect x="320" y="64" width="280" height="60" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="460" y="90" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="14.5" font-weight="600">Contract review agent</text>
+                <text x="460" y="110" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12">Compares to precedent</text>
+                <rect x="624" y="64" width="280" height="60" rx="12" fill="#003A6B" stroke="#FFCB05" stroke-width="1.5"/>
+                <text x="764" y="90" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="14.5" font-weight="600">Risk analysis agent</text>
+                <text x="764" y="110" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="12">Flags exposure earlier</text>
+                <rect x="270" y="6" width="380" height="34" rx="17" fill="#00274C" stroke="#FFCB05" stroke-width="2.5"/>
+                <text x="460" y="28" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="14" font-weight="600">Chat surface: one front door for the BD team</text>
+                <line x1="460" y1="240" x2="460" y2="219" stroke="#FFCB05" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
+                <line x1="156" y1="152" x2="156" y2="131" stroke="#FFCB05" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
+                <line x1="460" y1="152" x2="460" y2="131" stroke="#FFCB05" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
+                <line x1="764" y1="152" x2="764" y2="131" stroke="#FFCB05" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
+                <line x1="460" y1="64" x2="460" y2="47" stroke="#FFCB05" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
+                <text x="880" y="30" text-anchor="end" fill="#FFFFFF" opacity="0.7" font-family="Inter, sans-serif" font-size="11.5">LLM APIs power each agent</text>
+            </svg>
+            <figcaption>KoopsGPT's architecture. An internal tool, so this shows architecture rather than screenshots.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>Outcome</h2>
+            <p>40+ daily users saving 2+ hours per user per week, roughly 4,000+ hours a year. It outlived my internship, which is the outcome I am proudest of.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I learned</h2>
+            <p>Adoption was the real product. Sitting with the team, watching where they hesitated, and shipping the next thing they actually asked for did more for usage than any model upgrade.</p>
+        </div>
+        <div class="case-cta-row">
+            <a href="/work/koopsgpt" class="cta-button cta-secondary">Open the full page</a>
+        </div>
+    </template>
+
+    <template id="case-jpl-research">
+        <p class="case-modal-kicker">AI Work / Research</p>
+        <h2 class="case-title">Do experts trust AI? Field research inside Mars operations</h2>
+        <p class="case-summary">At NASA JPL I ran an embedded ethnographic study of how Mars Science Laboratory (Curiosity rover) operators actually use Faro, a GenAI analysis tool, during downlink operations.</p>
+        <div class="chip-row">
+            <span class="chip">67% expert/novice trust gap</span>
+            <span class="chip">NASA Shining Star Award (4 of 1,200+)</span>
+        </div>
+        <div class="case-section">
+            <h2>What I did</h2>
+            <p>I sat with expert and novice mission operators through real operations, instrumented the study with a gaze tracking tool I built on OpenFace 2.0 (mapping gaze to on-screen regions to produce heatmaps and deterministic measurements of tool utilization), and combined the qualitative and quantitative records.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of two operator screens. The novice operator's gaze concentrates on the GenAI analysis panel; the expert operator's gaze concentrates on raw telemetry. Labeled as an illustration, not actual study data.">
+                <defs>
+                    <radialGradient id="heat-hot-m" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FFCB05" stop-opacity="0.9"/>
+                        <stop offset="45%" stop-color="#FF9E1B" stop-opacity="0.55"/>
+                        <stop offset="100%" stop-color="#FF9E1B" stop-opacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="heat-warm-m" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FFCB05" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#FF9E1B" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <text x="235" y="28" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Novice operator</text>
+                <rect x="30" y="44" width="410" height="250" rx="10" fill="#001A33" stroke="#FFCB05" stroke-width="1.5"/>
+                <rect x="48" y="62" width="180" height="100" rx="6" fill="#003A6B" opacity="0.85"/>
+                <text x="138" y="80" text-anchor="middle" fill="#FFFFFF" opacity="0.75" font-family="Inter, sans-serif" font-size="11">Raw telemetry</text>
+                <rect x="48" y="176" width="180" height="100" rx="6" fill="#003A6B" opacity="0.85"/>
+                <text x="138" y="194" text-anchor="middle" fill="#FFFFFF" opacity="0.75" font-family="Inter, sans-serif" font-size="11">Channel plots</text>
+                <rect x="244" y="62" width="178" height="214" rx="6" fill="#003A6B"/>
+                <text x="333" y="80" text-anchor="middle" fill="#FFFFFF" opacity="0.9" font-family="Inter, sans-serif" font-size="11">GenAI analysis (Faro)</text>
+                <ellipse cx="333" cy="170" rx="110" ry="95" fill="url(#heat-hot-m)"/>
+                <ellipse cx="330" cy="230" rx="70" ry="50" fill="url(#heat-warm-m)"/>
+                <ellipse cx="138" cy="110" rx="48" ry="34" fill="url(#heat-warm-m)"/>
+                <text x="685" y="28" text-anchor="middle" fill="#FFCB05" font-family="Inter, sans-serif" font-size="16" font-weight="600">Expert operator</text>
+                <rect x="480" y="44" width="410" height="250" rx="10" fill="#001A33" stroke="#FFCB05" stroke-width="1.5"/>
+                <rect x="498" y="62" width="180" height="100" rx="6" fill="#003A6B"/>
+                <text x="588" y="80" text-anchor="middle" fill="#FFFFFF" opacity="0.9" font-family="Inter, sans-serif" font-size="11">Raw telemetry</text>
+                <rect x="498" y="176" width="180" height="100" rx="6" fill="#003A6B"/>
+                <text x="588" y="194" text-anchor="middle" fill="#FFFFFF" opacity="0.9" font-family="Inter, sans-serif" font-size="11">Channel plots</text>
+                <rect x="694" y="62" width="178" height="214" rx="6" fill="#003A6B" opacity="0.85"/>
+                <text x="783" y="80" text-anchor="middle" fill="#FFFFFF" opacity="0.75" font-family="Inter, sans-serif" font-size="11">GenAI analysis (Faro)</text>
+                <ellipse cx="588" cy="118" rx="105" ry="72" fill="url(#heat-hot-m)"/>
+                <ellipse cx="585" cy="222" rx="85" ry="60" fill="url(#heat-hot-m)"/>
+                <ellipse cx="783" cy="120" rx="45" ry="34" fill="url(#heat-warm-m)"/>
+                <ellipse cx="330" cy="330" rx="16" ry="12" fill="url(#heat-hot-m)"/>
+                <text x="354" y="335" fill="#FFFFFF" opacity="0.85" font-family="Inter, sans-serif" font-size="12.5">High gaze dwell</text>
+                <ellipse cx="510" cy="330" rx="16" ry="12" fill="url(#heat-warm-m)"/>
+                <text x="534" y="335" fill="#FFFFFF" opacity="0.85" font-family="Inter, sans-serif" font-size="12.5">Low gaze dwell</text>
+                <text x="460" y="368" text-anchor="middle" fill="#FFCB05" opacity="0.9" font-family="Inter, sans-serif" font-size="12.5" font-weight="600">Illustration recreated to show the method. Not actual study data.</text>
+            </svg>
+            <figcaption>How the gaze tracking read out: novices leaned on the GenAI panel while experts kept their eyes on raw telemetry. A recreated illustration of the method, not actual study data.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>What I found</h2>
+            <p>A statistically significant mistrust of Faro among expert operators: a 67% difference in trust between experts and novices. New operators leaned on the tool; the people with the most experience trusted it least.</p>
+        </div>
+        <div class="case-section">
+            <h2>What happened next</h2>
+            <p>I delivered a 5-point recommendation plan to prepare Faro for mission-critical use, and JPL recognized the work with the NASA Shining Star Award, given to 4 interns out of 1,200+ across all NASA centers.</p>
+        </div>
+        <div class="case-section">
+            <h2>Why it matters for building</h2>
+            <p>Every AI product I ship now starts from this finding: adoption is a trust problem before it is a model problem, and human-in-the-loop design is how you earn it.</p>
+        </div>
+        <div class="case-cta-row">
+            <a href="/work/jpl-research" class="cta-button cta-secondary">Open the full page</a>
+        </div>
+    </template>
 
     <!-- Project Modal -->
     <div id="project-modal" class="project-modal">

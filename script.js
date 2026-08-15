@@ -60,6 +60,24 @@ function openProjectModal(projectId) {
 
 let lastFocusedElement = null;
 
+// Case study modal: clones an inert <template> into the shared modal shell,
+// so AI Work case studies pop out the same way the robot cards do.
+function openCaseStudyModal(templateId) {
+    const modal = document.getElementById('project-modal');
+    const modalBody = document.getElementById('modal-body');
+    const template = document.getElementById(templateId);
+    if (!modal || !modalBody || !template) return;
+
+    modalBody.innerHTML = '';
+    modalBody.appendChild(template.content.cloneNode(true));
+
+    document.body.style.overflow = 'hidden';
+    modal.classList.add('active');
+    lastFocusedElement = document.activeElement;
+    const closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+}
+
 function closeProjectModal() {
     const modal = document.getElementById('project-modal');
     modal.classList.remove('active');
