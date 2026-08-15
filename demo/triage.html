@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIAGE: Flight Edition | Live Demo | James Oosterhouse</title>
+    <meta name="description" content="A live public rebuild of TRIAGE using the open Ingenuity flight log: deterministic anomaly detection, LLM root cause narratives, human-in-the-loop review, and a visible golden-set evaluation tab.">
+    <link rel="canonical" href="https://ooster.house/demo/triage">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ooster.house/demo/triage">
+    <meta property="og:title" content="TRIAGE: Flight Edition, a live root cause analysis demo">
+    <meta property="og:description" content="Deterministic statistics flag Mars helicopter flights, an LLM writes the narrative, a human makes the call, and the Evals tab shows the golden-set scores and traces.">
+    <meta property="og:image" content="https://ooster.house/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="/gear.png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/demo/triage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body class="demo-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">JAMES OOSTERHOUSE</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/#about" class="nav-link">About</a></li>
+                <li><a href="/#ai-work" class="nav-link active">AI Work</a></li>
+                <li><a href="/#robotics" class="nav-link">Robotics</a></li>
+                <li><a href="/#journey" class="nav-link">Journey</a></li>
+                <li><a href="/#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="demo-main">
+        <div class="container demo-container">
+            <header class="demo-header">
+                <p class="case-kicker"><a href="/work/triage">TRIAGE case study</a> / Live demo</p>
+                <h1 class="demo-title" id="demo-title">TRIAGE: Flight Edition</h1>
+                <p class="demo-tagline">Deterministic statistics flag the anomaly. A language model writes the narrative. A human makes the call. And the Evals tab shows you exactly how well the pipeline performs.</p>
+                <div class="chip-row">
+                    <span class="chip">Numbers computed, never generated</span>
+                    <span class="chip">LLM narrates, never computes</span>
+                    <span class="chip">Human decides</span>
+                </div>
+
+                <div class="demo-meta">
+                    <div class="mode-toggle" role="radiogroup" aria-label="Demo mode">
+                        <button type="button" class="mode-btn active" data-mode="cached" role="radio" aria-checked="true">Demo mode (cached)</button>
+                        <button type="button" class="mode-btn" data-mode="live" role="radio" aria-checked="false">Run it live</button>
+                    </div>
+                    <p class="mode-note" id="mode-note">Cached mode uses pre-computed narratives for every flight: instant, offline, zero API calls. Live mode makes a real model call, rate-limited to 10 per hour.</p>
+                </div>
+
+                <p class="data-source">Data: the public Ingenuity (Mars 2020 helicopter) flight log, all 72 flights with per-flight duration, altitude, distance, groundspeed, and mission notes, compiled from NASA status reports via Wikipedia's List of Ingenuity flights. <a href="https://github.com/jameso107/oosterfolio" target="_blank" rel="noopener">Code and README on GitHub</a>.</p>
+
+                <div class="disclaimer" role="note">
+                    TRIAGE was built inside NASA JPL and stays there. This is an independent public rebuild using only public NASA data and my own code, written to show the approach. It is not affiliated with or endorsed by NASA or JPL.
+                </div>
+            </header>
+
+            <div class="tab-bar" role="tablist" aria-label="Demo sections">
+                <button type="button" class="tab-btn active" id="tab-flights" role="tab" aria-selected="true" aria-controls="panel-flights">Flight Browser</button>
+                <button type="button" class="tab-btn" id="tab-evals" role="tab" aria-selected="false" aria-controls="panel-evals">Evals</button>
+            </div>
+
+            <!-- ============ FLIGHT BROWSER ============ -->
+            <section id="panel-flights" class="tab-panel active" role="tabpanel" aria-labelledby="tab-flights">
+                <div class="panel-grid">
+                    <div class="card chart-card">
+                        <div class="chart-controls">
+                            <label for="metric-select">Metric</label>
+                            <select id="metric-select"></select>
+                            <label for="flight-select">Flight</label>
+                            <select id="flight-select"></select>
+                        </div>
+                        <div class="chart-wrap">
+                            <svg id="chart" role="img" aria-label="Selected metric for all 72 flights plotted against the fleet envelope. Flagged flights are drawn as amber diamonds."></svg>
+                            <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+                        </div>
+                        <div class="chart-legend" aria-hidden="false">
+                            <span class="legend-item"><span class="legend-dot"></span> In envelope</span>
+                            <span class="legend-item"><span class="legend-diamond"></span> Flagged by deterministic layer</span>
+                            <span class="legend-item"><span class="legend-band"></span> Fleet envelope (median &plusmn; 2.5&sigma;)</span>
+                        </div>
+                        <details class="table-view">
+                            <summary>View the data as a table</summary>
+                            <div class="table-scroll" id="data-table"></div>
+                        </details>
+                    </div>
+
+                    <div class="card detail-card" id="detail-card">
+                        <!-- Flight detail rendered by JS -->
+                    </div>
+                </div>
+
+                <div class="card review-log-card">
+                    <h2>Review log</h2>
+                    <p class="muted">TRIAGE advises, humans decide. Every accept, edit, or reject you make is recorded here (stored only in your browser).</p>
+                    <div id="review-log"></div>
+                    <button type="button" class="ghost-btn" id="clear-log">Clear log</button>
+                </div>
+            </section>
+
+            <!-- ============ EVALS ============ -->
+            <section id="panel-evals" class="tab-panel" role="tabpanel" aria-labelledby="tab-evals" hidden>
+                <div class="eval-tiles" id="eval-tiles"></div>
+
+                <div class="card">
+                    <h2>How this is evaluated</h2>
+                    <p>The golden set is 22 labeled cases drawn from the public flight record: each case pins an expected anomaly category and a reference narrative. The pipeline's cached outputs are scored two ways. Exact match checks the predicted category against the label. An LLM-as-judge pass (Claude, cached run) scores each narrative 1 to 5 for category correctness, grounding in the record, and calibration of confidence. Every case has a full trace below: inputs, deterministic flags, the exact prompt, the model output, the reference, and the judge verdict, so failures can be traced back through the pipeline to their root cause.</p>
+                    <p class="muted">A note on the high match rate: the deterministic layer does the heavy lifting here by design. Categories follow tightly from computed flags plus record notes, so the judge score on narrative quality is where the discriminating signal lives.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Golden set results</h2>
+                    <div class="table-scroll">
+                        <table class="eval-table" id="eval-table">
+                            <thead>
+                                <tr><th scope="col">Flight</th><th scope="col">Expected</th><th scope="col">Predicted</th><th scope="col">Match</th><th scope="col">Judge</th><th scope="col">Trace</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card trace-card" id="trace-card" hidden>
+                    <!-- Per-case trace rendered by JS -->
+                </div>
+            </section>
+
+            <section class="demo-about">
+                <h2>What this demo shows</h2>
+                <p>The internal TRIAGE was built at the JPL hackathon to disposition Mars Sample Return helicopter anomalies. This public rebuild keeps its architecture on open data: a deterministic layer computes fleet statistics (median and MAD robust z-scores, fully client-side, zero API calls), an LLM narrative layer turns flags into plain language through a server-side API route (prompt design plus a strict JSON schema, the key never reaches the browser), a human-in-the-loop review flow records every disposition, and a golden-set evaluation with LLM-as-judge scoring and per-case trace analysis makes the quality measurable instead of claimed.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p class="footer-name">James Oosterhouse</p>
+            <nav class="footer-links" aria-label="Footer">
+                <a href="https://github.com/jameso107" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/james-oosterhouse/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="mailto:jamesoo@umich.edu">Email</a>
+                <a href="/26_resume.pdf">Resume</a>
+                <a href="/work/triage">Case study</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="/demo/flights-data.js"></script>
+    <script src="/demo/cached-narratives.js"></script>
+    <script src="/demo/golden-set.js"></script>
+    <script src="/demo/triage.js"></script>
+    <script src="/script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

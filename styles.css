@@ -231,10 +231,21 @@ body.animating {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: var(--blue);
+    background-color: rgba(0, 39, 76, 0.78);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 203, 5, 0.12);
     padding: 1rem 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .navbar {
+        background-color: var(--blue);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
 }
 
 .nav-container {
@@ -284,6 +295,14 @@ body.animating {
 }
 
 .nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link.active {
+    color: var(--maize);
+}
+
+.nav-link.active::after {
     width: 100%;
 }
 
@@ -409,6 +428,8 @@ body.animating {
 .hero-title {
     font-size: 4rem;
     font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     margin-bottom: 1rem;
     color: var(--maize);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -453,6 +474,7 @@ section {
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
+    letter-spacing: -0.01em;
     text-align: center;
     margin-bottom: 3rem;
     color: var(--maize);
@@ -1338,6 +1360,276 @@ section {
 
     .image-collage {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================= */
+/* Hero additions                                */
+/* ============================================= */
+
+.hero-description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 0 auto 2rem;
+    max-width: 620px;
+    opacity: 0.95;
+}
+
+.hero-cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.cta-button.cta-secondary {
+    background-color: rgba(0, 39, 76, 0.45);
+    color: var(--maize);
+    border: 2px solid var(--maize);
+    box-shadow: none;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.cta-button.cta-secondary:hover {
+    background-color: rgba(255, 203, 5, 0.12);
+    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.2);
+}
+
+.hero-now {
+    display: inline-block;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    background-color: rgba(0, 26, 51, 0.55);
+    border: 1px solid rgba(255, 203, 5, 0.25);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.hero-now strong {
+    color: var(--maize);
+    font-weight: 600;
+}
+
+/* ============================================= */
+/* Section intro line                            */
+/* ============================================= */
+
+.section-intro {
+    text-align: center;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    max-width: 760px;
+    margin: -1.5rem auto 2.5rem;
+    opacity: 0.95;
+}
+
+/* ============================================= */
+/* AI Work section                               */
+/* ============================================= */
+
+.ai-work {
+    background-color: var(--blue);
+}
+
+.ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.ai-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--blue-light);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 203, 5, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.ai-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    border-color: var(--maize);
+}
+
+.ai-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+}
+
+.ai-card-title-link {
+    color: var(--maize);
+    text-decoration: none;
+}
+
+.ai-card-title-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.ai-card-hook {
+    color: var(--white);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chip {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--maize);
+    background-color: rgba(255, 203, 5, 0.1);
+    border: 1px solid rgba(255, 203, 5, 0.45);
+}
+
+.ai-card-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: auto;
+}
+
+.ai-card-link {
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid rgba(255, 203, 5, 0.4);
+    padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.ai-card-link:hover {
+    color: var(--maize);
+    border-color: var(--maize);
+}
+
+.ai-card-link-demo {
+    color: var(--maize);
+}
+
+/* ============================================= */
+/* Footer                                        */
+/* ============================================= */
+
+.footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-name {
+    font-weight: 600;
+    color: var(--maize);
+    letter-spacing: 0.02em;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.85;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--maize);
+    opacity: 1;
+}
+
+/* ============================================= */
+/* Interaction polish                            */
+/* ============================================= */
+
+/* Press feedback on pointer-down, not release */
+.cta-button:active,
+.expand-button:active,
+.contact-link:active,
+.ai-card-link:active {
+    transform: scale(0.97);
+    transition: transform 100ms ease-out;
+}
+
+/* Visible focus for keyboard users */
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--maize);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Old #projects anchor keeps working */
+.anchor-alias {
+    display: block;
+    height: 0;
+}
+
+section[id] {
+    scroll-margin-top: 80px;
+}
+
+/* ============================================= */
+/* Reduced motion                                */
+/* ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .photo-slider-left,
+    .photo-slider-right {
+        animation: none;
+    }
+
+    .block-m,
+    .ripple,
+    .name-left,
+    .name-right {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .about-card:hover,
+    .project-card:hover,
+    .news-card:hover,
+    .ai-card:hover,
+    .timeline-content:hover,
+    .contact-link:hover,
+    .cta-button:hover {
+        transform: none;
+    }
+
+    .cta-button:active,
+    .expand-button:active,
+    .contact-link:active,
+    .ai-card-link:active {
+        transform: none;
     }
 }
 

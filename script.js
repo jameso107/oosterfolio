@@ -52,13 +52,23 @@ function openProjectModal(projectId) {
     // Show modal with animation
     document.body.style.overflow = 'hidden';
     modal.classList.add('active');
+    modal.dataset.returnFocus = '1';
+    lastFocusedElement = document.activeElement;
+    const closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
 }
+
+let lastFocusedElement = null;
 
 function closeProjectModal() {
     const modal = document.getElementById('project-modal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
-    
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
+
     // Clear modal content after animation
     setTimeout(() => {
         const modalBody = document.getElementById('modal-body');
@@ -92,9 +102,7 @@ function getPhotoPaths() {
         'img-9472_orig.jpg',
         'img-9519_orig.jpg',
         'img-9646_orig.jpg',
-        'img-9922_orig.jpg',
-        'Screenshot 2025-02-07 at 2.29.03 PM.png',
-        'screenshot-2023-08-31-at-2-19-54-pm.png'
+        'img-9922_orig.jpg'
     ];
     
     // Return paths - check if images are in root or in images/ folder
@@ -191,32 +199,49 @@ function initPhotoSliders() {
 }
 
 // Opening Animation Control
+// Plays once per browser session, can be skipped with any tap or key press,
+// and is bypassed entirely when the visitor prefers reduced motion.
 document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('animation-overlay');
     const body = document.body;
-    
+
     // Initialize photo sliders
     initPhotoSliders();
-    
-    // Add animating class to body to prevent scrolling
-    body.classList.add('animating');
-    
-    // Total animation sequence: ~4 seconds
-    // Block M slam: 0.1s delay + 1.2s duration = 1.3s
-    // Shake: 0.8s delay + 0.3s duration = 1.1s
-    // Ripples: 0.8s, 1.0s, 1.2s delays + 1.5s duration
-    // Text fade in: 1.2s delay + 1s duration = 2.2s
-    // Hold for a moment, then fade out
-    
-    setTimeout(() => {
-        overlay.classList.add('hidden');
+
+    const finishIntro = () => {
+        if (body.dataset.introDone === '1') return;
+        body.dataset.introDone = '1';
         body.classList.remove('animating');
-        
-        // Remove overlay from DOM after fade completes
-        setTimeout(() => {
+        if (overlay) {
+            overlay.classList.add('hidden');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 800);
+        }
+        document.dispatchEvent(new CustomEvent('intro:done'));
+    };
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const seenIntro = sessionStorage.getItem('introSeen') === '1';
+
+    if (!overlay || seenIntro || reducedMotion) {
+        if (overlay) {
             overlay.style.display = 'none';
-        }, 800);
-    }, 4000); // Total animation time: 4 seconds
+        }
+        finishIntro();
+        return;
+    }
+
+    try {
+        sessionStorage.setItem('introSeen', '1');
+    } catch (e) {
+        // Private browsing may block storage; the intro just plays again next time
+    }
+    body.classList.add('animating');
+
+    overlay.addEventListener('pointerdown', finishIntro);
+    document.addEventListener('keydown', finishIntro, { once: true });
+    setTimeout(finishIntro, 2800);
 });
 
 // Mobile Navigation Toggle
@@ -280,25 +305,29 @@ const observerOptions = {
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
             entry.target.style.transform = 'translateY(0)';
         }
     });
 }, observerOptions);
 
-// Observe elements for animation (delayed until after opening animation)
+// Observe elements for animation, starting as soon as the intro finishes
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait for opening animation to complete before setting up scroll animations
-    setTimeout(() => {
-        const animateElements = document.querySelectorAll('.about-card, .project-card, .timeline-item');
-        
+    const setupScrollAnimations = () => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const animateElements = document.querySelectorAll('.about-card, .project-card, .timeline-item, .ai-card, .news-card');
+
         animateElements.forEach(el => {
-            el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            el.style.transition = 'transform 0.6s ease';
             observer.observe(el);
         });
-    }, 4500); // Wait 4.5 seconds for opening animation to complete
+    };
+
+    if (document.body.dataset.introDone === '1') {
+        setupScrollAnimations();
+    } else {
+        document.addEventListener('intro:done', setupScrollAnimations, { once: true });
+    }
 });
 
 // Add active state to navigation links based on scroll position
@@ -329,9 +358,9 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const projectModal = document.getElementById('project-modal');
         const resumeModal = document.getElementById('resume-modal');
-        if (projectModal.classList.contains('active')) {
+        if (projectModal && projectModal.classList.contains('active')) {
             closeProjectModal();
-        } else if (resumeModal.classList.contains('active')) {
+        } else if (resumeModal && resumeModal.classList.contains('active')) {
             closeResumeModal();
         }
     }
@@ -342,12 +371,19 @@ function openResumeModal() {
     const modal = document.getElementById('resume-modal');
     document.body.style.overflow = 'hidden';
     modal.classList.add('active');
+    lastFocusedElement = document.activeElement;
+    const closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
 }
 
 function closeResumeModal() {
     const modal = document.getElementById('resume-modal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
 }
 
 

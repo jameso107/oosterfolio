@@ -3,12 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>James Oosterhouse | Robotics Engineer & Leader</title>
+    <title>James Oosterhouse | AI Engineer, Founder, Roboticist</title>
+    <meta name="description" content="I build AI products people trust: an agentic LLM suite in production at a manufacturer, decision-support tools for engineering teams, and NASA JPL research on how Mars operators trust AI.">
+    <link rel="canonical" href="https://ooster.house/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ooster.house/">
+    <meta property="og:title" content="James Oosterhouse | AI Engineer, Founder, Roboticist">
+    <meta property="og:description" content="I build AI products people trust: an agentic LLM suite in production, decision-support tools for engineering teams, and NASA JPL research on how Mars operators trust AI.">
+    <meta property="og:image" content="https://ooster.house/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="gear.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
     <!-- Animation Overlay -->
@@ -36,7 +45,8 @@
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#ai-work" class="nav-link">AI Work</a></li>
+                <li><a href="#robotics" class="nav-link">Robotics</a></li>
                 <li><a href="#journey" class="nav-link">Journey</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
@@ -58,7 +68,12 @@
         <div class="hero-content">
             <h1 class="hero-title">James Oosterhouse</h1>
             <p class="hero-subtitle">Engineer. Servant Leader. Believer.</p>
-            <a href="#projects" class="cta-button">View My Work</a>
+            <p class="hero-description">A people-focused engineer. I build AI products people trust, integrate robots into the real world, and study the humans who use both.</p>
+            <div class="hero-cta-row">
+                <a href="#ai-work" class="cta-button">See my AI work</a>
+                <a href="/demo/triage" class="cta-button cta-secondary">Try the live demo</a>
+            </div>
+            <p class="hero-now"><strong>Now:</strong> Founder &amp; CEO of SYZYGY.services. <strong>Recently:</strong> NASA JPL, where I studied how Mars mission operators trust AI tools.</p>
         </div>
     </section>
 
@@ -66,6 +81,7 @@
     <section id="about" class="about">
         <div class="container">
             <h2 class="section-title">Who I Am</h2>
+            <p class="section-intro">Over the last three years I have shipped AI products used every day by manufacturers, engineers, and mission operators: an LLM suite that saves a manufacturer 4,000+ hours a year, decision-support tools for engineering firms, and research that shaped how NASA JPL evaluates GenAI for Mars operations.</p>
             <div class="about-grid">
                 <div class="about-card">
                     <h3>Maker of Things</h3>
@@ -83,10 +99,68 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
+    <!-- AI Work Section -->
+    <section id="ai-work" class="ai-work">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+            <h2 class="section-title">AI Work</h2>
+            <p class="section-intro">I ship AI products end-to-end: problem definition with stakeholders, rapid prototyping, human-in-the-loop design, evaluation, and production deployment. Four examples below. One of them you can try yourself.</p>
+            <div class="ai-grid">
+                <article class="ai-card">
+                    <h3><a href="/work/triage" class="ai-card-title-link">TRIAGE</a></h3>
+                    <p class="ai-card-hook">Root cause analysis for a Mars helicopter.</p>
+                    <div class="chip-row">
+                        <span class="chip">JPL Mission Critical Award</span>
+                        <span class="chip">Solo build</span>
+                        <span class="chip">Live public rebuild</span>
+                    </div>
+                    <div class="ai-card-links">
+                        <a href="/work/triage" class="ai-card-link">Case study</a>
+                        <a href="/demo/triage" class="ai-card-link ai-card-link-demo">Try the demo</a>
+                    </div>
+                </article>
+                <article class="ai-card">
+                    <h3><a href="/work/specinator" class="ai-card-title-link">SPECINATOR</a></h3>
+                    <p class="ai-card-hook">AI decision support for an engineering BD team.</p>
+                    <div class="chip-row">
+                        <span class="chip">15 min to 4 min per document</span>
+                        <span class="chip">92% to 98% accuracy</span>
+                    </div>
+                    <div class="ai-card-links">
+                        <a href="/work/specinator" class="ai-card-link">Case study</a>
+                    </div>
+                </article>
+                <article class="ai-card">
+                    <h3><a href="/work/koopsgpt" class="ai-card-title-link">KoopsGPT</a></h3>
+                    <p class="ai-card-hook">An agentic LLM suite in production at a manufacturer.</p>
+                    <div class="chip-row">
+                        <span class="chip">40+ daily users</span>
+                        <span class="chip">4,000+ hours/year saved</span>
+                    </div>
+                    <div class="ai-card-links">
+                        <a href="/work/koopsgpt" class="ai-card-link">Case study</a>
+                    </div>
+                </article>
+                <article class="ai-card">
+                    <h3><a href="/work/jpl-research" class="ai-card-title-link">Do Experts Trust AI? (JPL Research)</a></h3>
+                    <p class="ai-card-hook">Ethnographic study of GenAI in Mars operations.</p>
+                    <div class="chip-row">
+                        <span class="chip">67% expert/novice trust gap</span>
+                        <span class="chip">NASA Shining Star Award (4 of 1,200+)</span>
+                    </div>
+                    <div class="ai-card-links">
+                        <a href="/work/jpl-research" class="ai-card-link">Case study</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Robotics Section -->
+    <span id="projects" class="anchor-alias" aria-hidden="true"></span>
+    <section id="robotics" class="projects">
+        <div class="container">
+            <h2 class="section-title">Robotics</h2>
+            <p class="section-intro">Robotics is where I learned to ship hardware and software under real deadlines with real budgets. It is also where I learned to lead.</p>
             <div class="projects-grid">
                 <!-- T-shirt Cannon Robot -->
                 <div class="project-card">
@@ -111,14 +185,14 @@
                         <div class="project-expanded" data-project-id="project-1" style="display: none;">
                             <div class="media-grid">
                                 <div class="linkedin-container">
-                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7378523807201837056?compact=1" height="399" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+                                    <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7378523807201837056?compact=1" height="399" width="504" loading="lazy" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
                                 </div>
                                 <div class="cad-image-container">
-                                    <img src="MAIN (1).png" alt="T-shirt Cannon Robot CAD Design" class="cad-image">
+                                    <img src="MAIN (1).png" alt="T-shirt Cannon Robot CAD Design" class="cad-image" loading="lazy">
                                 </div>
                             </div>
                             <div class="video-container" style="margin-top: 2rem;">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/EB0If7glSUw?si=2TOg7lxQEfwLh_hw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/EB0If7glSUw?si=2TOg7lxQEfwLh_hw" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
@@ -144,7 +218,7 @@
                         <button class="expand-button" onclick="openProjectModal('project-2')">View Technical Report</button>
                         <div class="project-expanded" data-project-id="project-2" style="display: none;">
                             <div class="pdf-container">
-                                <iframe src="ROB311 Final Report  (1).pdf" frameborder="0" allowfullscreen="" title="Technical Report PDF"></iframe>
+                                <iframe src="ROB311 Final Report  (1).pdf" loading="lazy" frameborder="0" allowfullscreen="" title="Technical Report PDF"></iframe>
                             </div>
                         </div>
                     </div>
@@ -152,7 +226,7 @@
 
                 <!-- Haunted House -->
                 <div class="project-card">
-                    <div class="project-image haunted-house" style="background-image: url('3.png');">
+                    <div class="project-image haunted-house" style="background-image: url('3.jpg');">
                         <div class="project-overlay">
                             <h3>The Ghost of Alice Lloyd</h3>
                         </div>
@@ -173,7 +247,7 @@
                         <button class="expand-button" onclick="openProjectModal('project-3')">Expand</button>
                         <div class="project-expanded" data-project-id="project-3" style="display: none;">
                             <div class="video-container">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/6TcMWkqsZzQ?si=h1kiuG4MnZrfGnak" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/6TcMWkqsZzQ?si=h1kiuG4MnZrfGnak" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
@@ -202,7 +276,7 @@
                         <button class="expand-button" onclick="openProjectModal('project-4')">Expand</button>
                         <div class="project-expanded" data-project-id="project-4" style="display: none;">
                             <div class="video-container">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/YR4UWzacF_8?si=MCvuIg_eLknkgzdp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/YR4UWzacF_8?si=MCvuIg_eLknkgzdp" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
                         </div>
                     </div>
@@ -231,12 +305,12 @@
                         <button class="expand-button" onclick="openProjectModal('project-5')">Expand</button>
                         <div class="project-expanded" data-project-id="project-5" style="display: none;">
                             <div class="image-collage">
-                                <img src="471615613_10161969345297432_554194538844078805_n.jpg" alt="FIRST Robotics">
-                                <img src="8e94b5dd-c7e8-4c7d-9d15-e8ab9e6ca8ac_orig.jpg" alt="FIRST Robotics">
-                                <img src="img-0867_orig.jpg" alt="FIRST Robotics">
-                                <img src="img-1006_orig.jpg" alt="FIRST Robotics">
-                                <img src="img-2341_orig.jpg" alt="FIRST Robotics">
-                                <img src="img-7941-2_orig.jpg" alt="FIRST Robotics">
+                                <img src="471615613_10161969345297432_554194538844078805_n.jpg" alt="FIRST Robotics" loading="lazy">
+                                <img src="8e94b5dd-c7e8-4c7d-9d15-e8ab9e6ca8ac_orig.jpg" alt="FIRST Robotics" loading="lazy">
+                                <img src="img-0867_orig.jpg" alt="FIRST Robotics" loading="lazy">
+                                <img src="img-1006_orig.jpg" alt="FIRST Robotics" loading="lazy">
+                                <img src="img-2341_orig.jpg" alt="FIRST Robotics" loading="lazy">
+                                <img src="img-7941-2_orig.jpg" alt="FIRST Robotics" loading="lazy">
                             </div>
                         </div>
                     </div>
@@ -303,14 +377,14 @@
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <h3>Koops Automation Systems - Business Development & AI</h3>
-                        <p>This third summer at Koops looked a bit different, in the best way possible. On our business development and applications engineering team, I got to test the waters in sales and customer acquisition, producing professional bid packages and product concepts. I personally won three projects worth over $2 million, putting me ranked 4th in our sales team over the summer out of 30 people. I also began to recognize inefficiencies in our process and proposed a new custom workflow to speed up the quoting process. Utilizing Large Language Models, I built KoopsGPT, a full-service LLM suite for the BD team. I also had the privilege to continue this project throughout the school year, managing its implementation and rollout. I am happy to say it saves users over 2 hours per week, and extrapolated out saves Koops over 4000 hours per year. Bot in the Lot was back and bigger than ever, attracting over 400 students, 3 new hires, and 15 local teams!</p>
+                        <p>This third summer at Koops looked a bit different, in the best way possible. On our business development and applications engineering team, I got to test the waters in sales and customer acquisition, producing professional bid packages, conceptual designs, financial justifications, and ROI analysis. I personally secured over $3 million in new automation projects, ranked 3rd of 15 on the summer sales team. I also began to recognize inefficiencies in our process, so I pitched leadership on building a custom LLM workflow to speed up quoting, and then I built it. KoopsGPT wires LLM APIs and retrieval over enterprise data to automate quoting, contract review, and risk analysis, and I managed its implementation and rollout through the school year. It now runs in production for 40+ employees, saving each user 2+ hours per week, roughly 4,000+ hours per year. Bot in the Lot was back and bigger than ever, attracting over 400 students, 3 new hires, and 15 local teams!</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <h3>SYZYGY.Services</h3>
-                        <p>After my experience at Koops, I realized that my problem-solving skills and AI aptitude were marketable skills. Through conversations with my network, I began to consult various businesses on AI integration through auditing, prototyping, and implementation of human-in-the-loop AI systems. We have grown this practice to have a team of 6, as we look to grow our customer base beyond our current 5 clients. This entrepreneurial experience has helped me grow as an engineer, leader, and person, and we're not done yet.</p>
+                        <p>After my experience at Koops, I realized that my problem-solving skills and AI aptitude were marketable skills. Through conversations with my network, I began to consult various businesses on AI integration through auditing, prototyping, and implementation of human-in-the-loop AI systems. Today, SYZYGY ships agentic AI products end-to-end for business clients, from problem definition with stakeholders to production deployment, with releases tested through LLM-as-judge scoring and trace analysis before every client launch. Our 6-person team now serves 15+ clients, driving 30 to 40% operational efficiency gains across their teams. This entrepreneurial experience has helped me grow as an engineer, leader, and person, and we're not done yet.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -318,6 +392,13 @@
                     <div class="timeline-content">
                         <h3>University of Michigan - Junior Year</h3>
                         <p>As an upperclassman, it is finally time to dig deep into what makes robotics so unique. My first semester was highlighted by a full-stack robotics class, where I developed a BB-8 style ballbot (see featured project). I also got to take another Human-robot interaction class, and breadth classes like Marketing Management and Positively Leading Teams. This semester, I'm taking classes in marine robotics, wearable sensor technology, and robotics communication. I even got to build a Robot in 3 days with my FIRST alumni club (see featured project)! Finally, I also began my role as a Resident Advisor for Alice Lloyd Hall. I even got to flex my creative muscles and develop a haunted house for all of my residents, using every resource available to put on an immersive show (see feature project).</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>NASA Jet Propulsion Laboratory</h3>
+                        <p>The summer of 2026 took me to Pasadena as an ethnographic software engineering intern at NASA JPL. I embedded with Mars Science Laboratory downlink operations to study how expert and novice operators actually use Faro, a GenAI analysis tool, during Curiosity rover operations. To measure what people did rather than what they said, I built a gaze tracking tool on OpenFace 2.0 that maps where operators look on screen. The study proved a statistically significant mistrust of Faro among expert operators, and I delivered a 5-point recommendation plan to prepare the tool for mission-critical use. At the JPL hackathon, I solo-built TRIAGE, a root cause analysis dashboard for the Mars Sample Return helicopter that won the Mission Critical Award for the best JPL solution. JPL capped the summer by honoring me with the NASA Shining Star Award. I came home convinced that adoption is a trust problem before it is a model problem.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -369,7 +450,7 @@
     <section id="contact" class="contact">
         <div class="container">
             <h2 class="section-title">Let's Connect</h2>
-            <p class="contact-description">I'm always open to discussing robotics, leadership, or new opportunities.</p>
+            <p class="contact-description">I'm always open to discussing AI, robotics, leadership, or new opportunities.</p>
             <div class="contact-links">
                 <a href="mailto:jamesoo@umich.edu" class="contact-link">
                     <span class="contact-icon">✉️</span>
@@ -393,7 +474,15 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="container footer-inner">
+            <p class="footer-name">James Oosterhouse</p>
+            <nav class="footer-links" aria-label="Footer">
+                <a href="https://github.com/jameso107" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://www.linkedin.com/in/james-oosterhouse/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="mailto:jamesoo@umich.edu">Email</a>
+                <a href="26_resume.pdf">Resume</a>
+                <a href="/demo/triage">Live demo</a>
+            </nav>
         </div>
     </footer>
 
@@ -423,13 +512,14 @@
             </button>
             <div class="modal-body resume-modal-body">
                 <div class="pdf-container resume-pdf-container">
-                    <iframe src="RESUME.pdf" frameborder="0" allowfullscreen="" title="Resume PDF"></iframe>
+                    <iframe src="26_resume.pdf" loading="lazy" frameborder="0" allowfullscreen="" title="Resume PDF"></iframe>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
 

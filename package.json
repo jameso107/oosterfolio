@@ -1,5 +1,7 @@
 {
   "name": "oosterfolio",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0"
+  }
 }
-
