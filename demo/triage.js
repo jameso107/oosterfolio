@@ -34,6 +34,15 @@
     var goldenSet = window.TRIAGE_GOLDEN || [];
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // NASA/JPL-Caltech Ingenuity model (public domain), decoded from the same
+    // Draco glTF the original flight deck ships. Scaled to an 18 m rotor span
+    // for visibility, exactly like the original's TARGET_SPAN_M; the two
+    // coaxial rotor assemblies counter-rotate at its calm 1.2 rad/s.
+    var HELI = window.TRIAGE_HELI || null;
+    var HELI_SPAN_M = 18;
+    var ROTOR_RAD_PER_SEC = 1.2;
+    var rotorAngle = 0;
+
     // ------------------------------------------------------------------
     // Deterministic layer: fleet statistics, robust z-scores, event flags
     // ------------------------------------------------------------------
@@ -468,10 +477,12 @@
     // straight down at the route. Each keeps its own zoom.
     var VIEWS = {
         overview: { dist: 1900, phi: 0.62, theta: 0.93, autoOrbit: 0.02, follow: false },
-        follow: { dist: 170, phi: 0.34, theta: 0.93, autoOrbit: 0, follow: true },
+        // Follow opens the show: a low hero shot of Ingenuity on the pad with
+        // the western delta on the horizon behind it, then rides along.
+        follow: { dist: 130, phi: 0.27, theta: 0.58, autoOrbit: 0, follow: true },
         top: { dist: 850, phi: 1.15, theta: 0.93, autoOrbit: 0, follow: false }
     };
-    var cam = { theta: 0.93, phi: 0.62, dist: 1900, target: [0, 20, 0] };
+    var cam = { theta: 0.58, phi: 0.27, dist: 130, target: [0, 20, 0] };
     var camVel = 0;
     var pathCenter = [0, 0, 0];
 
@@ -637,55 +648,155 @@
         drawPath(idx, r.path.length - 1, 'rgba(0,39,76,0.35)', 1.6);
         drawPath(0, idx, 'rgba(0,39,76,0.95)', 3);
 
-        // Helicopter with pitch rocking after the glitch
+        // Helicopter: the NASA Ingenuity model, pitch-rocking after the glitch
         var hp = r.path[idx];
         var sampleNow = sampleAt(r.channels, progress);
         var groundY = heightAt(hp.x, hp.z);
         var shadow = frame.project([hp.x, groundY + 0.5, hp.z]);
         var heli = frame.project([hp.x, hp.y, hp.z]);
+        var heading = 0;
+        if (idx < r.path.length - 1) {
+            var np = r.path[Math.min(r.path.length - 1, idx + 2)];
+            if (Math.hypot(np.x - hp.x, np.z - hp.z) > 0.05) {
+                heading = Math.atan2(np.z - hp.z, np.x - hp.x);
+                lastHeading = heading;
+            } else {
+                heading = lastHeading;
+            }
+        } else {
+            heading = lastHeading;
+        }
         if (shadow && heli) {
-            var scale = clamp(3400 / heli[2], 0.55, 2.6);
             ctx.strokeStyle = 'rgba(0,39,76,0.35)';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(shadow[0], shadow[1]);
             ctx.lineTo(heli[0], heli[1]);
             ctx.stroke();
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            var shScale = clamp(3400 / heli[2], 0.55, 2.6);
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
             ctx.beginPath();
-            ctx.ellipse(shadow[0], shadow[1], 6 * scale, 2.4 * scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(shadow[0], shadow[1], 6 * shScale, 2.4 * shScale, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.save();
-            ctx.translate(heli[0], heli[1]);
-            ctx.rotate((sampleNow.pitchSigned || 0) * Math.PI / 180 * 0.8);
-            ctx.fillStyle = '#F5F2E9';
-            ctx.strokeStyle = 'rgba(20,30,44,0.8)';
-            ctx.lineWidth = 1;
-            ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
-            ctx.strokeRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
-            ctx.fillStyle = '#B58900';
-            ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 2 * scale);
-            var ang = state.t * 6;
-            ctx.strokeStyle = 'rgba(35,42,54,0.9)';
-            ctx.lineWidth = 1.4 * scale;
-            [ang, -ang + Math.PI / 2].forEach(function (aRot) {
-                var rx = Math.cos(aRot) * 13 * scale;
-                var rz = Math.sin(aRot) * 4.5 * scale;
-                ctx.beginPath();
-                ctx.moveTo(-rx, -5 * scale - rz * 0.4);
-                ctx.lineTo(rx, -5 * scale + rz * 0.4);
-                ctx.stroke();
-            });
-            ctx.restore();
+            var screenSpan = (H * 1.25 * HELI_SPAN_M) / heli[2];
+            if (HELI && screenSpan > 22) {
+                drawHeliModel(frame, hp, heading, sampleNow.pitchSigned || 0);
+            } else {
+                drawHeliGlyph(heli, sampleNow.pitchSigned || 0, shScale);
+            }
         }
 
         // Data credit, always visible on the deck
         ctx.font = '10px Inter, sans-serif';
         ctx.fillStyle = 'rgba(20,30,44,0.75)';
         ctx.textAlign = 'right';
-        ctx.fillText(real ? 'Terrain: NASA/JPL-Caltech/USGS (Mars 2020 CTX)' : 'Terrain: procedural stand-in', W - 10, H - 8);
+        ctx.fillText((real ? 'Terrain: NASA/JPL-Caltech/USGS (Mars 2020 CTX)' : 'Terrain: procedural stand-in') +
+            (HELI ? ' · Model: NASA/JPL-Caltech' : ''), W - 10, H - 8);
         ctx.textAlign = 'left';
+    }
+
+    var lastHeading = 1.65; // initial nose direction, roughly along the planned route
+
+    // Render the decoded NASA Ingenuity mesh: rotor spin about the mast, pitch
+    // rocking about the lateral axis, yaw along the flight heading, painter-sorted
+    // flat-shaded triangles.
+    function drawHeliModel(frame, hp, heading, pitchDeg) {
+        var pitch = (pitchDeg * Math.PI) / 180;
+        var cosP = Math.cos(pitch), sinP = Math.sin(pitch);
+        var yaw = -heading; // world z is south; yaw about +y maps model +x onto the heading
+        var cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+        var cosR = Math.cos(rotorAngle), sinR = Math.sin(rotorAngle);
+
+        var tris = [];
+        ['body', 'rotorA', 'rotorB'].forEach(function (partName) {
+            var part = HELI.parts[partName];
+            var v = part.v, f = part.f, runs = part.runs;
+            var n = v.length / 3;
+            var px = new Float32Array(n), py = new Float32Array(n), pz = new Float32Array(n);
+            var sx = new Float32Array(n), sy = new Float32Array(n), sz = new Float32Array(n);
+            var spin = partName === 'rotorA' ? 1 : partName === 'rotorB' ? -1 : 0;
+            var cR = spin ? Math.cos(spin * rotorAngle) : 1;
+            var sR = spin ? Math.sin(spin * rotorAngle) : 0;
+            for (var i = 0; i < n; i++) {
+                var x = v[i * 3], y = v[i * 3 + 1], z = v[i * 3 + 2];
+                if (spin) { // rotor spin about the mast (model y axis)
+                    var rx = x * cR - z * sR;
+                    z = x * sR + z * cR;
+                    x = rx;
+                }
+                // pitch about the lateral (model z) axis
+                var px1 = x * cosP - y * sinP;
+                var py1 = x * sinP + y * cosP;
+                // yaw about y, then scale to the scene footprint
+                var wx = (px1 * cosY + z * sinY) * HELI_SPAN_M;
+                var wz = (-px1 * sinY + z * cosY) * HELI_SPAN_M;
+                var wy = py1 * HELI_SPAN_M;
+                px[i] = hp.x + wx; py[i] = hp.y + wy; pz[i] = hp.z + wz;
+                var pr = frame.project([px[i], py[i], pz[i]]);
+                if (pr) { sx[i] = pr[0]; sy[i] = pr[1]; sz[i] = pr[2]; }
+                else { sz[i] = -1; }
+            }
+            var fi = 0;
+            runs.forEach(function (run) {
+                var count = run[0], color = HELI.palette[run[1]];
+                for (var k = 0; k < count; k++, fi++) {
+                    var a = f[fi * 3], b = f[fi * 3 + 1], c = f[fi * 3 + 2];
+                    if (sz[a] < 0 || sz[b] < 0 || sz[c] < 0) continue;
+                    // flat shade from the world-space face normal
+                    var ux = px[b] - px[a], uy = py[b] - py[a], uz = pz[b] - pz[a];
+                    var wx2 = px[c] - px[a], wy2 = py[c] - py[a], wz2 = pz[c] - pz[a];
+                    var nx = uy * wz2 - uz * wy2, ny = uz * wx2 - ux * wz2, nz = ux * wy2 - uy * wx2;
+                    var nl = Math.hypot(nx, ny, nz) || 1;
+                    var diff = Math.abs((nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2]) / nl);
+                    var shade = 0.5 + 0.5 * diff;
+                    tris.push({
+                        d: (sz[a] + sz[b] + sz[c]) / 3,
+                        x1: sx[a], y1: sy[a], x2: sx[b], y2: sy[b], x3: sx[c], y3: sy[c],
+                        col: 'rgb(' + Math.round(color[0] * shade) + ',' + Math.round(color[1] * shade) + ',' + Math.round(color[2] * shade) + ')'
+                    });
+                }
+            });
+        });
+        tris.sort(function (a, b) { return b.d - a.d; });
+        for (var t = 0; t < tris.length; t++) {
+            var tr = tris[t];
+            ctx.fillStyle = tr.col;
+            ctx.strokeStyle = tr.col;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(tr.x1, tr.y1);
+            ctx.lineTo(tr.x2, tr.y2);
+            ctx.lineTo(tr.x3, tr.y3);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+
+    // Distant fallback: the simple marker used when the model would be tiny
+    function drawHeliGlyph(heli, pitchDeg, scale) {
+        ctx.save();
+        ctx.translate(heli[0], heli[1]);
+        ctx.rotate((pitchDeg * Math.PI) / 180 * 0.8);
+        ctx.fillStyle = '#F5F2E9';
+        ctx.strokeStyle = 'rgba(20,30,44,0.8)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
+        ctx.strokeRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
+        ctx.fillStyle = '#B58900';
+        ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 2 * scale);
+        ctx.strokeStyle = 'rgba(35,42,54,0.9)';
+        ctx.lineWidth = 1.4 * scale;
+        [rotorAngle * 4, -rotorAngle * 4 + Math.PI / 2].forEach(function (aRot) {
+            var rx = Math.cos(aRot) * 13 * scale;
+            var rz = Math.sin(aRot) * 4.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(-rx, -5 * scale - rz * 0.4);
+            ctx.lineTo(rx, -5 * scale + rz * 0.4);
+            ctx.stroke();
+        });
+        ctx.restore();
     }
 
     // ------------------------------------------------------------------
@@ -799,7 +910,7 @@
         t: 0,
         playing: false,
         speed: 1,
-        view: 'overview',
+        view: 'follow',
         zoom: 1,
         liveResults: {},
         dispositions: loadDispositions()
@@ -828,6 +939,7 @@
         var dt = (now - lastFrame) / 1000;
         lastFrame = now;
         state.t += dt * state.speed * 4; // 4 flight-seconds per wall-second at 1x
+        rotorAngle += dt * ROTOR_RAD_PER_SEC; // calm, watchable spin, like the original
         if (state.t >= state.recon.durationS) {
             state.t = state.recon.durationS;
             setPlaying(false);
