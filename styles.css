@@ -1471,6 +1471,29 @@ section {
     text-decoration: none;
 }
 
+/* Case study triggers are buttons (they open the modal, same as robot cards) */
+button.ai-card-title-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    text-align: left;
+}
+
+button.ai-card-link {
+    background: none;
+    border: 0;
+    border-bottom: 2px solid rgba(255, 203, 5, 0.4);
+    padding: 0 0 2px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
 .ai-card-title-link:hover {
     text-decoration: underline;
     text-underline-offset: 4px;

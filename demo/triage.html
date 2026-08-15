@@ -45,11 +45,11 @@
     <main class="demo-main">
         <div class="container demo-container">
             <header class="demo-header">
-                <p class="case-kicker"><a href="/work/triage">TRIAGE case study</a> / Live demo</p>
+                <p class="case-kicker"><a href="/#ai-work">AI Work</a> / Live demo</p>
                 <h1 class="demo-title" id="demo-title">TRIAGE: Flight Edition</h1>
-                <p class="demo-tagline">Replay any of Ingenuity's 72 Mars flights in 3D, watch the charts move with it, and read what a language model makes of the flags. Numbers are computed, never generated. The model narrates. A human decides.</p>
+                <p class="demo-tagline">One flight, told end to end: Ingenuity Flight 6, the first in-flight anomaly on another planet. Fifty-four seconds in, a dropped navigation image sent bad timestamps through the pipeline and the helicopter started rocking up to 20 degrees. Watch it happen over the real Jezero Crater landscape, follow the charts, and read what a language model makes of the flags. Numbers are computed, never generated. The model narrates. A human decides.</p>
 
-                <p class="data-source">Data: the public Ingenuity (Mars 2020 helicopter) flight log, all 72 flights, compiled from NASA status reports via Wikipedia's List of Ingenuity flights. Flight paths and channel curves are reconstructed from those summaries: deterministic, seeded per flight, anchored to the recorded numbers, and always labeled as reconstruction. <a href="https://github.com/jameso107/oosterfolio" target="_blank" rel="noopener">Code and README on GitHub</a>.</p>
+                <p class="data-source">Data: the public Ingenuity (Mars 2020 helicopter) flight log (72 flights, used for the fleet envelope statistics), compiled from NASA status reports via Wikipedia's List of Ingenuity flights. Terrain: the real Jezero Crater landscape from the USGS Mars 2020 CTX DEM and orthomosaic (NASA/JPL-Caltech/USGS, public domain), a 10 km window centered on Octavia E. Butler Landing. The flight path and channel curves are reconstructed from the recorded summary: deterministic, anchored to the recorded numbers, dramatized where the record describes the event, and always labeled as reconstruction. <a href="https://github.com/jameso107/oosterfolio" target="_blank" rel="noopener">Code and README on GitHub</a>.</p>
 
                 <div class="disclaimer" role="note">
                     TRIAGE was built inside NASA JPL and stays there. This is an independent public rebuild using only public NASA data and my own code, written to show the approach. It is not affiliated with or endorsed by NASA or JPL.
@@ -57,8 +57,6 @@
             </header>
 
             <div class="deck-controls">
-                <label for="flight-select">Flight</label>
-                <select id="flight-select"></select>
                 <span class="deck-meta" id="deck-meta"></span>
             </div>
 
@@ -116,7 +114,7 @@
 
             <section class="demo-about">
                 <h2>What this demo shows</h2>
-                <p>The internal TRIAGE was built at the JPL hackathon to disposition Mars Sample Return helicopter anomalies, with a flight deck that replays reconstructed flights over real Jezero Crater terrain. This public rebuild keeps that architecture on open data: a deterministic layer computes fleet statistics and envelope flags entirely client-side, the 3D replay and channel curves are reconstructed from the recorded summaries and labeled as such, and a fenced language model turns the flags into example narratives through a server-side API route (the key never reaches the browser). The design rule carried over: the statistics stay deterministic, the model only writes prose, and the reviewing human makes the call.</p>
+                <p>The internal TRIAGE was built at the JPL hackathon to disposition Mars Sample Return helicopter anomalies, with a flight deck that replays reconstructed flights over real Jezero Crater terrain. This public rebuild keeps that architecture on open data and tells one story with it: Flight 6, the sol 91 navigation anomaly that Ingenuity survived. The deterministic layer computes fleet statistics and envelope flags entirely client-side from all 72 public flights, the replay runs over the same USGS Jezero terrain data the original used, the reconstruction is seeded and anchored to the recorded numbers with the event dramatized where the record describes it, and a fenced language model turns the flags into an example narrative through a server-side API route (the key never reaches the browser). The design rule carried over: the statistics stay deterministic, the model only writes prose, and the reviewing human makes the call.</p>
             </section>
         </div>
     </main>
@@ -129,7 +127,7 @@
                 <a href="https://www.linkedin.com/in/james-oosterhouse/" target="_blank" rel="noopener">LinkedIn</a>
                 <a href="mailto:jamesoo@umich.edu">Email</a>
                 <a href="/26_resume.pdf">Resume</a>
-                <a href="/work/triage">Case study</a>
+                <a href="/#ai-work">AI Work</a>
             </nav>
         </div>
     </footer>

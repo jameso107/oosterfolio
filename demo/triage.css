@@ -340,6 +340,12 @@
     stroke-width: 1;
 }
 
+.chart-event {
+    stroke: rgba(228, 97, 79, 0.55);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+}
+
 .chart-now {
     position: absolute;
     top: 0.55rem;

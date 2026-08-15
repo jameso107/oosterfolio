@@ -1,10 +1,12 @@
-// TRIAGE: Flight Edition. A public rebuild of the TRIAGE flight deck:
-// a 3D replay of each Ingenuity flight over procedural Mars-style terrain,
-// synchronized strip charts, deterministic envelope flags, and example GenAI
-// narratives. Paths and channel curves are RECONSTRUCTED from the recorded
-// per-flight summaries: deterministic (seeded by flight number), anchored to
-// the recorded numbers, always labeled as reconstruction.
-// The deterministic layer runs entirely client-side. The model only narrates.
+// TRIAGE: Flight Edition. A public rebuild of the TRIAGE flight deck telling one
+// flight's story end to end: Ingenuity Flight 6, the first in-flight anomaly on
+// another planet. The replay runs over the real Jezero Crater landscape (USGS
+// Mars 2020 CTX DEM and orthomosaic, public domain, 10 km window centered on
+// Octavia E. Butler Landing), with a procedural fallback if the assets fail.
+// The flight path and channel curves are RECONSTRUCTED from the recorded
+// summary: deterministic, anchored to the recorded numbers, dramatized where
+// the record describes events (the T+54s navigation glitch), and always
+// labeled as reconstruction. Numbers are computed, never generated.
 (function () {
     'use strict';
 
@@ -13,7 +15,11 @@
         Z_THRESHOLD: 2.5,
         LIVE_ENDPOINT: '/api/narrative',
         STORAGE_KEY: 'triage-dispositions-v1',
-        SAMPLES_N: 240
+        SAMPLES_N: 280,
+        FLIGHT: 6,               // the one flight this demo replays
+        ANOMALY_START_S: 54,     // the record: image pipeline glitch 54 seconds in
+        PITCH_ALERT_DEG: 10,
+        VERT_EXAGGERATION: 2.0   // same relief lift the original flight deck uses
     };
 
     var METRICS = [
@@ -179,15 +185,16 @@
     }
 
     // ------------------------------------------------------------------
-    // Terrain: procedural Mars relief (same construction as the original)
+    // Terrain: real Jezero Crater (USGS Mars 2020 CTX DEM + orthomosaic),
+    // procedural stand-in until the assets arrive or if they fail
     // ------------------------------------------------------------------
 
     var TERRAIN_SEED = 0x4a505a;
-    var TERRAIN_SIZE = 4600;
-    var TERRAIN_SEG = 64;
-    var CRATERS = [[420, -300, 110], [-520, 430, 150], [150, 620, 80], [-260, -520, 70]];
+    var TERRAIN_SEG = 84;
+    var CRATERS = [[420, -300, 110], [-520, 430, 150], [150, 620, 80]];
+    var real = null; // { sample(x,z), sizeM, originH, texel(x,z), landmarks }
 
-    function heightAt(x, z) {
+    function proceduralHeight(x, z) {
         var nx = x / 900, nz = z / 900;
         var h = (fbm2(nx + 10, nz + 10, TERRAIN_SEED) - 0.5) * 16;
         h += (fbm2(x / 240 + 3, z / 240 + 3, TERRAIN_SEED + 21) - 0.5) * 7;
@@ -200,142 +207,222 @@
             }
         }
         var flatten = Math.min(1, Math.hypot(x, z) / 130);
-        return h * flatten * 2.0; // vertical exaggeration for legibility, as the original
+        return h * flatten * CONFIG.VERT_EXAGGERATION;
     }
 
-    // Regolith ramp: dark rust lows to tan-ochre highs, with dust noise
-    function terrainColor(x, z, h) {
+    // Terrain height (m) at local (x=east, z=south): real Jezero when loaded
+    function heightAt(x, z) {
+        if (real) return (real.sample(x, z) - real.originH) * CONFIG.VERT_EXAGGERATION;
+        return proceduralHeight(x, z);
+    }
+
+    function terrainColorAt(x, z, h) {
+        if (real) return real.texel(x, z);
         var dust = fbm2(x / 260 + 40, z / 260 + 40, TERRAIN_SEED + 55);
         var t = clamp((h + 16) / 68, 0, 1);
         return [
-            lerp(0.34, 0.62, t) + dust * 0.06,
-            lerp(0.2, 0.36, t) + dust * 0.035,
-            lerp(0.14, 0.24, t) + dust * 0.02
+            (lerp(0.34, 0.62, t) + dust * 0.06) * 255,
+            (lerp(0.2, 0.36, t) + dust * 0.035) * 255,
+            (lerp(0.14, 0.24, t) + dust * 0.02) * 255
         ];
     }
 
-    // ------------------------------------------------------------------
-    // Flight reconstruction: seeded, anchored to the recorded numbers
-    // ------------------------------------------------------------------
-
-    function bezierTrack(f, rand) {
-        var heading = rand() * Math.PI * 2;
-        var sx = (rand() - 0.5) * 50, sz = (rand() - 0.5) * 50;
-        var chord = Math.max(20, f.distance_m * 0.92);
-        var tx = sx + Math.cos(heading) * chord;
-        var tz = sz + Math.sin(heading) * chord;
-        var bow = (rand() - 0.5) * chord * 0.45;
-        var cx = (sx + tx) / 2 + Math.cos(heading + Math.PI / 2) * bow;
-        var cz = (sz + tz) / 2 + Math.sin(heading + Math.PI / 2) * bow;
-
-        // Sample the bezier finely, then scale about the start so the arc
-        // length equals the recorded distance exactly.
-        var raw = [];
-        var len = 0;
-        var N = 400;
-        for (var i = 0; i <= N; i++) {
-            var u = i / N, a = 1 - u;
-            var x = a * a * sx + 2 * a * u * cx + u * u * tx;
-            var z = a * a * sz + 2 * a * u * cz + u * u * tz;
-            if (i > 0) len += Math.hypot(x - raw[i - 1][0], z - raw[i - 1][1]);
-            raw.push([x, z]);
-        }
-        var k = f.distance_m / Math.max(1e-6, len);
-        var cum = [0];
-        for (var j = 1; j <= N; j++) {
-            raw[j] = [sx + (raw[j][0] - sx) * k, sz + (raw[j][1] - sz) * k];
-            cum.push(cum[j - 1] + Math.hypot(raw[j][0] - raw[j - 1][0], raw[j][1] - raw[j - 1][1]));
-        }
-        return {
-            at: function (s) { // ground position at arc length s
-                s = clamp(s, 0, cum[N]);
-                var lo = 0, hi = N;
-                while (lo < hi) {
-                    var mid = (lo + hi) >> 1;
-                    if (cum[mid] < s) lo = mid + 1; else hi = mid;
-                }
-                var i1 = Math.max(1, lo);
-                var seg = cum[i1] - cum[i1 - 1] || 1;
-                var t = (s - cum[i1 - 1]) / seg;
-                return [lerp(raw[i1 - 1][0], raw[i1][0], t), lerp(raw[i1 - 1][1], raw[i1][1], t)];
-            }
-        };
+    function terrainSizeM() {
+        return real ? real.sizeM : 4600;
     }
 
-    function aglAt(t, dur, climbEnd, descentStart, cruiseAlt) {
-        if (t <= 0) return 0;
-        if (t < climbEnd) return cruiseAlt * smoothstep(t / climbEnd);
-        if (t <= descentStart) {
-            var u = (t - climbEnd) / Math.max(1, descentStart - climbEnd);
-            return cruiseAlt * (1 - 0.06 * (0.5 + 0.5 * Math.sin(u * Math.PI * 2)));
-        }
-        if (t >= dur) return 0;
-        return cruiseAlt * (1 - smoothstep((t - descentStart) / (dur - descentStart)));
+    function imageData(img) {
+        var c = document.createElement('canvas');
+        c.width = img.width;
+        c.height = img.height;
+        var g = c.getContext('2d');
+        g.drawImage(img, 0, 0);
+        return g.getImageData(0, 0, img.width, img.height);
     }
 
-    function reconstructFlight(f) {
+    function loadImage(url) {
+        return new Promise(function (resolve, reject) {
+            var img = new Image();
+            img.onload = function () { resolve(img); };
+            img.onerror = function () { reject(new Error('failed ' + url)); };
+            img.src = url;
+        });
+    }
+
+    function loadRealTerrain() {
+        fetch('/demo/terrain/meta.json')
+            .then(function (r) { if (!r.ok) throw new Error('meta'); return r.json(); })
+            .then(function (meta) {
+                return Promise.all([loadImage('/demo/terrain/heightmap.png'), loadImage('/demo/terrain/texture.jpg')])
+                    .then(function (imgs) {
+                        var hm = imageData(imgs[0]);
+                        var tx = imageData(imgs[1]);
+                        var n = hm.width;
+                        var span = meta.heightMaxM - meta.heightMinM;
+                        var heights = new Float32Array(n * n);
+                        for (var i = 0; i < n * n; i++) {
+                            // elevation packed 16-bit as R*256+G (bake_dem.py convention)
+                            heights[i] = meta.heightMinM + ((hm.data[i * 4] * 256 + hm.data[i * 4 + 1]) / 65535) * span;
+                        }
+                        function sample(x, z) {
+                            var fx = clamp((x / meta.sizeM + 0.5) * (n - 1), 0, n - 1);
+                            var fz = clamp((z / meta.sizeM + 0.5) * (n - 1), 0, n - 1);
+                            var x0 = Math.floor(fx), z0 = Math.floor(fz);
+                            var x1 = Math.min(n - 1, x0 + 1), z1 = Math.min(n - 1, z0 + 1);
+                            var tx2 = fx - x0, tz = fz - z0;
+                            var h00 = heights[z0 * n + x0], h01 = heights[z0 * n + x1];
+                            var h10 = heights[z1 * n + x0], h11 = heights[z1 * n + x1];
+                            return (h00 * (1 - tx2) + h01 * tx2) * (1 - tz) + (h10 * (1 - tx2) + h11 * tx2) * tz;
+                        }
+                        var tn = tx.width;
+                        function texel(x, z) {
+                            // bilinear sample so adjacent quads blend smoothly
+                            var fx = clamp((x / meta.sizeM + 0.5) * (tn - 1), 0, tn - 1);
+                            var fz = clamp((z / meta.sizeM + 0.5) * (tn - 1), 0, tn - 1);
+                            var x0 = Math.floor(fx), z0 = Math.floor(fz);
+                            var x1 = Math.min(tn - 1, x0 + 1), z1 = Math.min(tn - 1, z0 + 1);
+                            var u = fx - x0, v = fz - z0;
+                            var out = [0, 0, 0];
+                            for (var ch = 0; ch < 3; ch++) {
+                                var c00 = tx.data[(z0 * tn + x0) * 4 + ch];
+                                var c01 = tx.data[(z0 * tn + x1) * 4 + ch];
+                                var c10 = tx.data[(z1 * tn + x0) * 4 + ch];
+                                var c11 = tx.data[(z1 * tn + x1) * 4 + ch];
+                                out[ch] = (c00 * (1 - u) + c01 * u) * (1 - v) + (c10 * (1 - u) + c11 * u) * v;
+                            }
+                            return out;
+                        }
+                        real = {
+                            sizeM: meta.sizeM,
+                            sample: sample,
+                            texel: texel,
+                            originH: sample(0, 0),
+                            landmarks: (meta.landmarks || []).filter(function (l) {
+                                return Math.abs(l.x) < meta.sizeM / 2 && Math.abs(l.z) < meta.sizeM / 2;
+                            })
+                        };
+                        onTerrainReady();
+                    });
+            })
+            .catch(function () { /* procedural stand-in keeps working */ });
+    }
+
+    // ------------------------------------------------------------------
+    // Flight 6 reconstruction: anchored to the record, dramatized where the
+    // record describes the event (glitch at T+54s, tilting up to 20 degrees)
+    // ------------------------------------------------------------------
+
+    function reconstructFlight6(f) {
         var rand = mulberry32(0x9e3779b9 ^ (f.flight * 2654435761));
-        var a = analyses[f.flight];
-        var dur = f.duration_s;
+        var dur = f.duration_s;                                  // 139.9 s
         var climbEnd = Math.min(30, dur * 0.15);
         var descentStart = dur - Math.min(30, dur * 0.15);
-        var popup = f.distance_m < 20;
-        var track = popup ? null : bezierTrack(f, rand);
-        var driftHeading = rand() * Math.PI * 2;
+        var t0 = CONFIG.ANOMALY_START_S;
 
-        // Groundspeed shape: ramps tied to climb/descent, cruise level solved so
-        // the covered distance matches the record, plus a brief seeded peak that
-        // touches the recorded max groundspeed.
-        var vmax = f.speed_ms;
-        var peakT = lerp(climbEnd + 5, descentStart - 5, 0.3 + rand() * 0.4);
-        var peakW = Math.max(3, dur * 0.05);
-        var cruise = 0;
-        if (!popup && vmax > 0) {
-            cruise = vmax * 0.7;
-            for (var iter = 0; iter < 4; iter++) {
-                var integral = 0, steps = 200;
-                for (var s = 0; s < steps; s++) {
-                    integral += speedShape((dur * s) / steps) * (dur / steps);
-                }
-                cruise = clamp(cruise * (f.distance_m / Math.max(1, integral)), 0.05, vmax);
-            }
+        // Two-leg ground track headed SSW then S (the record's route shape),
+        // scaled so the total ground track equals the recorded 202.39 m.
+        var sx = 4, sz = -6;
+        var leg1H = 1.75 + (rand() - 0.5) * 0.1;  // radians: mostly +z (south), slightly -x
+        var leg2H = 1.55 + (rand() - 0.5) * 0.08;
+        var raw = [[sx, sz]];
+        var L1 = 0.72, N = 400;
+        for (var i = 1; i <= N; i++) {
+            var u = i / N;
+            var h = u < L1 ? leg1H : lerp(leg1H, leg2H, smoothstep((u - L1) / (1 - L1)));
+            var step = 1;
+            raw.push([
+                raw[i - 1][0] + Math.cos(h) * step,
+                raw[i - 1][1] + Math.sin(h) * step
+            ]);
         }
+        var len = 0, cum = [0];
+        for (var j = 1; j <= N; j++) {
+            len += Math.hypot(raw[j][0] - raw[j - 1][0], raw[j][1] - raw[j - 1][1]);
+            cum.push(len);
+        }
+        var k = f.distance_m / len;
+        for (var q = 0; q <= N; q++) {
+            raw[q] = [sx + (raw[q][0] - sx) * k, sz + (raw[q][1] - sz) * k];
+            cum[q] *= k;
+        }
+        function trackAt(s) {
+            s = clamp(s, 0, cum[N]);
+            var lo = 0, hi = N;
+            while (lo < hi) { var mid = (lo + hi) >> 1; if (cum[mid] < s) lo = mid + 1; else hi = mid; }
+            var i1 = Math.max(1, lo);
+            var seg = cum[i1] - cum[i1 - 1] || 1;
+            var t = (s - cum[i1 - 1]) / seg;
+            var hdg = Math.atan2(raw[i1][1] - raw[i1 - 1][1], raw[i1][0] - raw[i1 - 1][0]);
+            return [lerp(raw[i1 - 1][0], raw[i1][0], t), lerp(raw[i1 - 1][1], raw[i1][1], t), hdg];
+        }
+
+        // Groundspeed shape: cruise solved so covered distance matches the record,
+        // with a peak touching the recorded max groundspeed.
+        var vmax = f.speed_ms;
+        var peakT = 40, peakW = 8;
+        var cruise = vmax * 0.7;
         function speedShape(t) {
-            if (popup || vmax <= 0) return 0;
             var v;
             if (t < climbEnd) v = cruise * smoothstep(t / climbEnd);
             else if (t > descentStart) v = cruise * smoothstep((dur - t) / (dur - descentStart));
-            else v = cruise * (0.92 + 0.08 * Math.sin(t / 9 + 1.7));
+            else v = cruise * (0.94 + 0.06 * Math.sin(t / 9 + 1.7));
             var bump = Math.exp(-((t - peakT) * (t - peakT)) / (2 * peakW * peakW));
-            return Math.min(vmax, v + (vmax - cruise) * bump * (t > climbEnd && t < descentStart ? 1 : 0));
+            v += (vmax - cruise) * bump * (t > climbEnd && t < descentStart ? 1 : 0);
+            // post-glitch: visible surging as the controller fights bad timestamps
+            if (t > t0 && t < descentStart) v *= 1 + 0.16 * Math.sin((t - t0) * 2.4) * anomalyAmp(t);
+            return clamp(v, 0, vmax);
+        }
+        for (var iter = 0; iter < 4; iter++) {
+            var integral = 0, steps = 300;
+            for (var s2 = 0; s2 < steps; s2++) integral += speedShape((dur * s2) / steps) * (dur / steps);
+            cruise = clamp(cruise * (f.distance_m / Math.max(1, integral)), 0.05, vmax);
+        }
+
+        // Anomaly envelope: ramps in over ~6s at T+54, sustains, eases on descent
+        function anomalyAmp(t) {
+            if (t <= t0) return 0;
+            var ramp = smoothstep(clamp((t - t0) / 6, 0, 1));
+            var settle = t > descentStart ? lerp(1, 0.45, smoothstep((t - descentStart) / (dur - descentStart))) : 1;
+            var beat = 0.72 + 0.28 * Math.sin((t - t0) / 5.1);
+            return ramp * settle * beat;
+        }
+
+        function pitchAt(t) {
+            var base = 1.2 * Math.sin(t / 3.1) * (t > climbEnd && t < descentStart ? 1 : 0.4);
+            // the record: tilting forward and backward up to 20 degrees
+            return base + 20 * anomalyAmp(t) * Math.sin((t - t0) * 2 * Math.PI * 0.45);
+        }
+
+        function aglAt(t) {
+            var cruiseAlt = f.altitude_m;
+            var agl;
+            if (t <= 0) agl = 0;
+            else if (t < climbEnd) agl = cruiseAlt * smoothstep(t / climbEnd);
+            else if (t <= descentStart) {
+                var u = (t - climbEnd) / Math.max(1, descentStart - climbEnd);
+                agl = cruiseAlt * (1 - 0.05 * (0.5 + 0.5 * Math.sin(u * Math.PI * 2)));
+            } else if (t >= dur) agl = 0;
+            else agl = cruiseAlt * (1 - smoothstep((t - descentStart) / (dur - descentStart)));
+            // altitude excursions while the vehicle rocks
+            agl += 1.4 * anomalyAmp(t) * Math.sin((t - t0) * 2 * Math.PI * 0.45 + 1.2);
+            return Math.max(0, agl);
         }
 
         var path = [], channels = [];
         var dist = 0;
-        var linkLossT = null;
-        for (var i = 0; i < CONFIG.SAMPLES_N; i++) {
-            var t = (dur * i) / (CONFIG.SAMPLES_N - 1);
+        for (var n2 = 0; n2 < CONFIG.SAMPLES_N; n2++) {
+            var t = (dur * n2) / (CONFIG.SAMPLES_N - 1);
             var dt = dur / (CONFIG.SAMPLES_N - 1);
             var v = speedShape(t);
-            if (i > 0) dist = Math.min(f.distance_m, dist + v * dt);
-            var agl = aglAt(t, dur, climbEnd, descentStart, f.altitude_m);
-            var gx, gz;
-            if (popup) {
-                // hover with a small seeded drift so the recorded distance is honored
-                var r = f.distance_m / (2 * Math.PI) + 0.5;
-                var ang = driftHeading + (t / dur) * (f.distance_m / Math.max(0.5, r));
-                gx = Math.cos(ang) * r;
-                gz = Math.sin(ang) * r;
-            } else {
-                var pos = track.at(dist);
-                gx = pos[0];
-                gz = pos[1];
-            }
+            if (n2 > 0) dist = Math.min(f.distance_m, dist + v * dt);
+            var pos = trackAt(dist);
+            // lateral wobble perpendicular to the heading while the anomaly is active
+            var wob = 2.6 * anomalyAmp(t) * Math.sin((t - t0) * 2 * Math.PI * 0.45 + 0.6);
+            var gx = pos[0] + Math.cos(pos[2] + Math.PI / 2) * wob;
+            var gz = pos[1] + Math.sin(pos[2] + Math.PI / 2) * wob;
+            var agl = aglAt(t);
             path.push({ x: gx, y: heightAt(gx, gz) + agl, z: gz });
-            channels.push({ t: t, agl: agl, speed: v, dist: popup ? (f.distance_m * t) / dur : dist });
-            if (linkLossT === null && a.kinds.comm && t > descentStart && agl <= 3 && agl > 0) {
-                linkLossT = t;
-            }
+            channels.push({ t: t, agl: agl, speed: v, pitch: Math.abs(pitchAt(t)), pitchSigned: pitchAt(t) });
         }
 
         return {
@@ -343,11 +430,9 @@
             durationS: dur,
             climbEnd: climbEnd,
             descentStart: descentStart,
+            anomalyStart: t0,
             path: path,
             channels: channels,
-            popup: popup,
-            linkLossT: linkLossT,
-            earlyTerm: !!a.kinds.early,
             envAltHi: envelopeHi('altitude_m'),
             envSpdHi: envelopeHi('speed_ms')
         };
@@ -368,25 +453,24 @@
     var terrainPose = null;
 
     var LIGHT = normalize([-0.72, 0.5, 0.34]);
-    var SKY = [10, 26, 46];  // deep navy sky, matching the site surface
-    var HAZE = [34, 22, 22]; // warm dust haze the far terrain melts into
+    var SKY = [10, 26, 46];
+    var HAZE = [34, 22, 22];
 
     function normalize(v) {
         var l = Math.hypot(v[0], v[1], v[2]) || 1;
         return [v[0] / l, v[1] / l, v[2] / l];
     }
 
-    var cam = { theta: -0.95, phi: 0.46, dist: 700, target: [0, 40, 0] };
+    var cam = { theta: 0.72, phi: 0.38, dist: 950, target: [0, 20, 0] };
     var camVel = 0;
 
-    // Terrain quads, built once. The grid is center-weighted: fine cells where
-    // the flights are, coarser toward the rim (which the distance fade absorbs).
     var quads = [];
-    (function buildQuads() {
-        var half = TERRAIN_SIZE / 2;
+    function buildQuads() {
+        quads = [];
+        var half = terrainSizeM() / 2;
         function gridCoord(i) {
             var u = (i / TERRAIN_SEG) * 2 - 1;
-            return half * Math.sign(u) * Math.pow(Math.abs(u), 1.65);
+            return half * Math.sign(u) * Math.pow(Math.abs(u), 1.5);
         }
         for (var i = 0; i < TERRAIN_SEG; i++) {
             for (var j = 0; j < TERRAIN_SEG; j++) {
@@ -394,22 +478,21 @@
                 var x1 = gridCoord(i + 1), z1 = gridCoord(j + 1);
                 var y00 = heightAt(x0, z0), y10 = heightAt(x1, z0);
                 var y01 = heightAt(x0, z1), y11 = heightAt(x1, z1);
-                // flat-shade normal from the two diagonals
                 var ux = x1 - x0, uy = y11 - y00, uz = z1 - z0;
                 var wx = x1 - x0, wy = y10 - y01, wz = z0 - z1;
                 var n = normalize([uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx]);
                 if (n[1] < 0) n = [-n[0], -n[1], -n[2]];
-                var shade = 0.52 + 0.48 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+                var shade = 0.55 + 0.45 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
                 var cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
-                var col = terrainColor(cx, cz, (y00 + y11) / 2);
+                var col = terrainColorAt(cx, cz, (y00 + y11) / 2);
                 quads.push({
                     pts: [[x0, y00, z0], [x1, y10, z0], [x1, y11, z1], [x0, y01, z1]],
-                    center: [cx, (y00 + y10 + y01 + y11) / 4, cz],
-                    rgb: [col[0] * shade * 255, col[1] * shade * 255, col[2] * shade * 255]
+                    rgb: [col[0] * shade, col[1] * shade, col[2] * shade]
                 });
             }
         }
-    })();
+        terrainPose = null;
+    }
 
     function makeCameraFrame(W, H) {
         var eye = [
@@ -433,14 +516,13 @@
                 if (cz < 25) return null;
                 var cx = dx * right[0] + dy * right[1] + dz * right[2];
                 var cy = dx * up[0] + dy * up[1] + dz * up[2];
-                // principal point sits below center: more sky, terrain to the frame edge
                 return [W / 2 + (f * cx) / cz, H * 0.58 - (f * cy) / cz, cz];
             }
         };
     }
 
     function renderTerrain(W, H) {
-        var key = [cam.theta.toFixed(3), cam.phi.toFixed(3), Math.round(cam.dist), W, H].join('|');
+        var key = [cam.theta.toFixed(3), cam.phi.toFixed(3), Math.round(cam.dist), W, H, real ? 'r' : 'p'].join('|');
         if (terrainPose === key) return;
         terrainPose = key;
         terrainCanvas.width = W;
@@ -487,6 +569,25 @@
         }
     }
 
+    function drawLandmarks(frame) {
+        var marks = real ? real.landmarks : [{ name: 'Base station', x: 0, z: 0 }];
+        ctx.font = '11px Inter, sans-serif';
+        marks.forEach(function (l) {
+            var y = heightAt(l.x, l.z);
+            var p = frame.project([l.x, y + 4, l.z]);
+            if (!p) return;
+            ctx.fillStyle = 'rgba(255,203,5,0.9)';
+            ctx.beginPath();
+            ctx.moveTo(p[0], p[1] - 7);
+            ctx.lineTo(p[0] - 5, p[1] + 4);
+            ctx.lineTo(p[0] + 5, p[1] + 4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.fillText(l.name, p[0] + 8, p[1] + 4);
+        });
+    }
+
     function renderDeck() {
         var W = canvas.width, H = canvas.height;
         renderTerrain(W, H);
@@ -497,26 +598,11 @@
         var progress = state.t / r.durationS;
         var idx = clamp(Math.round(progress * (r.path.length - 1)), 0, r.path.length - 1);
 
-        // Base station marker
-        var base = frame.project([0, heightAt(0, 0) + 2, 0]);
-        if (base) {
-            ctx.fillStyle = 'rgba(255,203,5,0.9)';
-            ctx.beginPath();
-            ctx.moveTo(base[0], base[1] - 7);
-            ctx.lineTo(base[0] - 5, base[1] + 4);
-            ctx.lineTo(base[0] + 5, base[1] + 4);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.55)';
-            ctx.font = '10px Inter, sans-serif';
-            ctx.fillText('BASE', base[0] + 8, base[1] + 4);
-        }
+        drawLandmarks(frame);
 
-        // Flight path: flown portion bright, remainder dim; dashed after link loss
-        function drawPath(from, to, style, width, dash) {
+        function drawPath(from, to, style, width) {
             ctx.strokeStyle = style;
             ctx.lineWidth = width;
-            ctx.setLineDash(dash || []);
             ctx.beginPath();
             var started = false;
             for (var i = from; i <= to; i++) {
@@ -526,19 +612,18 @@
                 else ctx.lineTo(p[0], p[1]);
             }
             ctx.stroke();
-            ctx.setLineDash([]);
         }
-        var lossIdx = r.linkLossT !== null ? Math.round((r.linkLossT / r.durationS) * (r.path.length - 1)) : null;
-        drawPath(idx, r.path.length - 1, 'rgba(255,255,255,0.22)', 1.5, lossIdx !== null ? [4, 4] : []);
-        drawPath(0, idx, 'rgba(255,203,5,0.85)', 2.5);
+        drawPath(idx, r.path.length - 1, 'rgba(255,255,255,0.25)', 1.5);
+        drawPath(0, idx, 'rgba(255,203,5,0.9)', 2.5);
 
-        // Helicopter: ground shadow, altitude stem, body, counter-rotating rotors
+        // Helicopter with pitch rocking after the glitch
         var hp = r.path[idx];
+        var sampleNow = sampleAt(r.channels, progress);
         var groundY = heightAt(hp.x, hp.z);
         var shadow = frame.project([hp.x, groundY + 0.5, hp.z]);
         var heli = frame.project([hp.x, hp.y, hp.z]);
         if (shadow && heli) {
-            var scale = clamp(2600 / heli[2], 0.5, 2.2);
+            var scale = clamp(3400 / heli[2], 0.55, 2.4);
             ctx.strokeStyle = 'rgba(255,255,255,0.25)';
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -549,12 +634,14 @@
             ctx.beginPath();
             ctx.ellipse(shadow[0], shadow[1], 6 * scale, 2.4 * scale, 0, 0, Math.PI * 2);
             ctx.fill();
-            // fuselage
+
+            ctx.save();
+            ctx.translate(heli[0], heli[1]);
+            ctx.rotate((sampleNow.pitchSigned || 0) * Math.PI / 180 * 0.8);
             ctx.fillStyle = '#E8E4DA';
-            ctx.fillRect(heli[0] - 4 * scale, heli[1] - 3 * scale, 8 * scale, 6 * scale);
+            ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
             ctx.fillStyle = '#B58900';
-            ctx.fillRect(heli[0] - 4 * scale, heli[1] - 3 * scale, 8 * scale, 2 * scale);
-            // rotors (counter-rotating, deliberately watchable like the original)
+            ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 2 * scale);
             var ang = state.t * 6;
             ctx.strokeStyle = 'rgba(230,230,230,0.9)';
             ctx.lineWidth = 1.4 * scale;
@@ -562,11 +649,19 @@
                 var rx = Math.cos(aRot) * 13 * scale;
                 var rz = Math.sin(aRot) * 4.5 * scale;
                 ctx.beginPath();
-                ctx.moveTo(heli[0] - rx, heli[1] - 5 * scale - rz * 0.4);
-                ctx.lineTo(heli[0] + rx, heli[1] - 5 * scale + rz * 0.4);
+                ctx.moveTo(-rx, -5 * scale - rz * 0.4);
+                ctx.lineTo(rx, -5 * scale + rz * 0.4);
                 ctx.stroke();
             });
+            ctx.restore();
         }
+
+        // Data credit, always visible on the deck
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.textAlign = 'right';
+        ctx.fillText(real ? 'Terrain: NASA/JPL-Caltech/USGS (Mars 2020 CTX)' : 'Terrain: procedural stand-in', W - 10, H - 8);
+        ctx.textAlign = 'left';
     }
 
     // ------------------------------------------------------------------
@@ -574,9 +669,9 @@
     // ------------------------------------------------------------------
 
     var CHART_DEFS = [
-        { key: 'agl', label: 'Altitude AGL', unit: 'm', color: '#3E8FD9', envKey: 'envAltHi', anchor: 'altitude_m' },
-        { key: 'speed', label: 'Groundspeed', unit: 'm/s', color: '#B58900', envKey: 'envSpdHi', anchor: 'speed_ms' },
-        { key: 'dist', label: 'Distance covered', unit: 'm', color: '#7FA8C9', envKey: null, anchor: 'distance_m' }
+        { key: 'agl', label: 'Altitude AGL', unit: 'm', color: '#3E8FD9', env: function (r) { return r.envAltHi; }, envLabel: 'fleet envelope' },
+        { key: 'speed', label: 'Groundspeed', unit: 'm/s', color: '#B58900', env: function (r) { return r.envSpdHi; }, envLabel: 'fleet envelope' },
+        { key: 'pitch', label: 'Pitch excursion', unit: 'deg', color: '#7FA8C9', env: function () { return CONFIG.PITCH_ALERT_DEG; }, envLabel: 'alert' }
     ];
     var chartRefs = [];
 
@@ -589,8 +684,8 @@
             var W = 340, H = 110, padL = 42, padR = 10, padT = 12, padB = 18;
             var iw = W - padL - padR, ih = H - padT - padB;
             var vals = r.channels.map(function (c) { return c[def.key]; });
-            var env = def.envKey ? r[def.envKey] : null;
-            var vmax = Math.max.apply(null, vals.concat(env !== null && env < Math.max.apply(null, vals) * 3 ? [env] : [0])) * 1.12 || 1;
+            var env = def.env(r);
+            var vmax = Math.max.apply(null, vals.concat(env < Math.max.apply(null, vals) * 3 ? [env] : [0])) * 1.12 || 1;
 
             function X(t) { return padL + (t / r.durationS) * iw; }
             function Y(v) { return padT + ih - (v / vmax) * ih; }
@@ -608,10 +703,13 @@
                 svg += '<text x="' + (padL - 4) + '" y="' + (gy + 3) + '" class="chart-tick" text-anchor="end">' + (gv >= 100 ? Math.round(gv) : gv.toFixed(1)) + '</text>';
             }
             svg += '<text x="' + (W - padR) + '" y="' + (H - 5) + '" class="chart-tick" text-anchor="end">' + Math.round(r.durationS) + 's</text>';
-            if (env !== null && env < vmax) {
+            if (env < vmax) {
                 svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + Y(env) + '" y2="' + Y(env) + '" class="chart-env"/>';
-                svg += '<text x="' + (padL + 4) + '" y="' + (Y(env) - 3) + '" class="chart-env-label" text-anchor="start">fleet envelope</text>';
+                svg += '<text x="' + (padL + 4) + '" y="' + (Y(env) - 3) + '" class="chart-env-label" text-anchor="start">' + def.envLabel + '</text>';
             }
+            // mark the anomaly onset on every chart
+            var ax = X(r.anomalyStart);
+            svg += '<line x1="' + ax + '" x2="' + ax + '" y1="' + padT + '" y2="' + (padT + ih) + '" class="chart-event"/>';
             svg += '<polyline points="' + pts + '" fill="none" stroke="' + def.color + '" stroke-width="1.8"/>';
             svg += '<line class="playhead" x1="' + padL + '" x2="' + padL + '" y1="' + padT + '" y2="' + (padT + ih) + '"/>';
             svg += '</svg>';
@@ -642,7 +740,7 @@
     }
 
     // ------------------------------------------------------------------
-    // Alarms (banner + panel outline), mirroring the original's alert flash
+    // Alarm: the navigation anomaly comes on at T+54s and stays on
     // ------------------------------------------------------------------
 
     var alarmBadge = document.getElementById('alarm-badge');
@@ -652,10 +750,8 @@
         var r = state.recon;
         var sample = sampleAt(r.channels, state.t / r.durationS);
         var alarm = null;
-        if (r.linkLossT !== null && state.t >= r.linkLossT) {
-            alarm = { text: 'LINK LOST', cls: 'alarm-red' };
-        } else if (r.earlyTerm && state.t >= r.descentStart) {
-            alarm = { text: 'EARLY TERMINATION', cls: 'alarm-red' };
+        if (state.t >= r.anomalyStart) {
+            alarm = { text: 'NAVIGATION ANOMALY', cls: 'alarm-red' };
         } else if (sample.agl > r.envAltHi || sample.speed > r.envSpdHi) {
             alarm = { text: 'ENVELOPE EXCEEDANCE', cls: 'alarm-amber' };
         }
@@ -671,11 +767,10 @@
     }
 
     // ------------------------------------------------------------------
-    // Playback
+    // Playback with a slow cinematic orbit (drag to take over, momentum kept)
     // ------------------------------------------------------------------
 
     var state = {
-        flightNo: 6,
         recon: null,
         t: 0,
         playing: false,
@@ -709,6 +804,9 @@
             state.t = state.recon.durationS;
             setPlaying(false);
         }
+        if (!dragging && !camVel && !reducedMotion) {
+            cam.theta += dt * 0.035; // slow cinematic orbit
+        }
         stepCameraInertia();
         drawTick();
         if (state.playing) requestAnimationFrame(tick);
@@ -722,17 +820,13 @@
         updateAlarm();
     }
 
-    // ------------------------------------------------------------------
-    // Camera drag-orbit with momentum (grabbable and interruptible)
-    // ------------------------------------------------------------------
-
     var dragging = false;
     var lastPointer = null;
     var pointerHistory = [];
 
     canvas.addEventListener('pointerdown', function (e) {
         dragging = true;
-        camVel = 0; // grabbing interrupts any in-flight inertia
+        camVel = 0;
         lastPointer = [e.clientX, e.clientY];
         pointerHistory = [{ x: e.clientX, t: performance.now() }];
         canvas.setPointerCapture(e.pointerId);
@@ -751,7 +845,6 @@
     function endDrag() {
         if (!dragging) return;
         dragging = false;
-        // hand the release velocity to the camera so the orbit keeps its momentum
         if (!reducedMotion && pointerHistory.length >= 2) {
             var a = pointerHistory[0];
             var b = pointerHistory[pointerHistory.length - 1];
@@ -809,21 +902,19 @@
 
     function renderNarrative() {
         var panel = document.getElementById('narrative-panel');
-        var f = flights[state.flightNo - 1];
+        var f = flights[CONFIG.FLIGHT - 1];
         var a = analyses[f.flight];
         var n = getNarrative(f.flight);
         var dispo = state.dispositions[f.flight];
 
         var html = '<h2>Example GenAI narrative</h2>';
         html += '<div class="record-block"><strong>Public record.</strong> ' + esc(f.summary) + '</div>';
-        if (f.note) html += '<div class="record-block"><strong>Pre-flight events.</strong> ' + esc(f.note) + '</div>';
 
         html += '<div class="flag-chips">';
         var allFlags = a.metricFlags.map(function (mf) { return mf.text; }).concat(a.eventFlags);
         if (allFlags.length) {
             allFlags.forEach(function (t) {
-                var neutral = t.indexOf('checkout') !== -1;
-                html += '<span class="flag-chip' + (neutral ? ' neutral' : '') + '">' + esc(t) + '</span>';
+                html += '<span class="flag-chip">' + esc(t) + '</span>';
             });
         } else {
             html += '<span class="flag-chip neutral">No deterministic flags</span>';
@@ -1011,39 +1102,39 @@
     }
 
     // ------------------------------------------------------------------
-    // Flight selection + boot
+    // Boot
     // ------------------------------------------------------------------
 
     function fitCamera() {
         var r = state.recon;
-        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity, maxY = 0;
+        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
         r.path.forEach(function (p) {
             minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
             minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
-            maxY = Math.max(maxY, p.y);
         });
-        cam.target = [(minX + maxX) / 2, Math.max(14, maxY * 0.35), (minZ + maxZ) / 2];
-        var radius = Math.max(Math.hypot(maxX - minX, maxZ - minZ) / 2, maxY, 60);
-        cam.dist = clamp(radius * 3.4, 480, 1650);
-        cam.phi = 0.4;
+        // Cinematic framing: pulled back enough that Kodiak butte and the
+        // western delta sit on the horizon behind the flight.
+        cam.target = [(minX + maxX) / 2, 26, (minZ + maxZ) / 2];
+        cam.dist = 900;
+        cam.phi = 0.38;
+        cam.theta = 0.72;
         terrainPose = null;
     }
 
-    function selectFlight(flightNo) {
-        state.flightNo = flightNo;
-        state.recon = reconstructFlight(flights[flightNo - 1]);
-        state.t = 0;
-        var f = flights[flightNo - 1];
-        var a = analyses[flightNo];
-        document.getElementById('deck-meta').textContent =
-            f.date + ' · Sol ' + f.sol + ' · ' + f.duration_s + 's · ' + f.altitude_m + 'm max · ' +
-            f.distance_m + 'm · ' + (a.flagged ? 'flagged' : 'in envelope');
-        document.getElementById('flight-select').value = String(flightNo);
+    function rebuildScene(preserveTime) {
+        var tSave = preserveTime && state.recon ? state.t : 0;
+        var wasPlaying = state.playing;
+        state.recon = reconstructFlight6(flights[CONFIG.FLIGHT - 1]);
+        state.t = Math.min(tSave, state.recon.durationS);
+        buildQuads();
         fitCamera();
         buildCharts();
-        renderNarrative();
         drawTick();
-        setPlaying(!reducedMotion);
+        if (!wasPlaying) setPlaying(!reducedMotion);
+    }
+
+    function onTerrainReady() {
+        rebuildScene(true);
     }
 
     function sizeCanvas() {
@@ -1057,15 +1148,10 @@
 
     function init() {
         document.getElementById('demo-title').textContent = CONFIG.DEMO_NAME;
-
-        var flightSel = document.getElementById('flight-select');
-        flights.forEach(function (f) {
-            var opt = document.createElement('option');
-            opt.value = String(f.flight);
-            opt.textContent = 'Flight ' + f.flight + ' (' + f.date + ')' + (analyses[f.flight].flagged ? ' [flagged]' : '');
-            flightSel.appendChild(opt);
-        });
-        flightSel.addEventListener('change', function () { selectFlight(Number(flightSel.value)); });
+        var f = flights[CONFIG.FLIGHT - 1];
+        document.getElementById('deck-meta').textContent =
+            'Flight ' + f.flight + ' · ' + f.date + ' · Sol ' + f.sol + ' · ' + f.duration_s + 's · ' +
+            f.altitude_m + 'm max · ' + f.distance_m + 'm · anomaly at T+54s';
 
         playBtn.addEventListener('click', function () {
             if (state.t >= state.recon.durationS) state.t = 0;
@@ -1086,9 +1172,11 @@
 
         window.addEventListener('resize', sizeCanvas);
         sizeCanvas();
-        selectFlight(state.flightNo);
+        rebuildScene(false);
+        renderNarrative();
         renderEvals();
         renderDataTable();
+        loadRealTerrain();
     }
 
     init();

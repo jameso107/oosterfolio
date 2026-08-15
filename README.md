@@ -2,17 +2,13 @@
 
 Personal portfolio of James Oosterhouse: AI engineer, founder, roboticist. Live at [ooster.house](https://ooster.house).
 
-The site is a static single page (plain HTML, CSS, and JavaScript, no framework) with pre-rendered case study pages and one interactive demo, deployed on Vercel.
+The site is a static single page (plain HTML, CSS, and JavaScript, no framework) with pop-out case study windows and one interactive demo, deployed on Vercel.
 
 ## What's here
 
 | Route | What it is |
 |---|---|
-| `/` | Home: AI work, robotics builds, journey timeline |
-| `/work/triage` | Case study: root cause analysis for a Mars helicopter (JPL hackathon, Mission Critical Award) |
-| `/work/specinator` | Case study: AI decision support for an engineering BD team |
-| `/work/koopsgpt` | Case study: an agentic LLM suite in production at a manufacturer |
-| `/work/jpl-research` | Research: how Mars operators trust GenAI (NASA JPL ethnographic study) |
+| `/` | Home: AI work (case studies open in pop-out windows), robotics builds, journey timeline |
 | `/demo/triage` | **TRIAGE: Flight Edition**, a live public rebuild of the TRIAGE concept |
 
 ## TRIAGE: Flight Edition (the demo)
@@ -23,20 +19,22 @@ The internal TRIAGE was built at the JPL hackathon to disposition Mars Sample Re
 
 **The data.** The public Ingenuity (Mars 2020 helicopter) flight log: all 72 flights with per-flight duration, max altitude, distance, max groundspeed, and mission notes, compiled from NASA status reports via Wikipedia's List of Ingenuity flights. Bundled as a static file (`demo/flights-data.js`), so the demo needs zero API calls to work.
 
-**The experience.** A 3D replay of any of the 72 flights over procedural Mars-style terrain (hand-rolled canvas projection, zero dependencies), with playback at 0.25x to 4x, a scrubber, drag-to-orbit with momentum, and synchronized strip charts (altitude, groundspeed, distance) with fleet-envelope reference lines. Flight paths and channel curves are reconstructed from the recorded summaries: deterministic (seeded per flight), anchored to the recorded numbers, and always labeled with a RECONSTRUCTED badge, the same honesty rule the original flight deck used. Alarm banners (LINK LOST, EARLY TERMINATION, ENVELOPE EXCEEDANCE) fire from the deterministic flags during replay.
+**The experience.** One flight, told end to end: Flight 6 (sol 91), the first in-flight anomaly on another planet. A 3D replay over the real Jezero Crater landscape (USGS Mars 2020 CTX DEM and orthomosaic, public domain, a 10 km window centered on Octavia E. Butler Landing, with real landmarks like Kodiak butte and the western delta), rendered with a hand-rolled canvas projection, zero dependencies, with a procedural fallback if the terrain assets fail. Playback runs 0.25x to 4x with a scrubber, a slow cinematic orbit, and drag-to-orbit with momentum. Synchronized strip charts (altitude, groundspeed, pitch excursion) carry fleet-envelope and alert lines. The flight path and channel curves are reconstructed from the recorded summary: deterministic, anchored to the recorded numbers, dramatized where the record describes the event (the T+54s navigation glitch and the up-to-20-degree tilting), and always labeled with a RECONSTRUCTED badge, the same honesty rule the original flight deck used. The NAVIGATION ANOMALY alarm comes on at T+54s and stays on through touchdown.
+
+Terrain credit: NASA/JPL-Caltech/USGS. The heightmap is elevation packed 16-bit (R*256+G) over a 10 km window, decoded in the browser exactly the way the original flight deck's baked assets are.
 
 **The architecture.**
 
 ```
-flights-data.js (72 public flights)
+flights-data.js (72 public flights, fleet envelope statistics)
         |
 deterministic layer (client-side, demo/triage.js)
   median + MAD robust z-scores per metric, |z| >= 2.5 flags,
   plus event flags mined from the record notes
         |
-flight reconstruction (client-side, seeded per flight)
-  3D replay over procedural terrain + synchronized strip charts,
-  labeled RECONSTRUCTED FROM SUMMARY DATA
+flight reconstruction (client-side, seeded, Flight 6)
+  3D replay over the real Jezero terrain (USGS Mars 2020 CTX DEM)
+  + synchronized strip charts, labeled RECONSTRUCTED FROM SUMMARY DATA
         |
 narrative layer (example GenAI narratives)
   cached by default: pre-computed outputs for every flight
@@ -85,7 +83,7 @@ Static site, no build step:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000`. Clean URLs (`/work/triage` instead of `/work/triage.html`) are handled by Vercel's `cleanUrls` in production.
+Then open `http://localhost:8000`. Clean URLs (`/demo/triage` instead of `/demo/triage.html`) are handled by Vercel's `cleanUrls` in production.
 
 The live narrative endpoint (`api/narrative.js`) runs as a Vercel serverless function and needs `ANTHROPIC_API_KEY` set in the Vercel project. Without it the endpoint returns 503 and the demo keeps working in cached mode; unplugging the key is a supported state, not an outage.
 
