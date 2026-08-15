@@ -452,17 +452,28 @@
     var terrainCtx = terrainCanvas.getContext('2d');
     var terrainPose = null;
 
+    // Mars daytime palette, matching the original flight deck: butterscotch
+    // haze at the horizon, dustier tan overhead, fog toward the horizon color.
     var LIGHT = normalize([-0.72, 0.5, 0.34]);
-    var SKY = [10, 26, 46];
-    var HAZE = [34, 22, 22];
+    var SKY_ZENITH = [168, 152, 140];   // 0xa8988c
+    var SKY_HORIZON = [228, 177, 132];  // 0xe4b184
 
     function normalize(v) {
         var l = Math.hypot(v[0], v[1], v[2]) || 1;
         return [v[0] / l, v[1] / l, v[2] / l];
     }
 
-    var cam = { theta: 0.72, phi: 0.38, dist: 950, target: [0, 20, 0] };
+    // Camera views: Overview mirrors the original deck's bird's-eye framing
+    // toward the western delta; Follow rides with the helicopter; Top looks
+    // straight down at the route. Each keeps its own zoom.
+    var VIEWS = {
+        overview: { dist: 1900, phi: 0.62, theta: 0.93, autoOrbit: 0.02, follow: false },
+        follow: { dist: 170, phi: 0.34, theta: 0.93, autoOrbit: 0, follow: true },
+        top: { dist: 850, phi: 1.15, theta: 0.93, autoOrbit: 0, follow: false }
+    };
+    var cam = { theta: 0.93, phi: 0.62, dist: 1900, target: [0, 20, 0] };
     var camVel = 0;
+    var pathCenter = [0, 0, 0];
 
     var quads = [];
     function buildQuads() {
@@ -482,7 +493,7 @@
                 var wx = x1 - x0, wy = y10 - y01, wz = z0 - z1;
                 var n = normalize([uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx]);
                 if (n[1] < 0) n = [-n[0], -n[1], -n[2]];
-                var shade = 0.55 + 0.45 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+                var shade = 0.62 + 0.38 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
                 var cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
                 var col = terrainColorAt(cx, cz, (y00 + y11) / 2);
                 quads.push({
@@ -501,7 +512,11 @@
             cam.target[2] + cam.dist * Math.cos(cam.phi) * Math.sin(cam.theta)
         ];
         var fwd = normalize([cam.target[0] - eye[0], cam.target[1] - eye[1], cam.target[2] - eye[2]]);
-        var right = normalize([fwd[2], 0, -fwd[0]]);
+        // right = fwd x worldUp (right-handed, y-up): this keeps east/west and
+        // north/south un-mirrored so the Jezero landscape matches reality
+        var right = [-fwd[2], 0, fwd[0]];
+        var rl = Math.hypot(right[0], right[2]);
+        right = rl > 1e-4 ? [right[0] / rl, 0, right[2] / rl] : [1, 0, 0];
         var up = [
             right[1] * fwd[2] - right[2] * fwd[1],
             right[2] * fwd[0] - right[0] * fwd[2],
@@ -522,17 +537,17 @@
     }
 
     function renderTerrain(W, H) {
-        var key = [cam.theta.toFixed(3), cam.phi.toFixed(3), Math.round(cam.dist), W, H, real ? 'r' : 'p'].join('|');
+        var key = [cam.theta.toFixed(3), cam.phi.toFixed(3), Math.round(cam.dist),
+            Math.round(cam.target[0]), Math.round(cam.target[1]), Math.round(cam.target[2]),
+            W, H, real ? 'r' : 'p'].join('|');
         if (terrainPose === key) return;
         terrainPose = key;
         terrainCanvas.width = W;
         terrainCanvas.height = H;
         var g = terrainCtx;
         var grad = g.createLinearGradient(0, 0, 0, H);
-        grad.addColorStop(0, 'rgb(' + SKY[0] + ',' + SKY[1] + ',' + SKY[2] + ')');
-        grad.addColorStop(0.42, 'rgb(26,27,40)');
-        grad.addColorStop(0.75, 'rgb(' + HAZE[0] + ',' + HAZE[1] + ',' + HAZE[2] + ')');
-        grad.addColorStop(1, 'rgb(52,34,29)');
+        grad.addColorStop(0, 'rgb(' + SKY_ZENITH[0] + ',' + SKY_ZENITH[1] + ',' + SKY_ZENITH[2] + ')');
+        grad.addColorStop(1, 'rgb(' + SKY_HORIZON[0] + ',' + SKY_HORIZON[1] + ',' + SKY_HORIZON[2] + ')');
         g.fillStyle = grad;
         g.fillRect(0, 0, W, H);
 
@@ -549,12 +564,14 @@
             drawList.push({ depth: (p0[2] + p2[2]) / 2, p: [p0, p1, p2, p3], rgb: quad.rgb });
         }
         drawList.sort(function (a, b) { return b.depth - a.depth; });
+        var S = terrainSizeM();
         for (var d = 0; d < drawList.length; d++) {
             var item = drawList[d];
-            var fade = clamp((item.depth - cam.dist * 0.8) / (cam.dist * 2.4), 0, 0.85);
-            var r = Math.round(lerp(item.rgb[0], HAZE[0], fade));
-            var gg = Math.round(lerp(item.rgb[1], HAZE[1], fade));
-            var b = Math.round(lerp(item.rgb[2], HAZE[2], fade));
+            // fog toward the horizon color, same start/range shape as the original
+            var fade = clamp((item.depth - S * 0.28) / (S * 1.17), 0, 0.92);
+            var r = Math.round(lerp(item.rgb[0], SKY_HORIZON[0], fade));
+            var gg = Math.round(lerp(item.rgb[1], SKY_HORIZON[1], fade));
+            var b = Math.round(lerp(item.rgb[2], SKY_HORIZON[2], fade));
             g.fillStyle = 'rgb(' + r + ',' + gg + ',' + b + ')';
             g.strokeStyle = g.fillStyle;
             g.lineWidth = 1;
@@ -571,19 +588,22 @@
 
     function drawLandmarks(frame) {
         var marks = real ? real.landmarks : [{ name: 'Base station', x: 0, z: 0 }];
-        ctx.font = '11px Inter, sans-serif';
+        ctx.font = '600 11px Inter, sans-serif';
         marks.forEach(function (l) {
             var y = heightAt(l.x, l.z);
             var p = frame.project([l.x, y + 4, l.z]);
             if (!p) return;
-            ctx.fillStyle = 'rgba(255,203,5,0.9)';
+            ctx.fillStyle = 'rgba(0,39,76,0.95)';
             ctx.beginPath();
             ctx.moveTo(p[0], p[1] - 7);
             ctx.lineTo(p[0] - 5, p[1] + 4);
             ctx.lineTo(p[0] + 5, p[1] + 4);
             ctx.closePath();
             ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+            ctx.lineWidth = 3;
+            ctx.strokeText(l.name, p[0] + 8, p[1] + 4);
+            ctx.fillStyle = 'rgba(20,30,44,0.95)';
             ctx.fillText(l.name, p[0] + 8, p[1] + 4);
         });
     }
@@ -613,8 +633,9 @@
             }
             ctx.stroke();
         }
-        drawPath(idx, r.path.length - 1, 'rgba(255,255,255,0.25)', 1.5);
-        drawPath(0, idx, 'rgba(255,203,5,0.9)', 2.5);
+        // dark navy path pops against the bright daytime regolith
+        drawPath(idx, r.path.length - 1, 'rgba(0,39,76,0.35)', 1.6);
+        drawPath(0, idx, 'rgba(0,39,76,0.95)', 3);
 
         // Helicopter with pitch rocking after the glitch
         var hp = r.path[idx];
@@ -623,8 +644,8 @@
         var shadow = frame.project([hp.x, groundY + 0.5, hp.z]);
         var heli = frame.project([hp.x, hp.y, hp.z]);
         if (shadow && heli) {
-            var scale = clamp(3400 / heli[2], 0.55, 2.4);
-            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+            var scale = clamp(3400 / heli[2], 0.55, 2.6);
+            ctx.strokeStyle = 'rgba(0,39,76,0.35)';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(shadow[0], shadow[1]);
@@ -638,12 +659,15 @@
             ctx.save();
             ctx.translate(heli[0], heli[1]);
             ctx.rotate((sampleNow.pitchSigned || 0) * Math.PI / 180 * 0.8);
-            ctx.fillStyle = '#E8E4DA';
+            ctx.fillStyle = '#F5F2E9';
+            ctx.strokeStyle = 'rgba(20,30,44,0.8)';
+            ctx.lineWidth = 1;
             ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
+            ctx.strokeRect(-4 * scale, -3 * scale, 8 * scale, 6 * scale);
             ctx.fillStyle = '#B58900';
             ctx.fillRect(-4 * scale, -3 * scale, 8 * scale, 2 * scale);
             var ang = state.t * 6;
-            ctx.strokeStyle = 'rgba(230,230,230,0.9)';
+            ctx.strokeStyle = 'rgba(35,42,54,0.9)';
             ctx.lineWidth = 1.4 * scale;
             [ang, -ang + Math.PI / 2].forEach(function (aRot) {
                 var rx = Math.cos(aRot) * 13 * scale;
@@ -658,7 +682,7 @@
 
         // Data credit, always visible on the deck
         ctx.font = '10px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.fillStyle = 'rgba(20,30,44,0.75)';
         ctx.textAlign = 'right';
         ctx.fillText(real ? 'Terrain: NASA/JPL-Caltech/USGS (Mars 2020 CTX)' : 'Terrain: procedural stand-in', W - 10, H - 8);
         ctx.textAlign = 'left';
@@ -775,6 +799,8 @@
         t: 0,
         playing: false,
         speed: 1,
+        view: 'overview',
+        zoom: 1,
         liveResults: {},
         dispositions: loadDispositions()
     };
@@ -785,10 +811,12 @@
     var lastFrame = null;
 
     function setPlaying(playing) {
+        var was = state.playing;
         state.playing = playing;
         playBtn.innerHTML = playing ? '&#10074;&#10074;' : '&#9654;';
         playBtn.setAttribute('aria-label', playing ? 'Pause the replay' : 'Play the replay');
-        if (playing) {
+        if (playing && !was) {
+            // only start a new frame loop if one is not already running
             lastFrame = null;
             requestAnimationFrame(tick);
         }
@@ -804,12 +832,27 @@
             state.t = state.recon.durationS;
             setPlaying(false);
         }
-        if (!dragging && !camVel && !reducedMotion) {
-            cam.theta += dt * 0.035; // slow cinematic orbit
+        var view = VIEWS[state.view];
+        if (view.autoOrbit && !dragging && !camVel && !reducedMotion) {
+            cam.theta += dt * view.autoOrbit; // gentle cinematic orbit in Overview
         }
+        stepCameraFollow();
         stepCameraInertia();
         drawTick();
         if (state.playing) requestAnimationFrame(tick);
+    }
+
+    // Follow view: the camera target glides after the helicopter
+    function stepCameraFollow() {
+        if (!VIEWS[state.view].follow || !state.recon) return;
+        var r = state.recon;
+        var idx = clamp(Math.round((state.t / r.durationS) * (r.path.length - 1)), 0, r.path.length - 1);
+        var hp = r.path[idx];
+        cam.target = [
+            lerp(cam.target[0], hp.x, 0.1),
+            lerp(cam.target[1], hp.y, 0.1),
+            lerp(cam.target[2], hp.z, 0.1)
+        ];
     }
 
     function drawTick() {
@@ -855,6 +898,10 @@
     }
     canvas.addEventListener('pointerup', endDrag);
     canvas.addEventListener('pointercancel', endDrag);
+    canvas.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        setZoom(state.zoom * Math.exp(e.deltaY * 0.0012));
+    }, { passive: false });
 
     function stepCameraInertia() {
         if (dragging || !camVel) return;
@@ -1105,20 +1152,47 @@
     // Boot
     // ------------------------------------------------------------------
 
-    function fitCamera() {
+    function computePathCenter() {
         var r = state.recon;
         var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
         r.path.forEach(function (p) {
             minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
             minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
         });
-        // Cinematic framing: pulled back enough that Kodiak butte and the
-        // western delta sit on the horizon behind the flight.
-        cam.target = [(minX + maxX) / 2, 26, (minZ + maxZ) / 2];
-        cam.dist = 900;
-        cam.phi = 0.38;
-        cam.theta = 0.72;
+        pathCenter = [(minX + maxX) / 2, 22, (minZ + maxZ) / 2];
+    }
+
+    function applyView(name) {
+        state.view = name;
+        var v = VIEWS[name];
+        cam.dist = v.dist * state.zoom;
+        cam.phi = v.phi;
+        cam.theta = v.theta;
+        camVel = 0;
+        if (v.follow && state.recon) {
+            var idx = clamp(Math.round((state.t / state.recon.durationS) * (state.recon.path.length - 1)), 0, state.recon.path.length - 1);
+            var hp = state.recon.path[idx];
+            cam.target = [hp.x, hp.y, hp.z];
+        } else {
+            // Overview leans slightly toward the western delta, like the original
+            cam.target = name === 'overview'
+                ? [pathCenter[0] - 220, pathCenter[1], pathCenter[2] - 180]
+                : pathCenter.slice();
+        }
+        Array.prototype.forEach.call(document.querySelectorAll('.view-btn'), function (b) {
+            var active = b.getAttribute('data-view') === name;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
         terrainPose = null;
+        if (state.recon && !state.playing) drawTick();
+    }
+
+    function setZoom(mult) {
+        state.zoom = clamp(mult, 0.35, 3.2);
+        cam.dist = clamp(VIEWS[state.view].dist * state.zoom, 80, terrainSizeM() * 0.7);
+        terrainPose = null;
+        if (state.recon && !state.playing) drawTick();
     }
 
     function rebuildScene(preserveTime) {
@@ -1127,7 +1201,8 @@
         state.recon = reconstructFlight6(flights[CONFIG.FLIGHT - 1]);
         state.t = Math.min(tSave, state.recon.durationS);
         buildQuads();
-        fitCamera();
+        computePathCenter();
+        applyView(state.view);
         buildCharts();
         drawTick();
         if (!wasPlaying) setPlaying(!reducedMotion);
@@ -1159,6 +1234,7 @@
         });
         scrubber.addEventListener('input', function () {
             state.t = (Number(scrubber.value) / 1000) * state.recon.durationS;
+            stepCameraFollow();
             if (!state.playing) drawTick();
         });
         Array.prototype.forEach.call(document.querySelectorAll('.speed-btn'), function (btn) {
@@ -1169,6 +1245,21 @@
                 });
             });
         });
+        Array.prototype.forEach.call(document.querySelectorAll('.view-btn'), function (btn) {
+            btn.addEventListener('click', function () { applyView(btn.getAttribute('data-view')); });
+        });
+        document.getElementById('restart-btn').addEventListener('click', function () {
+            state.t = 0;
+            stepCameraFollow();
+            setPlaying(true);
+        });
+        document.getElementById('anomaly-btn').addEventListener('click', function () {
+            state.t = Math.max(0, CONFIG.ANOMALY_START_S - 5); // arrive just before the glitch
+            stepCameraFollow();
+            setPlaying(true);
+        });
+        document.getElementById('zoom-in').addEventListener('click', function () { setZoom(state.zoom * 0.8); });
+        document.getElementById('zoom-out').addEventListener('click', function () { setZoom(state.zoom * 1.25); });
 
         window.addEventListener('resize', sizeCanvas);
         sizeCanvas();

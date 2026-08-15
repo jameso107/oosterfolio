@@ -66,8 +66,8 @@
                         <span class="recon-badge">Reconstructed from summary data</span>
                         <span class="alarm-badge" id="alarm-badge" hidden></span>
                     </div>
-                    <canvas id="deck-canvas" aria-label="3D replay of the selected Ingenuity flight over reconstructed Mars terrain. Use the playback controls below; the charts alongside carry the same data."></canvas>
-                    <p class="deck-hint">Drag to orbit the camera</p>
+                    <canvas id="deck-canvas" aria-label="3D replay of Ingenuity Flight 6 over the real Jezero Crater landscape. Use the playback and camera controls below; the charts alongside carry the same data."></canvas>
+                    <p class="deck-hint">Drag to orbit &middot; scroll to zoom</p>
                     <div class="playback-bar">
                         <button type="button" class="play-btn" id="play-btn" aria-label="Play or pause the replay">&#9654;</button>
                         <input type="range" id="scrubber" min="0" max="1000" value="0" aria-label="Scrub through the flight">
@@ -79,6 +79,19 @@
                             <button type="button" class="speed-btn" data-speed="2">2&times;</button>
                             <button type="button" class="speed-btn" data-speed="4">4&times;</button>
                         </div>
+                    </div>
+                    <div class="camera-bar">
+                        <div class="speed-group" role="group" aria-label="Camera view">
+                            <button type="button" class="speed-btn view-btn active" data-view="overview" aria-pressed="true">Overview</button>
+                            <button type="button" class="speed-btn view-btn" data-view="follow" aria-pressed="false">Follow</button>
+                            <button type="button" class="speed-btn view-btn" data-view="top" aria-pressed="false">Top</button>
+                        </div>
+                        <div class="speed-group" role="group" aria-label="Zoom">
+                            <button type="button" class="speed-btn" id="zoom-in" aria-label="Zoom in">+</button>
+                            <button type="button" class="speed-btn" id="zoom-out" aria-label="Zoom out">&minus;</button>
+                        </div>
+                        <button type="button" class="ghost-btn" id="restart-btn">Restart</button>
+                        <button type="button" class="ghost-btn" id="anomaly-btn">Jump to the anomaly (T+54s)</button>
                     </div>
                 </div>
 

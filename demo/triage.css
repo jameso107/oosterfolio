@@ -216,6 +216,14 @@
     flex-wrap: wrap;
 }
 
+.camera-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+}
+
 .play-btn {
     width: 42px;
     height: 42px;
