@@ -1,9 +1,20 @@
 /* Color Variables - University of Michigan Colors */
 :root {
+    /* Theme slots. A company page overrides these four (and the *-rgb
+       channel lists below) to re-skin the whole site. See portfolio/companies.js. */
     --maize: #FFCB05;
     --blue: #00274C;
     --blue-light: #003A6B;
     --blue-dark: #001A33;
+
+    /* Space separated channels so translucent rules can theme too:
+       rgb(var(--accent-rgb) / 0.2) */
+    --accent-rgb: 255 203 5;
+    --bg-rgb: 0 39 76;
+    --bg-light-rgb: 0 58 107;
+    --bg-dark-rgb: 0 26 51;
+    --accent-bright: #FFD700;
+
     --white: #FFFFFF;
     --gray-light: #F5F5F5;
     --gray: #E0E0E0;
@@ -71,7 +82,7 @@ body {
     border: 4px solid var(--maize);
     border-radius: 50%;
     opacity: 0;
-    box-shadow: 0 0 20px rgba(255, 203, 5, 0.5);
+    box-shadow: 0 0 20px rgb(var(--accent-rgb) / 0.5);
 }
 
 .ripple:nth-child(1) {
@@ -176,7 +187,7 @@ body {
     opacity: 0;
     position: absolute;
     white-space: nowrap;
-    text-shadow: 0 4px 20px rgba(255, 203, 5, 0.5);
+    text-shadow: 0 4px 20px rgb(var(--accent-rgb) / 0.5);
 }
 
 .name-left {
@@ -231,10 +242,10 @@ body.animating {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(0, 39, 76, 0.78);
+    background-color: rgb(var(--bg-rgb) / 0.78);
     -webkit-backdrop-filter: blur(18px) saturate(160%);
     backdrop-filter: blur(18px) saturate(160%);
-    border-bottom: 1px solid rgba(255, 203, 5, 0.12);
+    border-bottom: 1px solid rgb(var(--accent-rgb) / 0.12);
     padding: 1rem 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -411,7 +422,7 @@ body.animating {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(0, 39, 76, 0.75) 0%, rgba(0, 58, 107, 0.75) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-rgb) / 0.75) 0%, rgb(var(--bg-light-rgb) / 0.75) 100%);
     z-index: 1;
     backdrop-filter: blur(1px);
 }
@@ -457,13 +468,13 @@ body.animating {
     font-weight: 600;
     border-radius: 50px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 4px 15px rgb(var(--accent-rgb) / 0.3);
 }
 
 .cta-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.4);
-    background-color: #FFD700;
+    box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 0.4);
+    background-color: var(--accent-bright);
 }
 
 /* Section Styles */
@@ -514,12 +525,12 @@ section {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
 }
 
 .about-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 10px 30px rgb(var(--accent-rgb) / 0.3);
     border-color: var(--maize);
 }
 
@@ -560,12 +571,12 @@ section {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     gap: 0;
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
 }
 
 .project-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 10px 30px rgb(var(--accent-rgb) / 0.3);
     border-color: var(--maize);
 }
 
@@ -589,7 +600,7 @@ section {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-light-rgb) / 0.6) 100%);
     z-index: 1;
 }
 
@@ -599,23 +610,23 @@ section {
 }
 
 .tshirt-robot::before {
-    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-light-rgb) / 0.6) 100%);
 }
 
 .ballbot::before {
-    background: linear-gradient(135deg, rgba(0, 58, 107, 0.6) 0%, rgba(0, 39, 76, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-light-rgb) / 0.6) 0%, rgb(var(--bg-rgb) / 0.6) 100%);
 }
 
 .haunted-house::before {
-    background: linear-gradient(135deg, rgba(0, 26, 51, 0.6) 0%, rgba(0, 39, 76, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-dark-rgb) / 0.6) 0%, rgb(var(--bg-rgb) / 0.6) 100%);
 }
 
 .robot-3-days::before {
-    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-light-rgb) / 0.6) 100%);
 }
 
 .first-robotics::before {
-    background: linear-gradient(135deg, rgba(0, 39, 76, 0.6) 0%, rgba(0, 58, 107, 0.6) 100%);
+    background: linear-gradient(135deg, rgb(var(--bg-rgb) / 0.6) 0%, rgb(var(--bg-light-rgb) / 0.6) 100%);
 }
 
 .project-overlay {
@@ -690,13 +701,13 @@ section {
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 4px 15px rgb(var(--accent-rgb) / 0.3);
 }
 
 .expand-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.4);
-    background-color: #FFD700;
+    box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 0.4);
+    background-color: var(--accent-bright);
 }
 
 .expand-button.expanded {
@@ -712,7 +723,7 @@ section {
 .project-expanded {
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 2px solid rgba(255, 203, 5, 0.3);
+    border-top: 2px solid rgb(var(--accent-rgb) / 0.3);
     animation: fadeIn 0.3s ease;
 }
 
@@ -888,13 +899,13 @@ section {
     z-index: 10002;
     transition: all 0.3s ease;
     color: var(--blue);
-    box-shadow: 0 4px 15px rgba(255, 203, 5, 0.4);
+    box-shadow: 0 4px 15px rgb(var(--accent-rgb) / 0.4);
 }
 
 .modal-close:hover {
     transform: scale(1.1) rotate(90deg);
-    background-color: #FFD700;
-    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.6);
+    background-color: var(--accent-bright);
+    box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 0.6);
 }
 
 .modal-close svg {
@@ -1021,7 +1032,7 @@ section {
 }
 
 .modal-body::-webkit-scrollbar-thumb:hover {
-    background: #FFD700;
+    background: var(--accent-bright);
 }
 
 /* Journey Section */
@@ -1070,12 +1081,12 @@ section {
     border-radius: 10px;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
 }
 
 .timeline-content:hover {
     transform: translateX(10px);
-    box-shadow: 0 5px 20px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 5px 20px rgb(var(--accent-rgb) / 0.3);
     border-color: var(--maize);
 }
 
@@ -1110,7 +1121,7 @@ section {
     padding: 2.5rem 2rem;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
     transition: all 0.3s ease;
     text-decoration: none;
     display: flex;
@@ -1122,7 +1133,7 @@ section {
 
 .news-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 10px 30px rgb(var(--accent-rgb) / 0.3);
     border-color: var(--maize);
 }
 
@@ -1153,7 +1164,7 @@ section {
 }
 
 .news-card:hover .news-link {
-    color: #FFD700;
+    color: var(--accent-bright);
 }
 
 /* Contact Section */
@@ -1199,7 +1210,7 @@ section {
     transform: translateY(-5px);
     background-color: var(--maize);
     color: var(--blue);
-    box-shadow: 0 10px 25px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 10px 25px rgb(var(--accent-rgb) / 0.3);
 }
 
 .contact-icon {
@@ -1384,7 +1395,7 @@ section {
 }
 
 .cta-button.cta-secondary {
-    background-color: rgba(0, 39, 76, 0.45);
+    background-color: rgb(var(--bg-rgb) / 0.45);
     color: var(--maize);
     border: 2px solid var(--maize);
     box-shadow: none;
@@ -1393,8 +1404,8 @@ section {
 }
 
 .cta-button.cta-secondary:hover {
-    background-color: rgba(255, 203, 5, 0.12);
-    box-shadow: 0 6px 20px rgba(255, 203, 5, 0.2);
+    background-color: rgb(var(--accent-rgb) / 0.12);
+    box-shadow: 0 6px 20px rgb(var(--accent-rgb) / 0.2);
 }
 
 .hero-now {
@@ -1403,8 +1414,8 @@ section {
     line-height: 1.6;
     padding: 0.6rem 1.2rem;
     border-radius: 50px;
-    background-color: rgba(0, 26, 51, 0.55);
-    border: 1px solid rgba(255, 203, 5, 0.25);
+    background-color: rgb(var(--bg-dark-rgb) / 0.55);
+    border: 1px solid rgb(var(--accent-rgb) / 0.25);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
 }
@@ -1449,13 +1460,13 @@ section {
     padding: 2.5rem;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .ai-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(255, 203, 5, 0.3);
+    box-shadow: 0 10px 30px rgb(var(--accent-rgb) / 0.3);
     border-color: var(--maize);
 }
 
@@ -1486,7 +1497,7 @@ button.ai-card-title-link {
 button.ai-card-link {
     background: none;
     border: 0;
-    border-bottom: 2px solid rgba(255, 203, 5, 0.4);
+    border-bottom: 2px solid rgb(var(--accent-rgb) / 0.4);
     padding: 0 0 2px;
     font: inherit;
     font-weight: 600;
@@ -1520,8 +1531,8 @@ button.ai-card-link {
     font-weight: 600;
     letter-spacing: 0.01em;
     color: var(--maize);
-    background-color: rgba(255, 203, 5, 0.1);
-    border: 1px solid rgba(255, 203, 5, 0.45);
+    background-color: rgb(var(--accent-rgb) / 0.1);
+    border: 1px solid rgb(var(--accent-rgb) / 0.45);
 }
 
 .ai-card-links {
@@ -1534,7 +1545,7 @@ button.ai-card-link {
     color: var(--white);
     font-weight: 600;
     text-decoration: none;
-    border-bottom: 2px solid rgba(255, 203, 5, 0.4);
+    border-bottom: 2px solid rgb(var(--accent-rgb) / 0.4);
     padding-bottom: 2px;
     transition: color 0.2s ease, border-color 0.2s ease;
 }
@@ -1645,7 +1656,7 @@ button.ai-card-link {
     margin: 2rem auto;
     max-width: 860px;
     background-color: var(--blue-dark);
-    border: 1px solid rgba(255, 203, 5, 0.2);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
     border-radius: 15px;
     padding: 1.5rem;
     overflow-x: auto;
@@ -1674,6 +1685,61 @@ button.ai-card-link {
 }
 
 /* ============================================= */
+/* Highlights (landing page)                     */
+/* ============================================= */
+
+.highlights {
+    background-color: var(--blue);
+}
+
+.highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.highlight-card {
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.highlight-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--maize);
+    box-shadow: 0 10px 30px rgb(var(--accent-rgb) / 0.25);
+}
+
+.highlight-stat {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--maize);
+    margin-bottom: 0.6rem;
+}
+
+.highlight-label {
+    color: var(--white);
+    line-height: 1.7;
+    opacity: 0.92;
+}
+
+@media (max-width: 480px) {
+    .highlight-stat {
+        font-size: 1.4rem;
+    }
+
+    .highlight-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ============================================= */
 /* Interaction polish                            */
 /* ============================================= */
 
@@ -1692,12 +1758,6 @@ button:focus-visible {
     outline: 3px solid var(--maize);
     outline-offset: 3px;
     border-radius: 4px;
-}
-
-/* Old #projects anchor keeps working */
-.anchor-alias {
-    display: block;
-    height: 0;
 }
 
 section[id] {
@@ -1728,6 +1788,7 @@ section[id] {
     }
 
     .about-card:hover,
+    .highlight-card:hover,
     .project-card:hover,
     .news-card:hover,
     .ai-card:hover,

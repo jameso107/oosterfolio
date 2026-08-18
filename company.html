@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+      Shell for every company portfolio page. The Vercel rewrite in vercel.json
+      sends /<slug> here, and portfolio/render.js builds the page from the entry
+      for that slug in portfolio/companies.js.
+
+      These pages are unlisted on purpose: nothing links to them, they are not in
+      sitemap.xml, and the robots tag below keeps them out of search results.
+      The only way in is typing the URL or following a link James sent.
+    -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+
+    <title>James Oosterhouse</title>
+    <meta name="description" content="Portfolio of James Oosterhouse: AI engineer, founder, roboticist.">
+    <meta name="theme-color" content="#00274C">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="James Oosterhouse">
+    <meta property="og:description" content="AI engineer, founder, roboticist.">
+    <meta property="og:image" content="https://ooster.house/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/png" href="/gear.png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/portfolio/portfolio.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body>
+    <div id="app"></div>
+
+    <noscript>
+        <div class="container" style="padding: 6rem 20px; text-align: center;">
+            <h1 style="color: var(--maize);">James Oosterhouse</h1>
+            <p style="margin: 1rem 0 2rem;">This page needs JavaScript to load. The main site works without it.</p>
+            <a href="/" class="cta-button">Go to ooster.house</a>
+        </div>
+    </noscript>
+
+    <!-- Order matters: content, then configs, then the renderer (which writes
+         the DOM synchronously), then script.js which wires up behavior. -->
+    <script src="/portfolio/content.js"></script>
+    <script src="/portfolio/companies.js"></script>
+    <script src="/portfolio/render.js"></script>
+    <script src="/script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

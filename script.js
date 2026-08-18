@@ -125,12 +125,9 @@ function getPhotoPaths() {
     
     // Return paths - check if images are in root or in images/ folder
     // Try root first, then images/ folder as fallback
-    return imageFiles.map(file => {
-        // Try root directory first (if uploaded individually)
-        return file;
-        // If that doesn't work, the onerror handler will hide the image
-        // Alternative: return `images/${file}` if images are in a folder
-    });
+    // Absolute so the sliders also work on a company page rendered at /<slug>.
+    // If an image is missing the onerror handler hides it silently.
+    return imageFiles.map(file => `/${file}`);
 }
 
 // Initialize photo sliders
@@ -274,12 +271,14 @@ if (hamburger && navMenu) {
 }
 
 // Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
+if (hamburger && navMenu) {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
     });
-});
+}
 
 // Smooth scroll for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -1,0 +1,130 @@
+/*
+ * Company page styles.
+ *
+ * Loaded after styles.css. Everything here is either a component that only
+ * exists on a /<company> page, or a small adjustment for the longer, more
+ * targeted copy those pages carry. All colors go through the theme slots in
+ * styles.css so a company theme re-skins these too.
+ */
+
+/* ---------------------------------------------------------------- hero */
+
+.hero-kicker {
+    display: inline-block;
+    margin-bottom: 1.1rem;
+    padding: 0.4rem 1.1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--maize);
+    background-color: rgb(var(--bg-dark-rgb) / 0.55);
+    border: 1px solid rgb(var(--accent-rgb) / 0.35);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.hero-content {
+    max-width: 860px;
+}
+
+.hero-description {
+    max-width: 720px;
+}
+
+/* ------------------------------------------------------- why <company> */
+
+.fit-grid {
+    align-items: stretch;
+}
+
+.fit-card {
+    border-left: 4px solid var(--maize);
+    text-align: left;
+}
+
+.fit-card h3 {
+    text-align: left;
+}
+
+.fit-card p {
+    text-align: left;
+    font-size: 1.02rem;
+    line-height: 1.75;
+}
+
+/* ------------------------------------------------ per company framing */
+
+/* The one line that says why a piece of work matters to this company. */
+.ai-card-angle,
+.project-angle {
+    margin: 0 0 1.1rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid rgb(var(--accent-rgb) / 0.5);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--maize);
+    opacity: 0.88;
+}
+
+.project-angle {
+    margin: 0.15rem 0 1.2rem;
+}
+
+/* -------------------------------------------------------------- footer */
+
+.footer-note {
+    width: 100%;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    opacity: 0.6;
+}
+
+/* ----------------------------------------------------------- not found */
+
+.page-missing {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.page-missing-code {
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--maize);
+    opacity: 0.35;
+}
+
+.page-missing h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.75rem 0 0.75rem;
+    color: var(--white);
+}
+
+.page-missing p {
+    margin-bottom: 2rem;
+    opacity: 0.85;
+}
+
+/* ---------------------------------------------------------- responsive */
+
+@media (max-width: 768px) {
+    .hero-kicker {
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+    }
+
+    .page-missing-code {
+        font-size: 3.5rem;
+    }
+
+    .page-missing h1 {
+        font-size: 1.5rem;
+    }
+}

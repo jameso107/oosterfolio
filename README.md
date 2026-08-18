@@ -2,14 +2,51 @@
 
 Personal portfolio of James Oosterhouse: AI engineer, founder, roboticist. Live at [ooster.house](https://ooster.house).
 
-The site is a static single page (plain HTML, CSS, and JavaScript, no framework) with pop-out case study windows and one interactive demo, deployed on Vercel.
+Plain HTML, CSS, and JavaScript. No framework and no build step, deployed on Vercel.
 
 ## What's here
 
-| Route | What it is |
-|---|---|
-| `/` | Home: AI work (case studies open in pop-out windows), robotics builds, journey timeline |
-| `/demo/triage` | **TRIAGE: Flight Edition**, a live public rebuild of the TRIAGE concept |
+| Route | Listed | What it is |
+|---|---|---|
+| `/` | yes | Landing page: the opening animation, the photo wall, a short highlights block, and the links |
+| `/demo/triage` | yes | **TRIAGE: Flight Edition**, a live public rebuild of the TRIAGE concept |
+| `/<company>` | **no** | A portfolio aimed at one company, for example `/disney` or `/nasa` |
+
+## Company pages
+
+Each company page is the full portfolio (why this company, AI work with pop-out case studies, robotics builds, who I am, the journey timeline, press, contact) reordered and re-framed for one employer, on that employer's color scheme.
+
+**They are unlisted, not secret.** Nothing on the site links to them, they are absent from `sitemap.xml`, and `company.html` carries `noindex, nofollow, noarchive`. The only way in is typing the URL or following a link James sent. Anyone who has the link can open it, so treat these as public if shared.
+
+### Adding a company
+
+1. Open `portfolio/companies.js`, copy the `TEMPLATE` block at the bottom of the file, and add it to `COMPANIES` under the slug you want in the URL.
+2. Deploy. `/<slug>` already routes here, so no routing change is needed.
+
+### How it fits together
+
+```
+vercel.json         rewrites /:slug -> /company.html (after the filesystem,
+                    so /demo/triage and every asset still win)
+company.html        the shell: noindex tags, stylesheets, #app, script order
+portfolio/
+  content.js        every reusable block of copy: PROFILE, ABOUT, AI_WORK
+                    (with the case study bodies), ROBOTICS, JOURNEY, NEWS
+  companies.js      one config per company: theme, hero, why-us cards, and
+                    which content blocks to show in what order
+  render.js         reads the slug from the URL, applies the theme, and writes
+                    the page synchronously before script.js wires up behavior
+  portfolio.css     the few components that only exist on a company page
+index.html          the landing page, deliberately static so it renders with
+                    JavaScript off and stays crawlable
+styles.css          shared base. Colors go through theme slots (--maize,
+                    --blue, --accent-rgb, ...) so a company theme re-skins
+                    the whole site by overriding nine custom properties
+```
+
+An unknown slug renders a 404 view instead of a company page. Because it is served through a rewrite it returns HTTP 200, so a mistyped link looks like a 404 to a person but not to a crawler. The `noindex` tag covers the crawler case.
+
+Two standing copy rules when editing `content.js` or `companies.js`: no em dashes in anything that renders, and only facts that are already true elsewhere on this site.
 
 ## TRIAGE: Flight Edition (the demo)
 
@@ -83,10 +120,16 @@ Static site, no build step:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000`. Clean URLs (`/demo/triage` instead of `/demo/triage.html`) are handled by Vercel's `cleanUrls` in production.
+Then open `http://localhost:8000`. Two routing behaviors come from `vercel.json` and are absent from a plain static server: clean URLs (`/demo/triage` instead of `/demo/triage.html`) and the `/:slug` rewrite that serves company pages. To preview a company page without that rewrite, open `company.html` with the slug as a query parameter:
+
+```bash
+open "http://localhost:8000/company.html?company=disney"
+```
+
+For the real routing, run `vercel dev` instead.
 
 The live narrative endpoint (`api/narrative.js`) runs as a Vercel serverless function and needs `ANTHROPIC_API_KEY` set in the Vercel project. Without it the endpoint returns 503 and the demo keeps working in cached mode; unplugging the key is a supported state, not an outage.
 
 ## Stack
 
-Plain HTML/CSS/JS, one Vercel serverless function, `@anthropic-ai/sdk`, and zero client-side dependencies. The demo chart is hand-rolled SVG.
+Plain HTML/CSS/JS, one Vercel serverless function, `@anthropic-ai/sdk`, and zero client-side dependencies. Company pages are rendered client-side from plain scripts, no bundler. The demo chart is hand-rolled SVG.
