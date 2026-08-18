@@ -1,0 +1,633 @@
+/*
+ * Walt Disney Imagineering page.
+ *
+ * Loaded after styles.css and portfolio.css. The :root block re-skins the
+ * shared components (cards, chips, timeline, modal) to a night palette, and
+ * everything below it is built only for this page.
+ */
+
+:root {
+    --maize: #8FD3FF;
+    --accent-bright: #BCE6FF;
+    --accent-rgb: 143 211 255;
+    --blue: #0B1440;
+    --bg-rgb: 11 20 64;
+    --blue-light: #16225E;
+    --bg-light-rgb: 22 34 94;
+    --blue-dark: #060B26;
+    --bg-dark-rgb: 6 11 38;
+
+    /* Second accent, used for the wish, the sparkle, and anything lit. */
+    --gold: #F4C95D;
+    --gold-rgb: 244 201 93;
+}
+
+/* ============================================================ */
+/* Opening animation                                            */
+/* ============================================================ */
+
+.castle-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(120% 90% at 50% 105%, #1B2B78 0%, rgba(27, 43, 120, 0) 60%),
+        linear-gradient(180deg, #04081F 0%, #0B1440 55%, #142063 100%);
+    opacity: 1;
+    transition: opacity 0.7s ease;
+}
+
+.castle-overlay.is-done {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.castle-sky {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.castle-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    opacity: 0;
+    animation: starFade 2.4s ease-in-out infinite;
+}
+
+@keyframes starFade {
+    0%, 100% { opacity: 0.12; }
+    50%      { opacity: 0.85; }
+}
+
+.castle-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.2rem, 1.4vw, 1rem);
+    padding: 0 5vw;
+}
+
+.castle-word {
+    font-size: clamp(3rem, 12vw, 8.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--white);
+    opacity: 0;
+}
+
+.castle-word-left  { animation: castleInLeft  0.6s cubic-bezier(.2,.8,.3,1) 0.15s forwards; }
+.castle-word-right { animation: castleInRight 0.6s cubic-bezier(.2,.8,.3,1) 0.15s forwards; }
+
+@keyframes castleInLeft {
+    from { opacity: 0; transform: translateX(-70px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes castleInRight {
+    from { opacity: 0; transform: translateX(70px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* The castle stands in for the M, the way the Block M does on the main site. */
+.castle-mark {
+    width: clamp(3.8rem, 15.5vw, 11rem);
+    height: auto;
+    overflow: visible;
+}
+
+.castle-line {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 7;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: castleDraw 1s ease-in-out 0.45s forwards;
+}
+
+@keyframes castleDraw {
+    to { stroke-dashoffset: 0; }
+}
+
+.castle-body {
+    fill: #0A1233;
+    opacity: 0;
+    animation: castleFill 0.5s ease-out 1.35s forwards;
+}
+
+@keyframes castleFill {
+    to { opacity: 1; }
+}
+
+.castle-window {
+    fill: var(--gold);
+    opacity: 0;
+    animation: windowLight 0.35s ease-out forwards;
+}
+
+@keyframes windowLight {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.castle-arc-path { fill: none; stroke: none; }
+
+.castle-spark {
+    offset-path: path('M -40 216 Q 120 -262 280 216');
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+    opacity: 0;
+    animation: sparkFly 1.15s cubic-bezier(.35,0,.65,1) 1.45s forwards;
+}
+
+@keyframes sparkFly {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+}
+
+.castle-burst {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    animation: burstPop 0.75s cubic-bezier(.2,.7,.4,1) 1.95s forwards;
+}
+
+@keyframes burstPop {
+    0%   { opacity: 0; transform: scale(0.25); }
+    16%  { opacity: 1; transform: scale(0.85); }
+    100% { opacity: 0; transform: scale(2.4); }
+}
+
+.castle-skip {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0;
+    animation: castleFill 0.5s ease-out 1.9s forwards;
+}
+
+.castle-skip span { opacity: 0.45; }
+
+body.castle-running {
+    overflow: hidden;
+}
+
+/* Reduced motion: hold the finished frame, then get out of the way. */
+@media (prefers-reduced-motion: reduce) {
+    .castle-word,
+    .castle-body,
+    .castle-window,
+    .castle-skip {
+        opacity: 1;
+        animation: none;
+    }
+
+    .castle-line {
+        stroke-dashoffset: 0;
+        animation: none;
+    }
+
+    .castle-spark,
+    .castle-burst,
+    .castle-star {
+        display: none;
+    }
+}
+
+/* ============================================================ */
+/* Hero                                                         */
+/* ============================================================ */
+
+.disney-page .hero-overlay {
+    background: linear-gradient(180deg, rgb(var(--bg-dark-rgb) / 0.86) 0%, rgb(var(--bg-rgb) / 0.82) 45%, rgb(var(--bg-rgb) / 0.94) 100%);
+}
+
+.night-sky {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.night-sky .castle-star {
+    animation-duration: 4s;
+}
+
+.hero-kicker {
+    color: var(--gold);
+    border-color: rgb(var(--gold-rgb) / 0.4);
+}
+
+/* ============================================================ */
+/* Section furniture                                            */
+/* ============================================================ */
+
+.disney-page .section-title::after {
+    background: linear-gradient(to right, var(--gold), var(--maize));
+}
+
+.section-kicker {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+}
+
+.reconstructed-badge {
+    display: inline-block;
+    padding: 0.3rem 0.85rem;
+    border-radius: 50px;
+    border: 1px solid rgb(var(--gold-rgb) / 0.45);
+    background-color: rgb(var(--gold-rgb) / 0.1);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+/* ============================================================ */
+/* Show control                                                 */
+/* ============================================================ */
+
+.showctl {
+    background-color: var(--blue-dark);
+}
+
+.showctl-frame {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.showctl-panel {
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 15px;
+    padding: 1.25rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+}
+
+.showctl-panel h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--maize);
+    margin-bottom: 0.9rem;
+}
+
+.plan-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    background-color: #060C24;
+}
+
+.cue-list {
+    position: relative;
+    list-style: none;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 0;
+    padding-right: 0.35rem;
+}
+
+.cue-row {
+    display: grid;
+    grid-template-columns: 3.1rem 3.1rem 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+    padding: 0.5rem 0.55rem;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    opacity: 0.42;
+    transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.cue-row.is-past   { opacity: 0.62; }
+
+.cue-row.is-active {
+    opacity: 1;
+    background-color: rgb(var(--accent-rgb) / 0.12);
+    border-left-color: var(--gold);
+}
+
+.cue-time {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.82rem;
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.cue-dept {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 0.15rem 0;
+    border-radius: 4px;
+    background-color: rgb(var(--accent-rgb) / 0.16);
+    color: var(--maize);
+}
+
+.cue-name { font-size: 0.9rem; line-height: 1.45; }
+.cue-name strong { display: block; font-weight: 600; }
+.cue-name span { opacity: 0.75; font-size: 0.83rem; }
+
+.transport {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+    padding: 0.9rem 1.1rem;
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 50px;
+}
+
+.transport-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 5.5rem;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--maize);
+    border-radius: 50px;
+    background-color: rgb(var(--accent-rgb) / 0.14);
+    color: var(--maize);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.transport-btn:hover {
+    background-color: var(--maize);
+    color: var(--blue);
+}
+
+.transport-clock {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    min-width: 5.4rem;
+}
+
+.transport-scrub {
+    flex: 1 1 180px;
+    accent-color: var(--maize);
+    cursor: pointer;
+}
+
+.showctl-note {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.75;
+}
+
+/* ============================================================ */
+/* Pepper's Ghost                                               */
+/* ============================================================ */
+
+.pepper {
+    background-color: var(--blue);
+}
+
+.pepper-frame {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.pepper-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    background-color: #060C24;
+}
+
+.pepper-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.1rem;
+}
+
+.pepper-controls label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--maize);
+}
+
+.pepper-controls input[type="range"] {
+    flex: 1 1 160px;
+    accent-color: var(--gold);
+    cursor: pointer;
+}
+
+.pepper-readout {
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+    font-weight: 600;
+    min-width: 3.2rem;
+    text-align: right;
+}
+
+/* ============================================================ */
+/* Showcase cards                                               */
+/* ============================================================ */
+
+/* Four cards, so two by two rather than a lonely orphan on row two. */
+.showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr));
+    gap: 1.75rem;
+    margin-top: 3rem;
+}
+
+.showcase-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.showcase-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--maize);
+    box-shadow: 0 12px 32px rgb(var(--accent-rgb) / 0.22);
+}
+
+.showcase-media {
+    position: relative;
+    min-height: 230px;
+    background-size: cover;
+    background-position: center;
+}
+
+.showcase-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(var(--bg-dark-rgb) / 0.25) 0%, rgb(var(--bg-light-rgb) / 0.9) 100%);
+}
+
+.showcase-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    flex: 1;
+}
+
+.showcase-body h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--maize);
+}
+
+.showcase-angle {
+    color: var(--gold);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.showcase-body p.showcase-desc {
+    font-size: 0.94rem;
+    line-height: 1.7;
+    opacity: 0.9;
+}
+
+.showcase-btn {
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--maize);
+    border-radius: 50px;
+    background-color: transparent;
+    color: var(--maize);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.showcase-btn:hover {
+    background-color: var(--maize);
+    color: var(--blue);
+}
+
+/* ============================================================ */
+/* People section                                               */
+/* ============================================================ */
+
+.people {
+    background-color: var(--blue-dark);
+}
+
+.people-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    align-items: center;
+}
+
+.people-figure svg {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background-color: #060C24;
+}
+
+.people-figure figcaption {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    opacity: 0.7;
+}
+
+.people-points {
+    list-style: none;
+    display: grid;
+    gap: 1.1rem;
+}
+
+.people-points li {
+    padding-left: 1rem;
+    border-left: 2px solid rgb(var(--gold-rgb) / 0.5);
+}
+
+.people-points strong {
+    display: block;
+    color: var(--maize);
+    font-size: 1.05rem;
+    margin-bottom: 0.3rem;
+}
+
+.people-points span {
+    font-size: 0.96rem;
+    line-height: 1.7;
+    opacity: 0.92;
+}
+
+/* ============================================================ */
+/* Responsive                                                   */
+/* ============================================================ */
+
+@media (max-width: 900px) {
+    .showctl-frame,
+    .pepper-frame,
+    .people-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cue-list { max-height: 260px; }
+}
+
+@media (max-width: 600px) {
+    .transport { border-radius: 18px; }
+    .transport-btn { flex: 1 1 auto; }
+    .cue-row { grid-template-columns: 2.8rem 2.8rem 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .showcase-card:hover { transform: none; }
+}

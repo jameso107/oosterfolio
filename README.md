@@ -10,7 +10,8 @@ Plain HTML, CSS, and JavaScript. No framework and no build step, deployed on Ver
 |---|---|---|
 | `/` | yes | Landing page: the opening animation, the photo wall, a short highlights block, and the links |
 | `/demo/triage` | yes | **TRIAGE: Flight Edition**, a live public rebuild of the TRIAGE concept |
-| `/<company>` | **no** | A portfolio aimed at one company, for example `/disney` or `/nasa` |
+| `/<company>` | **no** | A portfolio aimed at one company, for example `/nasa` |
+| `/disney` | **no** | A hand-built page for Walt Disney Imagineering |
 
 ## Company pages
 
@@ -22,6 +23,18 @@ Each company page is the full portfolio (why this company, AI work with pop-out 
 
 1. Open `portfolio/companies.js`, copy the `TEMPLATE` block at the bottom of the file, and add it to `COMPANIES` under the slug you want in the URL.
 2. Deploy. `/<slug>` already routes here, so no routing change is needed.
+
+### When a company outgrows the template
+
+Vercel checks the filesystem before it checks rewrites, so a `<slug>.html` at the repo root takes over `/<slug>` on its own and never reaches the `/:slug` rewrite. No routing change, and the config system keeps working for everyone else.
+
+`/disney` does this. It is a hand-built Imagineering page with three things the shared template does not have:
+
+- **A castle opening animation.** Two tall towers over a low middle, so the silhouette reads as a castle from the front and as an M between "JA" and "ES", the same joke the Block M plays on the landing page. Its own `sessionStorage` key, so it does not interfere with the main intro.
+- **A playable show control cue sheet** for The Ghost of Alice Lloyd: 19 cues against a hall plan that responds as the show runs. Marked as a reconstruction, the same honesty rule the TRIAGE demo follows.
+- **An interactive Pepper's Ghost diagram**, with the glass at a true 45 degrees so the optics in the drawing actually work.
+
+Copy still comes from `portfolio/content.js`, so the case studies, projects, and timeline are not duplicated. `disney.js` builds its project modals with its own `openShowcase(id)` rather than `script.js`'s DOM-scraping `openProjectModal`, which frees the cards to look however they like.
 
 ### How it fits together
 
@@ -40,6 +53,9 @@ portfolio/
   render.js         reads the slug from the URL, applies the theme, and writes
                     the page synchronously before script.js wires up behavior
   portfolio.css     the few components that only exist on a company page
+disney.html         hand-built Imagineering page, see above. Wins /disney
+                    from the filesystem, so the rewrite never sees it
+  portfolio/disney.js, disney.css   its animation, sections, and interactives
 index.html          the landing page, deliberately static so it renders with
                     JavaScript off and stays crawlable
 styles.css          shared base. Colors go through theme slots (--maize,

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+      Bespoke page for Walt Disney Imagineering.
+
+      This one deliberately breaks the shared company template. Because Vercel
+      checks the filesystem before it checks rewrites, /disney resolves to this
+      file and never reaches the /:slug rewrite. Any other company that wants a
+      hand-built page can do the same: drop <slug>.html at the root.
+
+      Copy still comes from portfolio/content.js so the case studies, projects,
+      and timeline stay in one place.
+    -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+
+    <title>James Oosterhouse for Walt Disney Imagineering</title>
+    <meta name="description" content="A portfolio written for Walt Disney Imagineering. A haunted house with a Pepper's Ghost illusion, a crowd-facing robot, and a summer at NASA JPL studying how people really use what we build them.">
+    <meta name="theme-color" content="#0B1440">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="James Oosterhouse">
+    <meta property="og:description" content="Engineer. Servant Leader. Believer.">
+    <meta property="og:image" content="https://ooster.house/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/png" href="/gear.png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/portfolio/portfolio.css">
+    <link rel="stylesheet" href="/portfolio/disney.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body class="disney-page">
+    <div id="app"></div>
+
+    <noscript>
+        <div class="container" style="padding: 6rem 20px; text-align: center;">
+            <h1 style="color: var(--maize);">James Oosterhouse</h1>
+            <p style="margin: 1rem 0 2rem;">This page needs JavaScript to load. The main site works without it.</p>
+            <a href="/" class="cta-button">Go to ooster.house</a>
+        </div>
+    </noscript>
+
+    <script src="/portfolio/content.js"></script>
+    <script src="/portfolio/disney.js"></script>
+    <script src="/script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
