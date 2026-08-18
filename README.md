@@ -26,8 +26,11 @@ Each company page is the full portfolio (why this company, AI work with pop-out 
 ### How it fits together
 
 ```
-vercel.json         rewrites /:slug -> /company.html (after the filesystem,
-                    so /demo/triage and every asset still win)
+vercel.json         rewrites /:slug -> /company (after the filesystem, so
+                    /demo/triage and every asset still win). The destination
+                    is the clean URL, not /company.html: under cleanUrls the
+                    .html path only matches the redirect phase, so a rewrite
+                    pointed at it resolves to nothing and falls through to 404.
 company.html        the shell: noindex tags, stylesheets, #app, script order
 portfolio/
   content.js        every reusable block of copy: PROFILE, ABOUT, AI_WORK
