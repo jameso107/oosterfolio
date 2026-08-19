@@ -13,6 +13,7 @@ Plain HTML, CSS, and JavaScript. No framework and no build step, deployed on Ver
 | `/<company>` | **no** | A portfolio aimed at one company, for example `/nasa` |
 | `/disney` | **no** | A hand-built page for Walt Disney Imagineering |
 | `/haunt` | **no** | The Alice Lloyd Haunt 3D walkthrough, embedded on `/disney` |
+| `/cannon` | **no** | The t-shirt cannon CAD viewer, embedded on `/disney` |
 
 ## Company pages
 
@@ -35,6 +36,7 @@ Vercel checks the filesystem before it checks rewrites, so a `<slug>.html` at th
 - **The Alice Lloyd Haunt 3D walkthrough**, embedded from `/haunt`. A first-person Three.js scene James built to design this year's haunt: collision, an elevator ride, a living portrait, a Pepper's Ghost station, procedural audio, and 11 numbered stations. Vendored from `jameso107/haunted` into `haunt/`, self-hosted so the page has no external runtime dependency. The iframe is lazy loaded and granted `pointer-lock` and `fullscreen`; the station list on the page is transcribed from the scene so its numbers match the sprites standing in it.
 - **An interactive Pepper's Ghost diagram**, with the glass at a true 45 degrees so the optics in the drawing actually work. It explains station 7 of the walkthrough.
 - **A FIRST Robotics section** carrying the people-centered case: the ESPN3 Robotics Gameday interview embedded, the real photo wall, the highlights, and the line about robots building kids. Photos and highlights are read out of `content.js` at render time so there is one source of truth.
+- **A 3D CAD viewer for the t-shirt cannon** at `/cannon`, embedded lazily. The Onshape STL export is 555MB and 11.1M triangles, so `scratchpad/stage1.js` streams it, clusters at 1.13mm to keep distinct solids distinct, then `stage2.js` drops unwanted components and decimates to a budget. Output is `cannon/model.bin`: an indexed mesh with 16-bit quantized positions, 68,683 triangles in 538KB. The viewer reuses the three.js already vendored for `/haunt` and hand rolls its orbit rather than pulling in the OrbitControls example.
 - **A live ballistics model for the t-shirt cannon**, ported step for step from `jameso107/tshirt-cannon-simulator` (Python, streamlit) so it runs client side: work-energy muzzle velocity, quadratic drag at dt = 0.01, and the same bisection that calibrates the friction factor to 200 ft at 100 psi. Checked against the Python to three decimals. Calibrated on that single measurement, it independently predicts 263 ft at the cannon's real 150 psi against a recorded 250 plus.
 
 Copy still comes from `portfolio/content.js`, so the case studies, projects, and timeline are not duplicated. `disney.js` builds its project modals with its own `openShowcase(id)` rather than `script.js`'s DOM-scraping `openProjectModal`, which frees the cards to look however they like.

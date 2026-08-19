@@ -621,6 +621,89 @@ body.castle-running {
     font-weight: 600;
 }
 
+/* ------------------------- the three views ------------------------- */
+
+.cannon-split {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 1.75rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.cannon-panel {
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 15px;
+    padding: 1.25rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+}
+
+.panel-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--maize);
+    margin-bottom: 0.9rem;
+}
+
+.cannon-numbers-title {
+    margin-top: 3rem;
+    text-align: center;
+    color: var(--gold);
+}
+
+/* The viewer sizes itself off its own viewport, so the frame just sets a shape. */
+.cad-frame {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #060B26;
+}
+
+.cad-stage {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    min-height: 320px;
+    border: 0;
+}
+
+.panel-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.9rem;
+}
+
+.panel-hint {
+    flex: 1 1 150px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.panel-bar .transport-btn {
+    text-decoration: none;
+    min-width: 6.5rem;
+    font-size: 0.84rem;
+    padding: 0.45rem 0.9rem;
+}
+
+.panel-caption {
+    margin-top: 1rem;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    padding-left: 0.9rem;
+    border-left: 2px solid rgb(var(--gold-rgb) / 0.5);
+    opacity: 0.9;
+}
+
+.cannon-panel .linkedin-container {
+    background-color: #060B26;
+}
+
 /* ============================================================ */
 /* FIRST Robotics                                               */
 /* ============================================================ */
@@ -770,7 +853,8 @@ body.castle-running {
 @media (max-width: 900px) {
     .pepper-frame,
     .people-grid,
-    .first-grid {
+    .first-grid,
+    .cannon-split {
         grid-template-columns: 1fr;
     }
 }
@@ -778,6 +862,7 @@ body.castle-running {
 @media (max-width: 600px) {
     .transport-btn { flex: 1 1 auto; }
     .walk-stage { min-height: 260px; }
+    .cad-stage { min-height: 280px; }
     .first-mosaic { grid-template-columns: repeat(2, 1fr); }
     .first-quote p { font-size: 1.15rem; }
 }

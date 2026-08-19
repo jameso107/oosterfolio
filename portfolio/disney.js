@@ -460,13 +460,38 @@
     function cannonSection() {
         var e = robot('tshirt-cannon');
         var specs = e.specs.map(function (sp) { return '<li class="spec">' + sp + '</li>'; }).join('');
+        var linkedin = /(<iframe src="https:\/\/www\.linkedin[^>]*><\/iframe>)/.exec(e.media);
 
         return '' +
         '<section id="cannon" class="cannon">' +
             '<div class="container">' +
                 '<p class="section-kicker">Show action equipment</p>' +
                 '<h2 class="section-title">The T-shirt Cannon</h2>' +
-                '<p class="section-intro">Two friends and I built this after hours, and Koops funded it so they could take it out to community events. The range was never really the point. The point is that a hundred people all turn to look at the same moment, and then something has to land in somebody\'s hands. That is a pressure vessel and a show at the same time, and neither one gets to win.</p>' +
+                '<p class="section-intro">Two friends and I built this after hours, and Koops funded it so they could take it out to community events. The range was never really the point. The point is that a hundred people all turn to look at the same moment, and then something has to land in somebody\'s hands. That is a pressure vessel and a show at the same time, and neither one gets to win. Three ways to look at it.</p>' +
+
+                '<div class="cannon-split">' +
+                    '<div class="cannon-panel">' +
+                        '<h3 class="panel-title">The machine</h3>' +
+                        '<div class="cad-frame">' +
+                            '<iframe id="cad-stage" class="cad-stage" src="/cannon" loading="lazy" ' +
+                                'allow="fullscreen" title="T-shirt cannon robot, CAD assembly in 3D"></iframe>' +
+                        '</div>' +
+                        '<div class="panel-bar">' +
+                            '<span class="panel-hint">Drag to spin it, scroll to zoom. 29 by 38 inch footprint, 38 inches tall.</span>' +
+                            '<button type="button" class="transport-btn" id="cad-full">Full screen</button>' +
+                            '<a class="transport-btn" href="https://cad.onshape.com/documents/4f74f3a329da239a0e884a97/w/e750e810e13841ee01e0a5a0/e/a961c01b77cf7d39ca9bd272" target="_blank" rel="noopener">Onshape</a>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="cannon-panel">' +
+                        '<h3 class="panel-title">In front of a crowd</h3>' +
+                        (linkedin
+                            ? '<div class="linkedin-container">' + linkedin[1] + '</div>'
+                            : '<p class="panel-hint">Video unavailable.</p>') +
+                        '<p class="panel-caption">This is the part that matters. The engineering only counts once it is loud, on a field, with people watching and nothing to hide behind.</p>' +
+                    '</div>' +
+                '</div>' +
+
+                '<h3 class="panel-title cannon-numbers-title">The numbers behind it</h3>' +
                 '<div class="cannon-frame">' + chartSvg() + '</div>' +
                 '<div class="cannon-controls">' +
                     '<div class="cannon-slider">' +
@@ -487,10 +512,11 @@
                     '<div class="stat"><span class="stat-v" id="tsc-ball">0</span><span class="stat-k">stress ball range (ft)</span></div>' +
                 '</div>' +
                 '<p class="cannon-note" id="tsc-note"></p>' +
+
                 '<h3 class="walk-route-title">What it is made of</h3>' +
                 '<ul class="cannon-specs">' + specs + '</ul>' +
-                '<p class="showctl-note">The curves come from the simulator I wrote for this thing, ported from Python so it runs here. I calibrated it on one measurement, 200 feet at 100 psi and 45 degrees. Push it to the 150 psi the cannon actually fires at and it lands on 263 feet, against the 250 plus we measured on the field. I did not tune it to do that. ' +
-                '<button type="button" class="ai-card-link" onclick="openShowcase(\'tshirt-cannon\')">CAD, build photos, and video</button>. ' +
+                '<p class="showctl-note">The 3D view is the real Onshape assembly. Its export is 11.1 million triangles and 555 megabytes, so I decimated it by vertex clustering down to 68,683 to make it something a browser could open. The curves come from the simulator I wrote for this thing, ported from Python so it runs here. I calibrated it on one measurement, 200 feet at 100 psi and 45 degrees. Push it to the 150 psi the cannon actually fires at and it lands on 263 feet, against the 250 plus we measured on the field. I did not tune it to do that. ' +
+                '<button type="button" class="ai-card-link" onclick="openShowcase(\'tshirt-cannon\')">Build photos and video</button>. ' +
                 'Simulator source is <a href="https://github.com/jameso107/tshirt-cannon-simulator" target="_blank" rel="noopener">on GitHub</a>.</p>' +
             '</div>' +
         '</section>';
@@ -703,14 +729,19 @@
     /* Interactive behavior                                         */
     /* ============================================================ */
 
-    function initWalkthrough() {
-        var btn = document.getElementById('walk-full');
-        var frame = document.getElementById('walk-stage');
+    function fullscreenButton(btnId, frameId) {
+        var btn = document.getElementById(btnId);
+        var frame = document.getElementById(frameId);
         if (!btn || !frame) return;
         btn.addEventListener('click', function () {
             if (frame.requestFullscreen) frame.requestFullscreen();
             else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
         });
+    }
+
+    function initWalkthrough() {
+        fullscreenButton('walk-full', 'walk-stage');
+        fullscreenButton('cad-full', 'cad-stage');
     }
 
     function initCannon() {

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>T-shirt Cannon Robot, CAD</title>
+<!--
+  Viewer for the Onshape assembly export. The source STL is 11.1M triangles and
+  555MB, so it was decimated by vertex clustering to model.bin: an indexed mesh
+  with 16-bit quantized positions, about 570KB. Three.js is the copy already
+  vendored for /haunt, so this page adds no new dependency. Orbit is hand rolled
+  rather than pulling in the OrbitControls example module.
+-->
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;
+    background:radial-gradient(120% 100% at 50% 15%, #1B2A6B 0%, #0B1440 55%, #060B26 100%);
+    font-family:Inter,-apple-system,'Segoe UI',system-ui,sans-serif;color:#8FD3FF;}
+  canvas{display:block;width:100%;height:100%;cursor:grab;}
+  canvas.dragging{cursor:grabbing;}
+  .hud{position:absolute;pointer-events:none;user-select:none;font-size:12px;letter-spacing:.02em;}
+  #meta{left:14px;bottom:12px;opacity:.75;line-height:1.5;}
+  #meta b{color:#F4C95D;font-weight:600;}
+  #hint{right:14px;bottom:12px;opacity:.6;}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#F4C95D;font-size:14px;letter-spacing:.14em;text-transform:uppercase;}
+  body.compact .hud{display:none;}
+  #err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    padding:0 24px;text-align:center;line-height:1.6;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hud" id="meta"></div>
+<div class="hud" id="hint">drag to rotate &middot; scroll to zoom</div>
+<div id="loading">loading assembly</div>
+<div id="err">Could not load the model.</div>
+<script src="/haunt/js/three.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var loadingEl = document.getElementById('loading');
+  var errEl = document.getElementById('err');
+  function fail(msg) {
+    loadingEl.style.display = 'none';
+    errEl.style.display = 'flex';
+    errEl.textContent = msg;
+  }
+  if (!window.THREE) { fail('Could not load the 3D engine.'); return; }
+
+  var canvas = document.getElementById('c');
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
+
+  scene.add(new THREE.HemisphereLight(0x9ecbff, 0x0a0f2e, 0.5));
+  var key = new THREE.DirectionalLight(0xfff1d0, 0.82); key.position.set(2.2, 3.2, 1.8); scene.add(key);
+  var fill = new THREE.DirectionalLight(0x8FD3FF, 0.42); fill.position.set(-2.4, 0.8, -1.6); scene.add(fill);
+  var rim = new THREE.DirectionalLight(0xF4C95D, 0.35); rim.position.set(-0.4, -1.6, 2.4); scene.add(rim);
+
+  /* ---- parse the quantized mesh ---- */
+  function parse(buf) {
+    var dv = new DataView(buf);
+    var magic = String.fromCharCode(dv.getUint8(0), dv.getUint8(1), dv.getUint8(2), dv.getUint8(3));
+    if (magic !== 'CANN') throw new Error('bad model header');
+    var vn = dv.getUint32(4, true), tn = dv.getUint32(8, true);
+    var bb = [];
+    for (var i = 0; i < 6; i++) bb.push(dv.getFloat32(12 + i * 4, true));
+    var bits = dv.getUint8(36);
+    var off = 40;
+
+    var pos = new Float32Array(vn * 3);
+    var sx = (bb[3] - bb[0]) / 65535, sy = (bb[4] - bb[1]) / 65535, sz = (bb[5] - bb[2]) / 65535;
+    for (var v = 0; v < vn; v++) {
+      pos[v * 3]     = bb[0] + dv.getUint16(off, true) * sx; off += 2;
+      pos[v * 3 + 1] = bb[1] + dv.getUint16(off, true) * sy; off += 2;
+      pos[v * 3 + 2] = bb[2] + dv.getUint16(off, true) * sz; off += 2;
+    }
+    var idx = bits === 32 ? new Uint32Array(tn * 3) : new Uint16Array(tn * 3);
+    for (var t = 0; t < tn * 3; t++) {
+      if (bits === 32) { idx[t] = dv.getUint32(off, true); off += 4; }
+      else { idx[t] = dv.getUint16(off, true); off += 2; }
+    }
+    return { pos: pos, idx: idx, vn: vn, tn: tn };
+  }
+
+  var pivot = new THREE.Group();
+  scene.add(pivot);
+  var fitH = 1, fitV = 1;      // worst case half extents once it is upright
+
+  function build(m) {
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(m.pos, 3));
+    g.setIndex(new THREE.BufferAttribute(m.idx, 1));
+    g.computeVertexNormals();
+    g.computeBoundingSphere();
+    g.computeBoundingBox();
+
+    /* Onshape exports Z up; three.js is Y up. Center on the origin and stand it
+       upright so the turret points at the sky. */
+    var c = g.boundingBox.getCenter(new THREE.Vector3());
+    g.translate(-c.x, -c.y, -c.z);
+    var bs = g.boundingBox.getSize(new THREE.Vector3());
+    /* after the Z up to Y up rotation, model Z becomes screen height */
+    fitV = bs.z / 2;
+    fitH = Math.sqrt(bs.x * bs.x + bs.y * bs.y) / 2;
+
+    var mesh = new THREE.Mesh(g, new THREE.MeshPhongMaterial({
+      color: 0xaab6cc, specular: 0x8fa4c8, shininess: 34, flatShading: true
+    }));
+    mesh.rotation.x = -Math.PI / 2;
+    pivot.add(mesh);
+
+    /* soft contact disc so it reads as standing on something */
+    var disc = new THREE.Mesh(
+      new THREE.CircleGeometry(fitH * 1.5, 48),
+      new THREE.MeshBasicMaterial({ color: 0x060B26, transparent: true, opacity: 0.55 })
+    );
+    disc.rotation.x = -Math.PI / 2;
+    disc.position.y = -fitV * 1.02;
+    pivot.add(disc);
+
+    var IN = 39.3701;
+    var dims = [bs.x, bs.y, bs.z].map(function (v) { return Math.round(v * IN); });
+    document.getElementById('meta').innerHTML =
+      '<b>MAIN assembly</b> &middot; ' + dims[0] + ' x ' + dims[1] + ' in footprint, ' +
+      dims[2] + ' in tall<br>Onshape export, ' + m.tn.toLocaleString() +
+      ' of 11,109,116 triangles';
+    loadingEl.style.display = 'none';
+  }
+
+  /* ---- hand rolled orbit ---- */
+  var theta = 0.9, phi = 0.24, zoom = 1, spin = true;
+  var drag = false, lx = 0, ly = 0, vTheta = 0;
+
+  function place() {
+    var t = Math.tan(camera.fov * Math.PI / 360);
+    var d = Math.max(fitV / t, fitH / (t * camera.aspect)) * 1.34 * zoom;
+    camera.position.set(
+      Math.cos(phi) * Math.sin(theta) * d,
+      Math.sin(phi) * d,
+      Math.cos(phi) * Math.cos(theta) * d
+    );
+    camera.lookAt(0, 0, 0);
+  }
+
+  canvas.addEventListener('pointerdown', function (e) {
+    drag = true; spin = false; lx = e.clientX; ly = e.clientY;
+    canvas.classList.add('dragging');
+    canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - lx, dy = e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    theta -= dx * 0.007; vTheta = -dx * 0.007;
+    phi = Math.max(-1.3, Math.min(1.3, phi + dy * 0.006));
+  });
+  function endDrag() { drag = false; canvas.classList.remove('dragging'); }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', endDrag);
+  canvas.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    zoom = Math.max(0.55, Math.min(2.4, zoom + (e.deltaY > 0 ? 0.08 : -0.08)));
+  }, { passive: false });
+
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    document.body.classList.toggle('compact', h < 430 || w < 520);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function tick() {
+    if (spin) theta += 0.0022;
+    else if (!drag && Math.abs(vTheta) > 0.0002) { theta += vTheta; vTheta *= 0.94; }
+    place();
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+
+  fetch('/cannon/model.bin')
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(function (b) { build(parse(b)); tick(); })
+    .catch(function () { fail('Could not load the model.'); });
+})();
+</script>
+</body>
+</html>
