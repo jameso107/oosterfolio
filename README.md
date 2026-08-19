@@ -12,6 +12,7 @@ Plain HTML, CSS, and JavaScript. No framework and no build step, deployed on Ver
 | `/demo/triage` | yes | **TRIAGE: Flight Edition**, a live public rebuild of the TRIAGE concept |
 | `/<company>` | **no** | A portfolio aimed at one company, for example `/nasa` |
 | `/disney` | **no** | A hand-built page for Walt Disney Imagineering |
+| `/haunt` | **no** | The Alice Lloyd Haunt 3D walkthrough, embedded on `/disney` |
 
 ## Company pages
 
@@ -31,8 +32,10 @@ Vercel checks the filesystem before it checks rewrites, so a `<slug>.html` at th
 `/disney` does this. It is a hand-built Imagineering page with three things the shared template does not have:
 
 - **A castle opening animation.** Two tall towers over a low middle, so the silhouette reads as a castle from the front and as an M between "JA" and "ES", the same joke the Block M plays on the landing page. Its own `sessionStorage` key, so it does not interfere with the main intro.
-- **A playable show control cue sheet** for The Ghost of Alice Lloyd: 19 cues against a hall plan that responds as the show runs. Marked as a reconstruction, the same honesty rule the TRIAGE demo follows.
-- **An interactive Pepper's Ghost diagram**, with the glass at a true 45 degrees so the optics in the drawing actually work.
+- **The Alice Lloyd Haunt 3D walkthrough**, embedded from `/haunt`. A first-person Three.js scene James built to design this year's haunt: collision, an elevator ride, a living portrait, a Pepper's Ghost station, procedural audio, and 11 numbered stations. Vendored from `jameso107/haunted` into `haunt/`, self-hosted so the page has no external runtime dependency. The iframe is lazy loaded and granted `pointer-lock` and `fullscreen`; the station list on the page is transcribed from the scene so its numbers match the sprites standing in it.
+- **An interactive Pepper's Ghost diagram**, with the glass at a true 45 degrees so the optics in the drawing actually work. It explains station 7 of the walkthrough.
+- **A FIRST Robotics section** carrying the people-centered case: the ESPN3 Robotics Gameday interview embedded, the real photo wall, the highlights, and the line about robots building kids. Photos and highlights are read out of `content.js` at render time so there is one source of truth.
+- **A live ballistics model for the t-shirt cannon**, ported step for step from `jameso107/tshirt-cannon-simulator` (Python, streamlit) so it runs client side: work-energy muzzle velocity, quadratic drag at dt = 0.01, and the same bisection that calibrates the friction factor to 200 ft at 100 psi. Checked against the Python to three decimals. Calibrated on that single measurement, it independently predicts 263 ft at the cannon's real 150 psi against a recorded 250 plus.
 
 Copy still comes from `portfolio/content.js`, so the case studies, projects, and timeline are not duplicated. `disney.js` builds its project modals with its own `openShowcase(id)` rather than `script.js`'s DOM-scraping `openProjectModal`, which frees the cards to look however they like.
 
@@ -56,6 +59,9 @@ portfolio/
 disney.html         hand-built Imagineering page, see above. Wins /disney
                     from the filesystem, so the rewrite never sees it
   portfolio/disney.js, disney.css   its animation, sections, and interactives
+haunt/              vendored from jameso107/haunted. The ONLY local edits are
+                    two asset paths rebased for this subdirectory, so the copy
+                    stays diffable against the source repo
 index.html          the landing page, deliberately static so it renders with
                     JavaScript off and stays crawlable
 styles.css          shared base. Colors go through theme slots (--maize,

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<!--
+  Vendored from jameso107/haunted (commit 87baed6, 2026-07-08), the
+  first-person walkthrough built to design the Alice Lloyd Haunt.
+  Embedded on /disney. The ONLY edits here are the two asset paths
+  below, rebased for this /haunt subdirectory. Keep it that way so the
+  two copies stay diffable against the source repo.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alice Lloyd Haunt 2026 — 3D Walkthrough</title>
+<link rel="icon" type="image/svg+xml" href="/haunt/favicon.svg">
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;}
+  #three{display:block;width:100%;height:100%;cursor:crosshair;}
+  .hud{position:absolute;color:#e8e2d4;user-select:none;pointer-events:none;}
+  #title{top:14px;left:16px;font-size:13px;letter-spacing:.5px;}
+  #title b{font-family:Georgia,serif;font-size:15px;color:#f6a13c;}
+  #help{top:52px;left:16px;font-size:11.5px;line-height:1.55;color:#b9b2a2;background:rgba(10,10,14,.55);padding:8px 10px;border-radius:8px;}
+  #station{bottom:26px;left:50%;transform:translateX(-50%);text-align:center;}
+  #station .n{display:inline-block;background:#f6a13c;color:#3a2a10;font-weight:700;border-radius:5px;padding:1px 8px;margin-right:8px;}
+  #station .name{font-family:Georgia,serif;font-size:17px;color:#ffe9c4;}
+  #station .desc{font-size:12px;color:#c9c2b2;margin-top:3px;}
+  #caption{top:22%;left:50%;transform:translateX(-50%);font-family:Georgia,serif;font-size:20px;color:#ffdf9e;text-shadow:0 2px 12px #000;text-align:center;}
+  #scare{top:38%;left:50%;transform:translateX(-50%);font-family:Georgia,serif;font-size:34px;font-weight:700;color:#ff4b3a;text-shadow:0 0 24px #a00,0 2px 8px #000;display:none;text-align:center;}
+  #cross{top:50%;left:50%;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.75);transform:translate(-50%,-50%);}
+  #minimap{position:absolute;top:14px;right:14px;background:rgba(12,11,9,.82);border:1px solid #4a4436;border-radius:8px;}
+  #overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,#141018 0%,#050408 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#e8e2d4;text-align:center;cursor:pointer;}
+  #overlay h1{font-family:Georgia,serif;font-size:30px;color:#f6a13c;margin:0 0 6px;}
+  #overlay h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:15px;color:#b9b2a2;margin:0 0 26px;}
+  #overlay .keys{font-size:13px;line-height:2;color:#cfc8b8;}
+  #overlay .go{margin-top:26px;font-size:15px;color:#ffe9c4;border:1px solid #f6a13c;border-radius:22px;padding:9px 26px;}
+  #overlay small{margin-top:22px;color:#7d7666;font-size:11px;}
+  kbd{background:#2a2620;border:1px solid #57503f;border-radius:4px;padding:0 6px;font-family:inherit;color:#ffdf9e;}
+</style>
+</head>
+<body>
+<canvas id="three"></canvas>
+<div class="hud" id="title"><b>ALICE LLOYD HAUNT 2026</b> &nbsp;·&nbsp; 3D walkthrough (schematic scale)</div>
+<div class="hud" id="help">
+  <kbd>W A S D</kbd> walk &nbsp; <kbd>mouse / drag</kbd> look &nbsp; <kbd>Q E</kbd> turn<br>
+  <kbd>Shift</kbd> run &nbsp; <kbd>Tab</kbd> bird's-eye &nbsp; <kbd>G</kbd> route arrows &nbsp; <kbd>H</kbd> hide help<br>
+  <kbd>Enter</kbd> skip the elevator ride
+</div>
+<div class="hud" id="station"></div>
+<div class="hud" id="caption"></div>
+<div class="hud" id="scare">"I NEVER LEFT THIS HALL!"</div>
+<div class="hud" id="cross"></div>
+<canvas id="minimap" width="204" height="192"></canvas>
+<div id="overlay">
+  <h1>THE GHOST OF ALICE LLOYD</h1>
+  <h2>Halloween 2026 · walk the build before you build it</h2>
+  <div class="keys">
+    You begin inside the elevator. The strike plays automatically.<br>
+    <kbd>W A S D</kbd> walk · <kbd>mouse</kbd> or <kbd>click-drag</kbd> look · <kbd>Shift</kbd> run<br>
+    <kbd>Tab</kbd> bird's-eye view · <kbd>G</kbd> toggle route arrows
+  </div>
+  <div class="go">Click to ride up</div>
+  <small>Best on desktop Chrome / Edge / Firefox · headphones recommended</small>
+</div>
+<script src="/haunt/js/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+if (!window.THREE){ document.getElementById('overlay').innerHTML='<h1>Could not load 3D engine</h1><h2>Check your connection and reload.</h2>'; return; }
+
+// ---------- constants ----------
+var SC = 0.04;                 // svg units -> meters
+var WALL_H = 2.72, CURT_H = 2.35, EYE = 1.6, PR = 0.36;
+var canvas = document.getElementById('three');
+var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x05060a);
+scene.fog = new THREE.FogExp2(0x05060a, 0.052);
+var camera = new THREE.PerspectiveCamera(72, 1, 0.05, 60);
+scene.add(new THREE.AmbientLight(0x323a52, 0.42));
+
+// ---------- helpers ----------
+var solids = [];   // collision segments in meters {x1,z1,x2,z2}
+function seg(x1,z1,x2,z2){ solids.push({x1:x1*SC,z1:z1*SC,x2:x2*SC,z2:z2*SC}); }
+
+var matWall  = new THREE.MeshLambertMaterial({color:0x40392f});
+var matCurt  = new THREE.MeshLambertMaterial({color:0x171a26});
+var matCurtN = new THREE.MeshLambertMaterial({color:0x2c151a});
+var matMetal = new THREE.MeshLambertMaterial({color:0x6f7680});
+var matDark  = new THREE.MeshLambertMaterial({color:0x141317});
+
+function wallMesh(x1,z1,x2,z2,h,mat,yBase){
+  var dx=(x2-x1)*SC, dz=(z2-z1)*SC, len=Math.sqrt(dx*dx+dz*dz);
+  var m = new THREE.Mesh(new THREE.BoxGeometry(len,h,0.16), mat);
+  m.position.set((x1+x2)/2*SC,(yBase||0)+h/2,(z1+z2)/2*SC);
+  m.rotation.y = -Math.atan2(dz,dx);
+  scene.add(m); return m;
+}
+function addWall(x1,z1,x2,z2){ wallMesh(x1,z1,x2,z2,WALL_H,matWall,0); seg(x1,z1,x2,z2); }
+function addCurt(x1,z1,x2,z2,mat){ wallMesh(x1,z1,x2,z2,CURT_H,mat||matCurt,0); seg(x1,z1,x2,z2); }
+function box(w,h,d,mat,x,y,z,ry){ var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); m.position.set(x*SC,y,z*SC); if(ry)m.rotation.y=ry; scene.add(m); return m; }
+function textTexture(lines,opts){
+  opts=opts||{}; var c=document.createElement('canvas'); c.width=opts.w||512; c.height=opts.h||256;
+  var g=c.getContext('2d'); g.fillStyle=opts.bg||'#efe3c8'; g.fillRect(0,0,c.width,c.height);
+  if(opts.border){ g.strokeStyle=opts.border; g.lineWidth=14; g.strokeRect(10,10,c.width-20,c.height-20); }
+  g.fillStyle=opts.fg||'#33261a'; g.textAlign='center'; g.textBaseline='middle';
+  var fs=opts.fs||44, y0=c.height/2-(lines.length-1)*fs*0.62;
+  for(var i=0;i<lines.length;i++){ g.font=(i===0&&opts.boldFirst?'bold ':'')+fs+'px Georgia,serif'; g.fillText(lines[i],c.width/2,y0+i*fs*1.24); }
+  var t=new THREE.CanvasTexture(c); return t;
+}
+function figure(color,face){
+  var grp=new THREE.Group();
+  var m=new THREE.MeshLambertMaterial({color:color||0x1c1e26});
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.2,1.0,10),m); body.position.y=0.82; grp.add(body);
+  var head=new THREE.Mesh(new THREE.SphereGeometry(0.13,12,10), new THREE.MeshLambertMaterial({color:face||color||0x1c1e26})); head.position.y=1.5; grp.add(head);
+  scene.add(grp); return grp;
+}
+function plight(x,z,y,color,intensity,dist){ var L=new THREE.PointLight(color,intensity,dist||8,2); L.position.set(x*SC,y,z*SC); scene.add(L); return L; }
+
+// ---------- floor + ceiling ----------
+var floorM = new THREE.Mesh(new THREE.PlaneGeometry(27.5,25.0), new THREE.MeshLambertMaterial({color:0x1c1610}));
+floorM.rotation.x=-Math.PI/2; floorM.position.set(15.4,0,13.7); scene.add(floorM);
+var ceil = new THREE.Mesh(new THREE.PlaneGeometry(27.5,25.0), new THREE.MeshLambertMaterial({color:0x0c0b0f}));
+ceil.rotation.x=Math.PI/2; ceil.position.set(15.4,WALL_H,13.7); scene.add(ceil);
+
+// ---------- structural walls (from flow map) ----------
+[[220,100,295,100],[345,100,460,100],[220,100,220,390],[460,100,460,155],[460,210,460,245],
+ [220,245,330,245],[370,245,530,245],[460,155,700,155],[700,155,700,210],[700,210,590,210],
+ [540,210,460,210],[530,210,530,245],[530,245,530,390],[190,390,215,390],[268,390,280,390],
+ [318,390,610,390],[190,390,190,430],[190,460,190,545],[190,585,190,630],[190,630,610,630],
+ [610,390,610,630],[430,390,430,465],[430,465,455,465],[520,465,545,465],[545,390,545,465],
+ [70,415,190,415],[70,415,70,500],[70,500,190,500],[70,548,190,548],[70,582,190,582],
+ [260,60,380,60],[260,60,260,100],[380,60,380,100]].forEach(function(w){ addWall(w[0],w[1],w[2],w[3]); });
+
+// window: sill + header + glass (solid to walking)
+(function(){
+  var cx=(215+268)/2, w=(268-215)*SC;
+  box(w,0.9,0.16,matWall,cx,0.45,390); box(w,WALL_H-2.1,0.16,matWall,cx,(WALL_H+2.1)/2,390);
+  var glass=new THREE.Mesh(new THREE.PlaneGeometry(w,1.2), new THREE.MeshLambertMaterial({color:0x9cc4e8,transparent:true,opacity:0.15,side:THREE.DoubleSide,depthWrite:false}));
+  glass.position.set(cx*SC,1.5,390*SC); scene.add(glass); seg(215,390,268,390);
+})();
+
+// ---------- curtain walls ----------
+[[225,565,540,530],[300,390,300,560],[265,262,265,355],[285,270,455,340]].forEach(function(w){ addCurt(w[0],w[1],w[2],w[3]); });
+addCurt(190,545,190,585,matCurtN);                       // stairs-mouth curtain
+var burstCurt = wallMesh(540,210,590,210,CURT_H,matCurtN,0); seg(540,210,590,210);  // Alice's burst curtain
+// invisible stops: stairwell descent + niche back
+seg(148,548,148,582); seg(540,243,590,243); seg(540,210,540,243); seg(590,210,590,243);
+
+// ---------- elevator ----------
+var doorL = box(1.3,2.3,0.1,matMetal,471.2,1.15,465);
+var doorR = box(1.3,2.3,0.1,matMetal,503.8,1.15,465);
+var doorSolid = {x1:455*SC,z1:465*SC,x2:520*SC,z2:465*SC}; solids.push(doorSolid);
+box(1.7,0.05,1.1,new THREE.MeshLambertMaterial({color:0xfff1cf,emissive:0xffe6b0,emissiveIntensity:0.7}),488,2.56,428); // ceiling panel
+box(1.6,0.45,0.45,matDark,488,0.25,402);                                    // bench
+box(0.5,0.16,0.2,new THREE.MeshLambertMaterial({color:0x0a0a0a}),500,0.55,402); // speaker
+var elevLight = plight(488,428,2.4,0xffd9a0,1.0,6);
+
+// ---------- S3 arrival ----------
+(function(){
+  var t=textTexture(['WELCOME DEAN LLOYD','DEDICATION · 1950'],{w:1024,h:170,fs:58,bg:'#e9d9b4',fg:'#4b2f18',border:'#8a5a2a',boldFirst:true});
+  var b=new THREE.Mesh(new THREE.PlaneGeometry(3.6,0.55), new THREE.MeshLambertMaterial({map:t}));
+  b.position.set(488*SC,2.32,476*SC); b.rotation.y=Math.PI; scene.add(b);
+})();
+box(0.7,0.72,0.7,new THREE.MeshLambertMaterial({color:0x4a3421}),580,0.36,438);
+box(0.4,0.28,0.4,new THREE.MeshLambertMaterial({color:0x2b2119}),580,0.86,438);
+(function(){ var horn=new THREE.Mesh(new THREE.ConeGeometry(0.26,0.5,14,1,true), new THREE.MeshLambertMaterial({color:0xb8873b,side:THREE.DoubleSide}));
+  horn.position.set(580*SC,1.28,438*SC); horn.rotation.z=Math.PI/2.6; scene.add(horn); })();
+figure(0x232028,0xd9c2a4).position.set(596*SC,0,430*SC);
+plight(560,470,2.3,0xffc98a,0.95,8); plight(600,428,1.9,0xffb877,0.55,5);
+
+// ---------- S4 promenade ----------
+[['HALL DANCE','FRIDAY 8 PM'],['CURFEW','10 O\u2019CLOCK'],['WOMEN OF','MICHIGAN LEAD']].forEach(function(lines,i){
+  var p=new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.78), new THREE.MeshLambertMaterial({map:textTexture(lines,{w:340,h:440,fs:52,bg:'#e4d3ae',fg:'#4b2f18',border:'#7a5a30'})}));
+  p.position.set((315+i*88)*SC,1.6,628.8*SC); p.rotation.y=Math.PI; scene.add(p);
+});
+box(0.9,0.75,0.55,new THREE.MeshLambertMaterial({color:0x4a3421}),505,0.38,612);
+figure(0x15161c).position.set(428*SC,0,534*SC);   // promenade lurker (north of curtain)
+plight(400,600,2.25,0xffc27d,0.5,7); plight(270,598,2.25,0xffc27d,0.38,6);
+
+// ---------- S5 gallery ----------
+function portrait(x,z,face,live){
+  var mat = live
+    ? new THREE.MeshLambertMaterial({map:textTexture(['\u25CF  \u25CF','\u2323'],{w:220,h:300,fs:60,bg:'#cdbd97',fg:'#241a10',border:'#3b2c18'}),emissive:0x6a5836,emissiveIntensity:0.35})
+    : new THREE.MeshLambertMaterial({map:textTexture(['1950'],{w:220,h:300,fs:44,bg:'#b6a67f',fg:'#33261a',border:'#3b2c18'})});
+  var p=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.68),mat);
+  p.position.set(x*SC,1.55,z*SC); p.rotation.y=face; scene.add(p); return p;
+}
+portrait(298.9,418,-Math.PI/2); var livePortrait=portrait(298.9,505,-Math.PI/2,true); portrait(298.9,535,-Math.PI/2);
+portrait(191.1,485,Math.PI/2); portrait(191.1,520,Math.PI/2);
+var dropPanel=new THREE.Mesh(new THREE.PlaneGeometry(0.56,0.72), new THREE.MeshLambertMaterial({map:textTexture(['A. LLOYD'],{w:230,h:300,fs:40,bg:'#c9b895',fg:'#241a10',border:'#7a1f1f'})}));
+dropPanel.position.set(298.8*SC,1.55,468*SC); dropPanel.rotation.y=-Math.PI/2; scene.add(dropPanel);
+var dropFace=figure(0x1a1216,0xd8c6a8); dropFace.position.set(306*SC,0,468*SC); dropFace.visible=false;
+var dropLight=plight(296,468,1.5,0xff5030,0,3);
+plight(245,470,2.3,0x9fb4d8,0.34,7);
+
+// ---------- S6 dean's office ----------
+var chair=new THREE.Group();
+(function(){ var wood=new THREE.MeshLambertMaterial({color:0x3b2a1a});
+  var seat=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.07,0.5),wood); seat.position.y=0.45; chair.add(seat);
+  var back=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.75,0.5),wood); back.position.set(0.25,0.82,0); chair.add(back);
+  var r1=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.62,8),wood); r1.rotation.x=Math.PI/2; r1.position.set(-0.18,0.1,0); chair.add(r1);
+  var wig=new THREE.Mesh(new THREE.SphereGeometry(0.12,10,8), new THREE.MeshLambertMaterial({color:0x8f8f96})); wig.position.set(0.25,1.28,0); chair.add(wig);
+})();
+chair.position.set(126*SC,0,455*SC); scene.add(chair);
+box(0.95,0.75,0.55,new THREE.MeshLambertMaterial({color:0x4a3421}),98,0.38,472);
+box(0.36,0.03,0.26,new THREE.MeshLambertMaterial({color:0xe8ddc2}),98,0.78,472);   // open ledger
+box(0.2,0.14,0.12,new THREE.MeshLambertMaterial({color:0x2b2119}),86,0.83,472);    // radio
+var deanLight=plight(100,468,1.6,0xffd7a0,0.55,5);
+
+// ---------- S7 pepper's ghost ----------
+box(0.85,0.55,0.32,new THREE.MeshLambertMaterial({color:0x060606}),241,0.3,377);   // shrouded TV
+var ghost=new THREE.Group();
+var gMat=new THREE.MeshLambertMaterial({color:0x7fb0e0,emissive:0x9fd0ff,emissiveIntensity:0.8,transparent:true,opacity:0});
+(function(){ var b=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.24,1.15,10),gMat); b.position.y=0.9; ghost.add(b);
+  var h=new THREE.Mesh(new THREE.SphereGeometry(0.13,12,10),gMat); h.position.y=1.62; ghost.add(h); })();
+ghost.position.set(241*SC,0,420*SC); scene.add(ghost);
+var ghostLight=plight(241,418,1.5,0x86b8ff,0,4);
+
+// ---------- S8 bulletin ----------
+box(0.3,0.2,0.15,new THREE.MeshLambertMaterial({color:0x3a2a1a}),262,1.45,315);
+var glitchFix=box(0.55,0.06,0.2,new THREE.MeshLambertMaterial({color:0xfff2d2,emissive:0xffe6b0,emissiveIntensity:0.6}),242,2.6,300);
+var glitchLight=plight(242,300,2.45,0xffd9a0,0.6,6);
+
+// ---------- S9 whisper hall ----------
+var strips=[];
+[[318,259],[342,268],[366,277],[392,286],[414,294]].forEach(function(p,i){
+  var g=new THREE.PlaneGeometry(0.22,1.5); g.translate(0,-0.75,0);
+  var m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0x9aa0a8,transparent:true,opacity:0.28,side:THREE.DoubleSide,depthWrite:false}));
+  m.position.set(p[0]*SC,2.3,p[1]*SC); m.rotation.y=Math.random()*Math.PI; m.userData.ph=i*1.7; strips.push(m); scene.add(m);
+});
+plight(370,282,2.2,0x2c3448,0.14,6);
+
+// ---------- S10 bust ----------
+var pedM=new THREE.MeshLambertMaterial({color:0x2c2c32});
+[[498,336],[513,332]].forEach(function(p){ var c=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,1.06,12),pedM); c.position.set(p[0]*SC,0.53,p[1]*SC); scene.add(c); });
+var head1=new THREE.Mesh(new THREE.SphereGeometry(0.15,14,12), new THREE.MeshLambertMaterial({color:0xd9c9a8,emissive:0xffb867,emissiveIntensity:0.18}));
+head1.position.set(498*SC,1.2,336*SC); scene.add(head1);
+var head2=new THREE.Mesh(new THREE.SphereGeometry(0.15,14,12), new THREE.MeshLambertMaterial({color:0x4b4b50}));
+head2.position.set(513*SC,1.2,332*SC); scene.add(head2);
+var bd=new THREE.Mesh(new THREE.PlaneGeometry(2.3,2.5), new THREE.MeshLambertMaterial({color:0x040404}));
+bd.position.set(519*SC,1.25,346*SC); bd.rotation.y=-Math.PI*0.72; scene.add(bd);
+(function(){ var tri=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.03,1.12,8),pedM); tri.position.set(462*SC,0.56,356*SC); scene.add(tri); })();
+box(0.3,0.16,0.22,matDark,462,1.2,356);
+var spot=new THREE.SpotLight(0xffcf8f,1.15,7,0.24,0.45,2); spot.position.set(462*SC,1.24,356*SC);
+spot.target.position.set(498*SC,1.2,336*SC); scene.add(spot); scene.add(spot.target);
+(function(){ var g=new THREE.ConeGeometry(0.3,1.6,18,1,true); g.rotateX(Math.PI/2);
+  var cone=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xffcf8f,transparent:true,opacity:0.09,side:THREE.DoubleSide,depthWrite:false}));
+  cone.position.set((462+498)/2*SC,1.22,(356+336)/2*SC); cone.lookAt(new THREE.Vector3(498*SC,1.2,336*SC)); scene.add(cone); })();
+
+// ---------- S11 tomb ----------
+box(0.58,0.95,0.18,new THREE.MeshLambertMaterial({color:0x9a958c}),678,0.48,182);
+(function(){ var cap=new THREE.Mesh(new THREE.CylinderGeometry(0.29,0.29,0.18,16,1,false,0,Math.PI), new THREE.MeshLambertMaterial({color:0x9a958c}));
+  cap.rotation.z=Math.PI/2; cap.rotation.y=Math.PI/2; cap.position.set(678*SC,0.95,182*SC); scene.add(cap); })();
+var tombSpot=new THREE.SpotLight(0xa8c4e8,0.95,7,0.3,0.5,2); tombSpot.position.set(650*SC,2.55,182*SC);
+tombSpot.target.position.set(678*SC,0.6,182*SC); scene.add(tombSpot); scene.add(tombSpot.target);
+plight(600,182,2.4,0x8ea6c8,0.3,8);
+var alice=figure(0x121016,0xd6c6ae); alice.position.set(565*SC,0,228*SC);
+var aliceLight=plight(565,212,1.7,0xff2a1a,0,5);
+
+// ---------- S12 exit ----------
+(function(){ var t=textTexture(['EXIT'],{w:256,h:110,fs:64,bg:'#04140a',fg:'#37e07c'});
+  var s=new THREE.Mesh(new THREE.PlaneGeometry(0.52,0.22), new THREE.MeshBasicMaterial({map:t}));
+  s.position.set(320*SC,2.42,101*SC); s.rotation.y=Math.PI; scene.add(s); })();
+plight(320,98,2.3,0x2bd06a,0.4,4);
+(function(){ var t=textTexture(['EXIT'],{w:256,h:110,fs:64,bg:'#04140a',fg:'#37e07c'});
+  var s=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.21), new THREE.MeshBasicMaterial({map:t}));
+  s.position.set(196*SC,2.25,565*SC); s.rotation.y=Math.PI/2; scene.add(s); })();
+var fluor=box(1.2,0.05,0.16,new THREE.MeshLambertMaterial({color:0xf2f6ff,emissive:0xdfe8ff,emissiveIntensity:0.9}),320,2.66,80);
+var fluorLight=plight(320,80,2.5,0xdfe8ff,0.8,6);
+var boardOpen=textTexture(['RA OF THE MONTH','A. LLOYD','76 YEARS RUNNING','\u25CF \u25CF'],{w:520,h:400,fs:40,bg:'#caa96a',fg:'#2c1d10',border:'#6d4a22',boldFirst:true});
+var boardShut=textTexture(['RA OF THE MONTH','A. LLOYD','76 YEARS RUNNING','\u2014  \u2014'],{w:520,h:400,fs:40,bg:'#caa96a',fg:'#2c1d10',border:'#6d4a22',boldFirst:true});
+var boardMat=new THREE.MeshLambertMaterial({map:boardOpen});
+var board=new THREE.Mesh(new THREE.PlaneGeometry(1.15,0.88),boardMat);
+board.position.set(320*SC,1.6,61*SC); scene.add(board);
+// steps descending at stairwell
+for(var i=0;i<5;i++){ box(0.55,0.2,1.3,new THREE.MeshLambertMaterial({color:0x241d15}),182-i*13,-0.1-i*0.2,565); }
+
+// ---------- route arrows ----------
+var PATH=[[488,490],[565,540],[550,592],[425,600],[305,598],[228,590],[213,562],[241,537],[243,412],[292,396],[292,377],[248,372],[243,262],[300,258],[370,288],[445,313],[476,324],[452,286],[362,258],[350,246],[350,184],[455,184],[618,184]];
+var arrowTex=(function(){ var c=document.createElement('canvas'); c.width=128;c.height=128; var g=c.getContext('2d');
+  g.strokeStyle='#3fd47f'; g.lineWidth=16; g.lineCap='round'; g.beginPath();
+  g.moveTo(22,64); g.lineTo(96,64); g.moveTo(70,36); g.lineTo(100,64); g.lineTo(70,92); g.stroke();
+  return new THREE.CanvasTexture(c); })();
+var arrows=new THREE.Group();
+for(var i=0;i<PATH.length-1;i++){
+  var a=PATH[i],b=PATH[i+1];
+  var g=new THREE.PlaneGeometry(0.55,0.55); g.rotateX(-Math.PI/2);
+  var m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:arrowTex,transparent:true,opacity:0.4,depthWrite:false}));
+  m.position.set((a[0]+b[0])/2*SC,0.02,(a[1]+b[1])/2*SC);
+  m.rotation.y=-Math.atan2(b[1]-a[1],b[0]-a[0]); arrows.add(m);
+}
+scene.add(arrows);
+
+// ---------- station badges + HUD data ----------
+var stations=[
+ {n:2,x:488,z:428,name:'The Strike',desc:'elevator ride · LED flicker + thunder + blackout'},
+ {n:3,x:565,z:445,name:'Arrival 1950',desc:'banner · phonograph big band · period greeter'},
+ {n:4,x:385,z:585,name:'The Promenade',desc:'period posters · dance-card table · lurker'},
+ {n:5,x:255,z:498,name:'Portrait Gallery',desc:'living portrait · walk close to the red frame\u2026'},
+ {n:6,x:128,z:458,name:"Dean's Office",desc:'rocking chair rig · ledger with tonight\u2019s names'},
+ {n:7,x:243,z:370,name:"Pepper's Ghost",desc:'watch the window \u2014 she appears over the gallery'},
+ {n:8,x:242,z:300,name:'The Bulletin',desc:'the radio announces her death \u2014 lights glitch'},
+ {n:9,x:368,z:282,name:'Whisper Hall',desc:'pitch dark · cheesecloth brushes past'},
+ {n:10,x:490,z:325,name:'The Bust',desc:'projected face on the foam heads'},
+ {n:11,x:590,z:182,name:'The Tomb',desc:'eyes forward on the tombstone\u2026 keep walking'},
+ {n:12,x:320,z:86,name:'Back to 2026',desc:'fluorescent hum · check the corkboard'}
+];
+stations.forEach(function(s){
+  var c=document.createElement('canvas'); c.width=128;c.height=128; var g=c.getContext('2d');
+  g.fillStyle='#f6a13c'; g.strokeStyle='#8a5a12'; g.lineWidth=6;
+  if (g.roundRect){ g.beginPath(); g.roundRect(14,14,100,100,20); g.fill(); g.stroke(); }
+  else { g.fillRect(14,14,100,100); g.strokeRect(14,14,100,100); }
+  g.fillStyle='#3a2a10'; g.font='bold 62px Georgia,serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(String(s.n),64,68);
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));
+  sp.scale.set(0.42,0.42,1); sp.position.set(s.x*SC,2.42,s.z*SC); scene.add(sp);
+});
+
+// ---------- lights: LCH + upper room fill ----------
+plight(380,170,2.3,0x53608a,0.22,9); plight(300,150,2.3,0x53608a,0.16,8);
+
+// ---------- minimap ----------
+var mm=document.getElementById('minimap'), mg=mm.getContext('2d');
+var MMX=function(x){return (x-58)*0.31+6;}, MMZ=function(z){return (z-48)*0.31+6;};
+var mmBase=document.createElement('canvas'); mmBase.width=mm.width; mmBase.height=mm.height;
+(function(){ var g=mmBase.getContext('2d');
+  g.fillStyle='rgba(0,0,0,0)'; g.clearRect(0,0,mmBase.width,mmBase.height);
+  function drawSegs(list,style,w){ g.strokeStyle=style; g.lineWidth=w; g.beginPath();
+    list.forEach(function(s){ g.moveTo(MMX(s[0]),MMZ(s[1])); g.lineTo(MMX(s[2]),MMZ(s[3])); }); g.stroke(); }
+  drawSegs([[220,100,295,100],[345,100,460,100],[220,100,220,390],[460,100,460,155],[460,210,460,245],[220,245,330,245],[370,245,530,245],[460,155,700,155],[700,155,700,210],[700,210,590,210],[540,210,460,210],[530,210,530,245],[530,245,530,390],[190,390,215,390],[268,390,280,390],[318,390,610,390],[190,390,190,430],[190,460,190,545],[190,585,190,630],[190,630,610,630],[610,390,610,630],[430,390,430,465],[430,465,455,465],[520,465,545,465],[545,390,545,465],[70,415,190,415],[70,415,70,500],[70,500,190,500],[70,548,190,548],[70,582,190,582],[260,60,380,60],[260,60,260,100],[380,60,380,100],[215,390,268,390]],'#8f8674',1.5);
+  drawSegs([[225,565,540,530],[300,390,300,560],[265,262,265,355],[285,270,455,340]],'#3c6fe0',2.5);
+  drawSegs([[190,545,190,585],[540,210,590,210]],'#d43d3d',2.5);
+})();
+
+// ---------- player / controls ----------
+var pos=new THREE.Vector3(488*SC,EYE,424*SC), yaw=0, pitch=0;
+var keys={}, dragging=false, lastX=0,lastY=0, locked=false, overview=false, showHelp=true;
+var ovSave={};
+function onLook(dx,dy){ yaw-=dx*0.0023; pitch-=dy*0.0021; pitch=Math.max(-1.25,Math.min(1.25,pitch)); }
+canvas.addEventListener('mousedown',function(e){ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+window.addEventListener('mouseup',function(){ dragging=false; });
+window.addEventListener('mousemove',function(e){
+  if(locked){ onLook(e.movementX||0,e.movementY||0); }
+  else if(dragging){ onLook(e.clientX-lastX,e.clientY-lastY); lastX=e.clientX; lastY=e.clientY; }
+});
+document.addEventListener('pointerlockchange',function(){ locked=(document.pointerLockElement===canvas); });
+window.addEventListener('keydown',function(e){
+  keys[e.code]=true;
+  if(e.code==='Tab'){ e.preventDefault(); toggleOverview(); }
+  if(e.code==='KeyG'){ arrows.visible=!arrows.visible; }
+  if(e.code==='KeyH'){ showHelp=!showHelp; document.getElementById('help').style.display=showHelp?'block':'none'; }
+  if(e.code==='Enter' && !elev.done){ elevSkip(); }
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].indexOf(e.code)>=0) e.preventDefault();
+});
+window.addEventListener('keyup',function(e){ keys[e.code]=false; });
+function toggleOverview(){
+  overview=!overview;
+  if(overview){ ovSave={p:pos.clone(),y:yaw,pt:pitch}; }
+  else { pos.copy(ovSave.p); yaw=ovSave.y; pitch=ovSave.pt; }
+}
+
+// collision
+function collide(){
+  for(var pass=0;pass<2;pass++){
+    for(var i=0;i<solids.length;i++){
+      var s=solids[i]; if(s===doorSolid && elev.doorsOpen) continue;
+      var ax=s.x1,az=s.z1,bx=s.x2,bz=s.z2, dx=bx-ax,dz=bz-az;
+      var L2=dx*dx+dz*dz||1e-6;
+      var t=((pos.x-ax)*dx+(pos.z-az)*dz)/L2; t=Math.max(0,Math.min(1,t));
+      var cx=ax+dx*t, cz=az+dz*t, ox=pos.x-cx, oz=pos.z-cz, d=Math.sqrt(ox*ox+oz*oz);
+      if(d<PR && d>1e-5){ var push=(PR-d)/d; pos.x+=ox*push; pos.z+=oz*push; }
+    }
+  }
+  pos.x=Math.max(2.5,Math.min(28.3,pos.x)); pos.z=Math.max(2.1,Math.min(25.4,pos.z));
+}
+
+// ---------- audio ----------
+var AC=null;
+function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+function noiseBurst(dur,freq,gainV){
+  var ac=audio(); if(!ac) return;
+  try{
+    var len=Math.floor(ac.sampleRate*dur), buf=ac.createBuffer(1,len,ac.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<len;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2); }
+    var src=ac.createBufferSource(); src.buffer=buf;
+    var f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=freq;
+    var g=ac.createGain(); g.gain.value=gainV;
+    src.connect(f); f.connect(g); g.connect(ac.destination); src.start();
+  }catch(e){}
+}
+function thunder(){ noiseBurst(2.4,110,0.9); setTimeout(function(){noiseBurst(1.6,80,0.6);},350); }
+function bang(){ noiseBurst(0.18,500,0.8); }
+function ding(){ var ac=audio(); if(!ac) return; try{
+  [880,660].forEach(function(f,i){ var o=ac.createOscillator(), g=ac.createGain();
+    o.frequency.value=f; g.gain.setValueAtTime(0.12,ac.currentTime+i*0.18);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+i*0.18+0.5);
+    o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+i*0.18); o.stop(ac.currentTime+i*0.18+0.55); }); }catch(e){} }
+function sting(){ var ac=audio(); if(!ac) return; try{
+  [92,138,196].forEach(function(f){ var o=ac.createOscillator(), g=ac.createGain(); o.type='sawtooth';
+    o.frequency.value=f; g.gain.setValueAtTime(0.09,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.7);
+    o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+0.75); }); noiseBurst(0.5,900,0.5); }catch(e){} }
+
+// ---------- state machines ----------
+var elev={t:-1,done:false,doorsOpen:false,doorAnim:0};
+var capEl=document.getElementById('caption');
+function cap(txt){ capEl.textContent=txt; }
+function elevSkip(){ elev.done=true; elev.doorsOpen=true; elev.doorAnim=1; cap(''); elevLight.intensity=0.9; }
+var drop={state:0,t:0}, glitch={state:0,t:0}, tomb={state:0,t:0}, boardT=0, boardShutT=0;
+var scareEl=document.getElementById('scare');
+var stEl=document.getElementById('station');
+
+// ---------- start ----------
+var started=false;
+document.getElementById('overlay').addEventListener('click',function(){
+  started=true; this.style.display='none'; audio();
+  try{ canvas.requestPointerLock&&canvas.requestPointerLock(); }catch(e){}
+  elev.t=0;
+});
+canvas.addEventListener('click',function(){ if(started){ try{ canvas.requestPointerLock&&canvas.requestPointerLock(); }catch(e){} } });
+
+// ---------- resize ----------
+function resize(){ var w=window.innerWidth,h=window.innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+window.addEventListener('resize',resize); resize();
+
+// ---------- main loop ----------
+var clock=new THREE.Clock(), thunderDone=false, dingDone=false;
+function tick(){
+  requestAnimationFrame(tick);
+  var dt=Math.min(clock.getDelta(),0.05), t=clock.elapsedTime;
+
+  // elevator sequence
+  if(started && !elev.done){
+    elev.t+=dt;
+    if(elev.t<3.5){ elevLight.intensity=1.0; cap('Riding up\u2026 your RA is mid-small-talk.'); }
+    else if(elev.t<6){ elevLight.intensity=0.28; cap('The lights dip. A low hum.'); }
+    else if(elev.t<8){ elevLight.intensity=Math.random()*1.5; if(!thunderDone){thunder();thunderDone=true;} cap('FLICKER \u2014 THUNDER'); }
+    else if(elev.t<9.4){ elevLight.intensity=0; cap('\u2026'); }
+    else { if(!dingDone){ding();dingDone=true; cap('Doors open on 1950.');}
+      elev.doorAnim=Math.min(1,elev.doorAnim+dt/1.3); if(elev.doorAnim>=1){ elev.doorsOpen=true; }
+      elevLight.intensity=0.9;
+      if(elev.t>13){ elev.done=true; cap(''); }
+    }
+  }
+  doorL.position.x=(471.2*SC)-1.32*elev.doorAnim;
+  doorR.position.x=(503.8*SC)+1.32*elev.doorAnim;
+
+  // movement
+  if(!overview){
+    var f=(keys['KeyW']||keys['ArrowUp']?1:0)-(keys['KeyS']||keys['ArrowDown']?1:0);
+    var s=(keys['KeyD']?1:0)-(keys['KeyA']?1:0);
+    if(keys['KeyQ']||keys['ArrowLeft']) yaw+=1.9*dt;
+    if(keys['KeyE']||keys['ArrowRight']) yaw-=1.9*dt;
+    var sp=(keys['ShiftLeft']||keys['ShiftRight'])?4.6:2.9;
+    var fx=Math.sin(yaw),fz=Math.cos(yaw);
+    pos.x+=(fx*f - fz*s)*sp*dt;
+    pos.z+=(fz*f + fx*s)*sp*dt;
+    collide();
+    camera.position.set(pos.x,EYE,pos.z);
+    camera.lookAt(pos.x+Math.sin(yaw)*Math.cos(pitch), EYE+Math.sin(pitch), pos.z+Math.cos(yaw)*Math.cos(pitch));
+  } else {
+    camera.position.set(15.2,25,15.5);
+    camera.lookAt(15.2,0,12.8);
+  }
+
+  // ambient animations
+  var gOp=Math.max(0,Math.sin(t*0.75))*0.55;
+  gMat.opacity=gOp; ghostLight.intensity=gOp*1.3;
+  livePortrait.material.emissiveIntensity=0.28+0.18*Math.abs(Math.sin(t*0.6))+(Math.random()<0.01?0.5:0);
+  chair.rotation.z=Math.sin(t*2.1)*0.085;
+  strips.forEach(function(m){ m.rotation.z=Math.sin(t*1.25+m.userData.ph)*0.09; });
+  fluor.material.emissiveIntensity=0.75+(Math.random()<0.06?-0.5:0)+0.1*Math.sin(t*30);
+  fluorLight.intensity=0.55+fluor.material.emissiveIntensity*0.3;
+  // bust talk pulse when player near
+  var nearBust=Math.hypot(pos.x-498*SC,pos.z-336*SC)<3.2;
+  head1.material.emissiveIntensity=nearBust?0.3+0.3*Math.abs(Math.sin(t*7.3)):0.15;
+  head2.material.emissiveIntensity=0;
+  // corkboard blink
+  boardT+=dt;
+  if(boardShutT>0){ boardShutT-=dt; if(boardShutT<=0){ boardMat.map=boardOpen; boardMat.needsUpdate=true; } }
+  else if(boardT>4){ boardT=0; boardShutT=0.16; boardMat.map=boardShut; boardMat.needsUpdate=true; }
+
+  // drop panel trigger
+  if(drop.state===0 && elev.done && pos.x>7.7 && pos.x<11.9 && Math.abs(pos.z-468*SC)<1.5){ drop.state=1; drop.t=0; bang(); dropFace.visible=true; }
+  if(drop.state===1){ drop.t+=dt;
+    dropPanel.position.y=Math.max(1.02,1.55-drop.t*4.5);
+    dropLight.intensity=Math.max(0,1.4-drop.t*2.5);
+    if(drop.t>2.6){ drop.state=2; drop.t=0; dropFace.visible=false; } }
+  if(drop.state===2){ drop.t+=dt; dropPanel.position.y=Math.min(1.55,1.02+drop.t*0.8);
+    if(drop.t>7){ drop.state=0; } }
+
+  // bulletin glitch trigger
+  var inCorr=pos.x>8.85 && pos.x<10.55 && pos.z>10.4 && pos.z<14.2;
+  if(glitch.state===0 && inCorr){ glitch.state=1; glitch.t=0; cap('\u201C\u2026we interrupt this broadcast \u2014 Dean Alice Lloyd, dead at fifty-seven\u2026\u201D'); noiseBurst(0.8,1400,0.25); }
+  if(glitch.state===1){ glitch.t+=dt;
+    glitchLight.intensity=Math.random()<0.5?0:1.4; glitchFix.material.emissiveIntensity=glitchLight.intensity*0.7;
+    if(glitch.t>3.2){ glitch.state=2; glitch.t=0; glitchLight.intensity=0.6; glitchFix.material.emissiveIntensity=0.6; cap(''); } }
+  if(glitch.state===2){ glitch.t+=dt; if(glitch.t>12 && !inCorr){ glitch.state=0; } }
+
+  // tomb burst trigger
+  var inLCH=pos.z>6.2 && pos.z<8.4 && pos.x>18.6 && pos.x<28;
+  if(tomb.state===0 && inLCH && pos.x>21.0){ tomb.state=1; tomb.t=0; sting(); burstCurt.visible=false; scareEl.style.display='block'; }
+  if(tomb.state===1){ tomb.t+=dt;
+    alice.position.z=Math.max(7.7, (228*SC)-tomb.t*4.2);
+    aliceLight.intensity=1.8*Math.max(0,1-tomb.t*0.5)+Math.random()*0.4;
+    if(tomb.t>1.6){ tomb.state=2; tomb.t=0; scareEl.style.display='none'; } }
+  if(tomb.state===2){ tomb.t+=dt;
+    alice.position.z=Math.min(228*SC, 7.7+tomb.t*2.2); aliceLight.intensity=Math.max(0,0.8-tomb.t);
+    if(tomb.t>3){ burstCurt.visible=true; tomb.state=3; tomb.t=0; } }
+  if(tomb.state===3){ tomb.t+=dt; if(tomb.t>8 && !inLCH){ tomb.state=0; } }
+
+  // HUD station proximity
+  var best=null,bd2=10.5;
+  stations.forEach(function(s){ var d=Math.hypot(pos.x-s.x*SC,pos.z-s.z*SC); if(d<bd2){bd2=d;best=s;} });
+  if(best && bd2<3.4){ stEl.innerHTML='<span class="n">'+best.n+'</span><span class="name">'+best.name+'</span><div class="desc">'+best.desc+'</div>'; }
+  else stEl.innerHTML='';
+
+  // minimap
+  mg.clearRect(0,0,mm.width,mm.height);
+  mg.drawImage(mmBase,0,0);
+  var px=MMX(pos.x/SC), pz=MMZ(pos.z/SC);
+  mg.save(); mg.translate(px,pz); mg.rotate(-yaw);
+  mg.fillStyle='#3fd47f'; mg.beginPath(); mg.moveTo(0,6); mg.lineTo(-4,-4); mg.lineTo(4,-4); mg.closePath(); mg.fill(); mg.restore();
+
+  renderer.render(scene,camera);
+}
+tick();
+})();
+</script>
+</body>
+</html>

@@ -274,14 +274,6 @@ body.castle-running {
     background-color: var(--blue-dark);
 }
 
-.showctl-frame {
-    display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    align-items: start;
-}
-
 .showctl-panel {
     background-color: var(--blue-light);
     border: 1px solid rgb(var(--accent-rgb) / 0.2);
@@ -297,77 +289,6 @@ body.castle-running {
     text-transform: uppercase;
     color: var(--maize);
     margin-bottom: 0.9rem;
-}
-
-.plan-svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 10px;
-    background-color: #060C24;
-}
-
-.cue-list {
-    position: relative;
-    list-style: none;
-    max-height: 320px;
-    overflow-y: auto;
-    margin: 0;
-    padding-right: 0.35rem;
-}
-
-.cue-row {
-    display: grid;
-    grid-template-columns: 3.1rem 3.1rem 1fr;
-    gap: 0.6rem;
-    align-items: baseline;
-    padding: 0.5rem 0.55rem;
-    border-radius: 8px;
-    border-left: 3px solid transparent;
-    opacity: 0.42;
-    transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.cue-row.is-past   { opacity: 0.62; }
-
-.cue-row.is-active {
-    opacity: 1;
-    background-color: rgb(var(--accent-rgb) / 0.12);
-    border-left-color: var(--gold);
-}
-
-.cue-time {
-    font-variant-numeric: tabular-nums;
-    font-size: 0.82rem;
-    color: var(--gold);
-    font-weight: 600;
-}
-
-.cue-dept {
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-align: center;
-    padding: 0.15rem 0;
-    border-radius: 4px;
-    background-color: rgb(var(--accent-rgb) / 0.16);
-    color: var(--maize);
-}
-
-.cue-name { font-size: 0.9rem; line-height: 1.45; }
-.cue-name strong { display: block; font-weight: 600; }
-.cue-name span { opacity: 0.75; font-size: 0.83rem; }
-
-.transport {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    flex-wrap: wrap;
-    margin-top: 1.25rem;
-    padding: 0.9rem 1.1rem;
-    background-color: var(--blue-light);
-    border: 1px solid rgb(var(--accent-rgb) / 0.2);
-    border-radius: 50px;
 }
 
 .transport-btn {
@@ -392,25 +313,134 @@ body.castle-running {
     color: var(--blue);
 }
 
-.transport-clock {
-    font-variant-numeric: tabular-nums;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--gold);
-    min-width: 5.4rem;
-}
-
-.transport-scrub {
-    flex: 1 1 180px;
-    accent-color: var(--maize);
-    cursor: pointer;
-}
-
 .showctl-note {
     margin-top: 1rem;
     font-size: 0.9rem;
     line-height: 1.6;
     opacity: 0.75;
+}
+
+/* Scoped deliberately: a bare `a { color: ... }` rule would outrank
+   .cta-button and reintroduce the unreadable button text this site had once. */
+.showctl-note a,
+.first .showctl-note a {
+    color: var(--maize);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.showctl-note a:hover {
+    color: var(--gold);
+}
+
+/* ============================================================ */
+/* The walkthrough                                              */
+/* ============================================================ */
+
+/* The embedded scene sizes itself off the iframe viewport, so the box just has
+   to be a sensible shape and get out of the way. */
+.walk-frame {
+    margin-top: 2rem;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgb(var(--accent-rgb) / 0.28);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    background-color: #05060A;
+}
+
+.walk-stage {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 360px;
+    border: 0;
+}
+
+.walk-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding: 0.9rem 1.2rem;
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 15px;
+}
+
+.walk-hint {
+    flex: 1 1 300px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.85;
+}
+
+.walk-hint strong {
+    color: var(--maize);
+    font-weight: 600;
+}
+
+.walk-hint em {
+    display: block;
+    margin-top: 0.3rem;
+    font-style: normal;
+    color: var(--gold);
+    opacity: 0.85;
+}
+
+.walk-bar .transport-btn {
+    text-decoration: none;
+    min-width: 7rem;
+}
+
+.walk-route-title {
+    margin: 2.5rem 0 1.2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.walk-stations {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: 0.9rem 1.5rem;
+}
+
+.station {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+/* Same badge the numbered sprites use inside the scene. */
+.station-n {
+    flex: 0 0 auto;
+    width: 1.7rem;
+    height: 1.7rem;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background-color: var(--gold);
+    color: #3A2A10;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.station-copy strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--maize);
+}
+
+.station-copy span {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    opacity: 0.82;
 }
 
 /* ============================================================ */
@@ -466,92 +496,217 @@ body.castle-running {
 }
 
 /* ============================================================ */
-/* Showcase cards                                               */
+/* T-shirt cannon                                               */
 /* ============================================================ */
 
-/* Four cards, so two by two rather than a lonely orphan on row two. */
-.showcase-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr));
-    gap: 1.75rem;
-    margin-top: 3rem;
+.cannon {
+    background-color: var(--blue);
 }
 
-.showcase-card {
-    display: flex;
-    flex-direction: column;
-    border-radius: 15px;
-    overflow: hidden;
+.cannon-frame {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem 0.5rem;
     background-color: var(--blue-light);
     border: 1px solid rgb(var(--accent-rgb) / 0.2);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
 }
 
-.showcase-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--maize);
-    box-shadow: 0 12px 32px rgb(var(--accent-rgb) / 0.22);
+.cannon-chart {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-.showcase-media {
-    position: relative;
-    min-height: 230px;
-    background-size: cover;
-    background-position: center;
+.cannon-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 1rem 2rem;
+    margin-top: 1.2rem;
 }
 
-.showcase-media::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgb(var(--bg-dark-rgb) / 0.25) 0%, rgb(var(--bg-light-rgb) / 0.9) 100%);
-}
-
-.showcase-body {
-    padding: 1.5rem;
+.cannon-slider {
     display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    flex: 1;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem 1.2rem;
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-radius: 50px;
 }
 
-.showcase-body h3 {
-    font-size: 1.3rem;
+.cannon-slider label {
+    flex: 0 0 auto;
+    font-size: 0.88rem;
     font-weight: 600;
     color: var(--maize);
 }
 
-.showcase-angle {
-    color: var(--gold);
-    font-size: 0.95rem;
-    line-height: 1.6;
+.cannon-slider input[type="range"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    accent-color: var(--gold);
+    cursor: pointer;
 }
 
-.showcase-body p.showcase-desc {
+.cannon-slider output {
+    flex: 0 0 auto;
+    min-width: 4.2rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.cannon-readout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+}
+
+.stat {
+    padding: 1.1rem 1.25rem;
+    background-color: var(--blue-light);
+    border: 1px solid rgb(var(--accent-rgb) / 0.2);
+    border-left: 3px solid var(--gold);
+    border-radius: 12px;
+}
+
+.stat-v {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-k {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    opacity: 0.8;
+}
+
+/* The one line that turns the front row number into a decision. */
+.cannon-note {
+    margin-top: 1.1rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid rgb(var(--accent-rgb) / 0.5);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--maize);
+    min-height: 1.65em;
+}
+
+.cannon-specs {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 0.8rem 1.5rem;
+}
+
+.spec {
+    padding-left: 1rem;
+    border-left: 2px solid rgb(var(--gold-rgb) / 0.45);
     font-size: 0.94rem;
-    line-height: 1.7;
+    line-height: 1.6;
     opacity: 0.9;
 }
 
-.showcase-btn {
-    align-self: flex-start;
-    margin-top: auto;
-    padding: 0.6rem 1.4rem;
-    border: 1px solid var(--maize);
-    border-radius: 50px;
-    background-color: transparent;
+.spec strong {
     color: var(--maize);
-    font-family: inherit;
     font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.showcase-btn:hover {
-    background-color: var(--maize);
-    color: var(--blue);
+/* ============================================================ */
+/* FIRST Robotics                                               */
+/* ============================================================ */
+
+.first {
+    background-color: var(--blue-dark);
+}
+
+.first-quote {
+    max-width: 780px;
+    margin: 2.5rem auto 0;
+    padding: 1.75rem 2rem;
+    background-color: var(--blue-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 15px 15px 0;
+}
+
+.first-quote p {
+    font-size: 1.35rem;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.first-quote footer {
+    margin-top: 1rem;
+    font-size: 0.96rem;
+    line-height: 1.7;
+    opacity: 0.88;
+}
+
+.first-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    align-items: start;
+}
+
+.first-video {
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgb(var(--accent-rgb) / 0.25);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+    background-color: #000;
+}
+
+.first-video iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+}
+
+.first-side .walk-route-title {
+    margin-top: 0;
+}
+
+/* One column here: the highlights read as a list, not a grid of fragments. */
+.first-highlights {
+    grid-template-columns: 1fr;
+}
+
+/* Six photos, so three across and two across both tile without an orphan. */
+.first-mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.mosaic-tile {
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgb(var(--accent-rgb) / 0.18);
+    filter: saturate(0.85);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.mosaic-tile:hover {
+    filter: saturate(1.05);
+    transform: translateY(-3px);
 }
 
 /* ============================================================ */
@@ -613,21 +768,21 @@ body.castle-running {
 /* ============================================================ */
 
 @media (max-width: 900px) {
-    .showctl-frame,
     .pepper-frame,
-    .people-grid {
+    .people-grid,
+    .first-grid {
         grid-template-columns: 1fr;
     }
-
-    .cue-list { max-height: 260px; }
 }
 
 @media (max-width: 600px) {
-    .transport { border-radius: 18px; }
     .transport-btn { flex: 1 1 auto; }
-    .cue-row { grid-template-columns: 2.8rem 2.8rem 1fr; }
+    .walk-stage { min-height: 260px; }
+    .first-mosaic { grid-template-columns: repeat(2, 1fr); }
+    .first-quote p { font-size: 1.15rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .showcase-card:hover { transform: none; }
+    .stat:hover { transform: none; }
+    .mosaic-tile:hover { transform: none; }
 }

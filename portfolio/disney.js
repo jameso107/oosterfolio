@@ -130,7 +130,6 @@
                 '</svg>' +
                 '<span class="castle-word castle-word-right">ES</span>' +
             '</div>' +
-            '<p class="castle-skip"><span>Tap anywhere to skip</span></p>' +
         '</div>';
     }
 
@@ -171,11 +170,11 @@
     var NAV = [
         ['home', 'Home'],
         ['why', 'Why Imagineering'],
-        ['show', 'Show control'],
-        ['built', 'What I have built'],
+        ['walk', 'The walkthrough'],
+        ['cannon', 'The cannon'],
+        ['first', 'FIRST'],
         ['people', 'People'],
         ['software', 'Software'],
-        ['journey', 'Journey'],
         ['contact', 'Contact']
     ];
 
@@ -207,7 +206,7 @@
                 '<p class="hero-subtitle">Engineer. Servant Leader. Believer.</p>' +
                 '<p class="hero-description">I built a haunted house for over 200 residents with a Pepper\'s Ghost illusion, a portrait that changed while you were looking at it, and six speakers hidden in a dorm hallway. I also built the world\'s most powerful mobile robotic t-shirt cannon, and spent a summer at NASA JPL measuring how people really use the tools we hand them. Imagineering is the only place I know of where those three are the same job.</p>' +
                 '<div class="hero-cta-row">' +
-                    '<a href="#show" class="cta-button">Run my show</a>' +
+                    '<a href="#walk" class="cta-button">Walk my haunted house</a>' +
                     '<a href="#why" class="cta-button cta-secondary">Why Imagineering</a>' +
                 '</div>' +
                 '<p class="hero-now"><strong>Now:</strong> Robotics Engineering at the University of Michigan, minoring in Coaching &amp; Leadership. <strong>Recently:</strong> NASA JPL.</p>' +
@@ -217,7 +216,7 @@
 
     var WHY = [
         ['Creative', 'I already build shows',
-         'The Ghost of Alice Lloyd ran for over 200 residents on a budget of almost nothing. A Pepper\'s Ghost illusion, a living picture frame, black light, six JBL speakers, and a cast of fellow RAs I had to direct. I designed it, built it, sequenced it, and performed in it. There is a playable cue sheet a little further down this page.'],
+         'The Ghost of Alice Lloyd ran for over 200 residents on a budget of almost nothing. A Pepper\'s Ghost illusion, a living picture frame, black light, six JBL speakers, and a cast of fellow RAs I had to direct. I designed it, built it, sequenced it, and performed in it. There is a 3D walkthrough of it a little further down this page.'],
         ['Ambitious', 'I keep building the bigger version',
          'Nobody asked for a t-shirt cannon robot, so two friends and I built the most powerful mobile one in the world and Koops still takes it to events. Nobody asked an intern to build an LLM suite either. I pitched it, built it, and around 40 people use it every day. When I can see the better version of a thing, I have a hard time leaving it alone.'],
         ['People centered', 'The person in the seat is the whole job',
@@ -241,115 +240,58 @@
         '</section>';
     }
 
-    /* ---------------- Show control ---------------- */
+    /* ---------------- The walkthrough ---------------- */
 
-    /* Reconstructed from the show I ran. Times are the running order for one
-       group of six guests; the hall reset and ran again behind them. */
-    var CUES = [
-        { t: 0,   dept: 'SM',   name: 'House open',            desc: 'Guests admitted in groups of six.',                 set: { corridor: 0.85 } },
-        { t: 5,   dept: 'SND',  name: 'Drone in',              desc: 'Low bed under the whole hall.',                     spk: [1, 2] },
-        { t: 10,  dept: 'LX',   name: 'Corridor to 20%',       desc: 'Practicals down. Eyes start adjusting.',            set: { corridor: 0.2 } },
-        { t: 15,  dept: 'CAST', name: 'Greeter, the story',    desc: 'Who Alice Lloyd was, and what residents still hear.', set: { greeter: 1 } },
-        { t: 25,  dept: 'SND',  name: 'Whisper pass',          desc: 'Voice walks from speaker 3 to speaker 4.',          spk: [3, 4] },
-        { t: 31,  dept: 'LX',   name: 'Black light up',        desc: 'Portrait wall only.',                               set: { uv: 1, greeter: 0 } },
-        { t: 35,  dept: 'SFX',  name: 'Living picture frame',  desc: 'Portrait cross-fades while they are looking at it.', set: { portrait: 1 } },
-        { t: 41,  dept: 'SND',  name: 'Portrait sting',        desc: 'Hard hit, speaker 4, close and dry.',               spk: [4] },
-        { t: 46,  dept: 'CAST', name: 'Move to the threshold', desc: 'Guests walked to the ballroom sightline.',          set: { atGlass: 1 } },
-        { t: 53,  dept: 'LX',   name: 'Chamber to 5%',         desc: 'Hidden alcove barely lifts. Nothing visible yet.',  set: { chamber: 0.2 } },
-        { t: 57,  dept: 'SFX',  name: 'Alice appears',         desc: 'Pepper\'s Ghost. Reflection builds in the glass.',  set: { chamber: 0.85, ghost: 1 } },
-        { t: 62,  dept: 'SND',  name: 'Swell, all six',        desc: 'First time the whole rig is used at once.',         spk: [1, 2, 3, 4, 5, 6] },
-        { t: 68,  dept: 'SFX',  name: 'Alice fades',           desc: 'Chamber down slowly. She does not exit, she stops being there.', set: { chamber: 0, ghost: 0 } },
-        { t: 72,  dept: 'LX',   name: 'Blackout',              desc: 'Everything out. Hold it longer than feels safe.',   set: { corridor: 0, uv: 0, portrait: 0, blackout: 1 } },
-        { t: 75,  dept: 'SND',  name: 'Silence',               desc: 'Two beats of nothing. This is the actual scare.',   set: {} },
-        { t: 78,  dept: 'CAST', name: 'Alcove scare',          desc: 'Actor out of the dark on the exit side.',           set: { scare: 1, blackout: 0 } },
-        { t: 82,  dept: 'LX',   name: 'Exit path up',          desc: 'Corridor to 60%, house lights lead them out.',      set: { corridor: 0.6, scare: 0 } },
-        { t: 87,  dept: 'SND',  name: 'Outro under',           desc: 'Bed continues so the next group hears it coming.',  spk: [5, 6] },
-        { t: 93,  dept: 'SM',   name: 'Reset',                 desc: 'Thirty seconds to reset for the next six.',         set: { atGlass: 0 } }
+    /* Stations transcribed from jameso107/haunted so the numbers on this page
+       match the numbered sprites you see standing in the scene. Em dashes in
+       the original descriptions are normalized, per the site's copy rule. */
+    var STATIONS = [
+        [2,  'The Strike',       'elevator ride, LED flicker, thunder, blackout'],
+        [3,  'Arrival 1950',     'banner, phonograph big band, period greeter'],
+        [4,  'The Promenade',    'period posters, dance-card table, a lurker'],
+        [5,  'Portrait Gallery', 'living portrait. Walk close to the red frame'],
+        [6,  "Dean's Office",    "rocking chair rig, ledger with tonight's names"],
+        [7,  "Pepper's Ghost",   'watch the window, she appears over the gallery'],
+        [8,  'The Bulletin',     'the radio announces her death and the lights glitch'],
+        [9,  'Whisper Hall',     'pitch dark, cheesecloth brushes past'],
+        [10, 'The Bust',         'projected face on the foam heads'],
+        [11, 'The Tomb',         'eyes forward on the tombstone, keep walking'],
+        [12, 'Back to 2026',     'fluorescent hum, check the corkboard']
     ];
 
-    var SHOW_LEN = 100;
-
-    function planSvg() {
-        var spk = '';
-        var pos = [[66, 48], [66, 212], [262, 48], [240, 212], [420, 48], [390, 212]];
-        for (var i = 0; i < 6; i++) {
-            spk += '<g id="spk-' + (i + 1) + '" class="plan-spk">' +
-                '<circle cx="' + pos[i][0] + '" cy="' + pos[i][1] + '" r="13" fill="#16225E" stroke="#8FD3FF" stroke-width="1.5"/>' +
-                '<text x="' + pos[i][0] + '" y="' + (pos[i][1] + 4) + '" text-anchor="middle" fill="#8FD3FF" font-family="Inter, sans-serif" font-size="11" font-weight="600">' + (i + 1) + '</text>' +
-                '</g>';
-        }
-
-        return '' +
-        '<svg class="plan-svg" viewBox="0 0 560 270" role="img" aria-label="Top down plan of the hall: entry, portrait wall, the angled glass with its hidden chamber, the exit alcove, and six speaker positions.">' +
-            '<rect id="plan-floor" x="30" y="26" width="500" height="208" rx="10" fill="#0B1440" stroke="#2A3A7A" stroke-width="1.5"/>' +
-            '<rect id="plan-uv" x="120" y="30" width="130" height="60" rx="6" fill="#8B5CF6" opacity="0"/>' +
-            '<path id="plan-guests" d="M 46 130 L 150 130 L 300 130 L 470 130" fill="none" stroke="#8FD3FF" stroke-width="2" stroke-dasharray="7 7" opacity="0.5"/>' +
-            '<text x="46" y="118" fill="#8FD3FF" font-family="Inter, sans-serif" font-size="11" opacity="0.75">ENTRY</text>' +
-            '<text x="470" y="118" text-anchor="end" fill="#8FD3FF" font-family="Inter, sans-serif" font-size="11" opacity="0.75">EXIT</text>' +
-            /* portrait wall */
-            '<rect x="150" y="36" width="72" height="48" rx="4" fill="#16225E" stroke="#8FD3FF" stroke-width="1.5"/>' +
-            '<rect id="plan-portrait" x="158" y="43" width="56" height="34" rx="3" fill="#F4C95D" opacity="0.2"/>' +
-            '<text x="186" y="102" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="10" opacity="0.7">PORTRAIT</text>' +
-            /* angled glass and the hidden chamber below it */
-            '<line id="plan-glass" x1="300" y1="96" x2="360" y2="156" stroke="#8FD3FF" stroke-width="3" opacity="0.55"/>' +
-            '<text x="292" y="90" fill="#8FD3FF" font-family="Inter, sans-serif" font-size="10" opacity="0.75">GLASS 45&#176;</text>' +
-            '<rect id="plan-chamber" x="292" y="176" width="76" height="46" rx="5" fill="#F4C95D" opacity="0.08" stroke="#F4C95D" stroke-width="1.2"/>' +
-            '<text x="330" y="203" text-anchor="middle" fill="#F4C95D" font-family="Inter, sans-serif" font-size="10" opacity="0.85">CHAMBER</text>' +
-            '<g id="plan-ghost" opacity="0">' +
-                '<ellipse cx="404" cy="130" rx="20" ry="28" fill="#BCE6FF" opacity="0.6"/>' +
-                '<ellipse cx="404" cy="106" rx="10" ry="11" fill="#BCE6FF" opacity="0.85"/>' +
-                '<text x="404" y="182" text-anchor="middle" fill="#BCE6FF" font-family="Inter, sans-serif" font-size="9">ALICE</text>' +
-            '</g>' +
-            /* actors */
-            '<g id="plan-greeter" opacity="0.18">' +
-                '<circle cx="96" cy="130" r="9" fill="#F4C95D"/>' +
-                '<text x="96" y="156" text-anchor="middle" fill="#F4C95D" font-family="Inter, sans-serif" font-size="9">GREETER</text>' +
-            '</g>' +
-            '<g id="plan-scare" opacity="0.18">' +
-                '<circle cx="470" cy="180" r="9" fill="#F4C95D"/>' +
-                '<text x="470" y="204" text-anchor="middle" fill="#F4C95D" font-family="Inter, sans-serif" font-size="9">ALCOVE</text>' +
-            '</g>' +
-            spk +
-            '<rect id="plan-blackout" x="30" y="26" width="500" height="208" rx="10" fill="#02040F" opacity="0"/>' +
-        '</svg>';
-    }
-
-    function cueRows() {
-        return CUES.map(function (c, i) {
-            var m = Math.floor(c.t / 60), s = c.t % 60;
-            return '<li class="cue-row" data-cue="' + i + '">' +
-                '<span class="cue-time">' + m + ':' + (s < 10 ? '0' : '') + s + '</span>' +
-                '<span class="cue-dept">' + c.dept + '</span>' +
-                '<span class="cue-name"><strong>' + esc(c.name) + '</strong><span>' + esc(c.desc) + '</span></span>' +
+    function walkSection() {
+        var stations = STATIONS.map(function (st) {
+            return '<li class="station">' +
+                '<span class="station-n">' + st[0] + '</span>' +
+                '<span class="station-copy"><strong>' + esc(st[1]) + '</strong>' +
+                '<span>' + esc(st[2]) + '</span></span>' +
             '</li>';
         }).join('');
-    }
 
-    function showSection() {
         return '' +
-        '<section id="show" class="showctl">' +
+        '<section id="walk" class="showctl">' +
             '<div class="container">' +
-                '<p class="section-kicker">Show control</p>' +
-                '<h2 class="section-title">The Ghost of Alice Lloyd</h2>' +
-                '<p class="section-intro">A haunted house is a show control problem in a costume. Six guests at a time, one hallway, a portrait, a pane of glass, and a cast who had to hit their marks in the dark. Here is how it was sequenced. Press play and watch the hall respond.</p>' +
-                '<p style="text-align:center;margin-bottom:0.5rem"><span class="reconstructed-badge">Reconstructed cue sheet</span></p>' +
-                '<div class="showctl-frame">' +
-                    '<div class="showctl-panel">' +
-                        '<h3>Hall plan</h3>' + planSvg() +
-                    '</div>' +
-                    '<div class="showctl-panel">' +
-                        '<h3>Cue sheet</h3>' +
-                        '<ul class="cue-list" id="cue-list">' + cueRows() + '</ul>' +
-                    '</div>' +
+                '<p class="section-kicker">Concept art you can walk</p>' +
+                '<h2 class="section-title">Walk the haunted house</h2>' +
+                '<p class="section-intro">The haunt ran for one night in a dorm hallway, so I rebuilt it in a browser where it can keep running. This is not a video. It is a first-person walkthrough of the Alice Lloyd Haunt with walls you bump into, the elevator ride that opens the show, a portrait that changes when you get close, Alice arriving in the glass, and a tomb you should keep walking past. Click in and take a lap.</p>' +
+                '<div class="walk-frame">' +
+                    '<iframe id="walk-stage" class="walk-stage" src="/haunt" loading="lazy" ' +
+                        'allow="pointer-lock; fullscreen" ' +
+                        'title="Alice Lloyd Haunt, first person 3D walkthrough"></iframe>' +
                 '</div>' +
-                '<div class="transport">' +
-                    '<button type="button" class="transport-btn" id="show-play">Play</button>' +
-                    '<button type="button" class="transport-btn" id="show-reset">Restart</button>' +
-                    '<span class="transport-clock" id="show-clock">0:00 / 1:40</span>' +
-                    '<input type="range" class="transport-scrub" id="show-scrub" min="0" max="' + SHOW_LEN + '" step="0.1" value="0" aria-label="Show timecode">' +
+                '<div class="walk-bar">' +
+                    '<span class="walk-hint"><strong>Click inside to take the controls.</strong> ' +
+                        'W A S D to walk, mouse to look, Shift to run, Tab for a bird\'s eye view, G for the route arrows. ' +
+                        '<em>It wants a keyboard, so a laptop is the right place for it.</em></span>' +
+                    '<button type="button" class="transport-btn" id="walk-full">Full screen</button>' +
+                    '<a class="transport-btn" href="/haunt" target="_blank" rel="noopener">Open in its own tab</a>' +
                 '</div>' +
-                '<p class="showctl-note">The cue times are reconstructed from the show I ran, not a scan of the original paper. The hall, the effects, the speaker count, and the running order are the real ones. ' +
-                '<button type="button" class="ai-card-link" onclick="openShowcase(\'haunted-house\')">Watch the walkthrough</button></p>' +
+                '<h3 class="walk-route-title">The route</h3>' +
+                '<ol class="walk-stations">' + stations + '</ol>' +
+                '<p class="showctl-note">Schematic scale, built to carry the route and the sightlines rather than to be pretty. Every sound in it is generated in the browser rather than loaded from a file. ' +
+                'Video of the night itself, all 200 plus residents of it: ' +
+                '<button type="button" class="ai-card-link" onclick="openShowcase(\'haunted-house\')">watch the walkthrough</button>. ' +
+                'Source for this one is <a href="https://github.com/jameso107/haunted" target="_blank" rel="noopener">on GitHub</a>.</p>' +
             '</div>' +
         '</section>';
     }
@@ -362,7 +304,7 @@
             '<div class="container">' +
                 '<p class="section-kicker">The trick in the middle of it</p>' +
                 '<h2 class="section-title">Pepper\'s Ghost</h2>' +
-                '<p class="section-intro">The same principle the Haunted Mansion ballroom runs on. A sheet of glass at 45 degrees, a chamber the guest cannot see, and a light you bring up slowly. Drag the slider and watch Alice arrive.</p>' +
+                '<p class="section-intro">Station 7 up there is this trick, and it is the same principle the Haunted Mansion ballroom runs on. A sheet of glass at 45 degrees, a chamber the guest cannot see, and a light you bring up slowly. Drag the slider and watch Alice arrive.</p>' +
                 '<div class="pepper-frame">' +
                     '<div class="showctl-panel">' +
                         '<h3>Side elevation</h3>' +
@@ -418,37 +360,201 @@
         '</section>';
     }
 
-    /* ---------------- Built for an audience ---------------- */
+    /* ---------------- The t-shirt cannon ---------------- */
 
-    var BUILT = [
-        ['tshirt-cannon',   'Show action equipment, more or less. 150psi, a two axis turret, a 250 foot range, and a hard rule about never hurting the front row.'],
-        ['robot-in-3-days', 'A three day charrette with fifteen alumni. I ran the design and owned integration between the subsystems.'],
-        ['first-robotics',  'Eight years of the program. It is where I learned how to hand a crowd a story and make them care about a machine.'],
-        ['ballbot',         'Dynamic balancing on three omniwheels. The same controls math that ride motion and animatronics run on.']
-    ];
+    /*
+     * Ballistics ported from jameso107/tshirt-cannon-simulator (app.py), which
+     * James wrote in Python with streamlit and plotly. Streamlit needs a server,
+     * so the model is reimplemented here step for step: work-energy muzzle
+     * velocity, quadratic drag integrated at dt = 0.01, and the same bisection
+     * that calibrates a friction factor so a t-shirt reaches exactly 200 ft at
+     * 100 psi and 45 degrees. Checked against the Python to 3 decimal places.
+     */
+    var BAL = {
+        rho: 1.225,
+        cd: 0.5,
+        g: 9.81,
+        barrelArea: Math.PI * Math.pow(2.75 * 0.0254 / 2, 2),
+        barrelLen: 24 * 0.0254,
+        shirt: { mass: 0.170, diam: 0.07 },
+        ball: { mass: 0.040, diam: 0.07 },
+        targetRangeM: 200 * 0.3048
+    };
+    var M_TO_FT = 3.281, MS_TO_MPH = 2.237;
 
-    function builtSection() {
-        var cards = BUILT.map(function (b) {
-            var e = robot(b[0]);
-            if (!e) return '';
-            return '<article class="showcase-card">' +
-                '<div class="showcase-media" style="background-image:url(\'' + esc(e.image) + '\')"></div>' +
-                '<div class="showcase-body">' +
-                    '<h3>' + esc(e.title) + '</h3>' +
-                    '<p class="showcase-angle">' + esc(b[1]) + '</p>' +
-                    '<p class="showcase-desc">' + e.description + '</p>' +
-                    '<button type="button" class="showcase-btn" onclick="openShowcase(\'' + e.id + '\')">Open it up</button>' +
-                '</div>' +
-            '</article>';
-        }).join('');
+    function muzzleV(mass, psi) {
+        return Math.sqrt((2 * (psi * 6894.76 * BAL.barrelArea * BAL.barrelLen)) / mass);
+    }
+
+    /* Mirrors the Python loop exactly, including where the sample is recorded
+       and where the early return sits, so the numbers come out identical. */
+    function flight(obj, v0, angleDeg, stopAtX) {
+        var A = Math.PI * Math.pow(obj.diam / 2, 2);
+        var k = 0.5 * BAL.rho * BAL.cd * A;
+        var a = angleDeg * Math.PI / 180;
+        var vx = v0 * Math.cos(a), vy = v0 * Math.sin(a);
+        var x = 0, y = 0, dt = 0.01, pts = [];
+        while (y >= 0) {
+            pts.push([x, y]);
+            var sp = Math.sqrt(vx * vx + vy * vy);
+            if (stopAtX != null && x >= stopAtX) return { speed: sp, height: y };
+            var drag = k * sp * sp;
+            vx += (-(drag / obj.mass) * (vx / sp)) * dt;
+            vy += (-(drag / obj.mass) * (vy / sp) - BAL.g) * dt;
+            x += vx * dt;
+            y += vy * dt;
+        }
+        return { range: x, pts: pts, speed: 0, height: 0 };
+    }
+
+    var FRICTION = (function () {
+        var ideal = muzzleV(BAL.shirt.mass, 100);
+        var lo = 0.01, hi = 1.0, mid;
+        for (var i = 0; i < 100; i++) {
+            mid = (lo + hi) / 2;
+            if (flight(BAL.shirt, ideal * mid, 45).range > BAL.targetRangeM) hi = mid;
+            else lo = mid;
+        }
+        var shirt = (lo + hi) / 2;
+        return { shirt: shirt, ball: shirt * 0.5 };
+    })();
+
+    var PLOT = { w: 900, h: 452, l: 62, t: 34, r: 884, b: 396, maxX: 300, maxY: 160 };
+
+    function px(ft) { return PLOT.l + (ft / PLOT.maxX) * (PLOT.r - PLOT.l); }
+    function py(ft) { return PLOT.b - (ft / PLOT.maxY) * (PLOT.b - PLOT.t); }
+
+    function chartSvg() {
+        var g = '';
+        for (var xf = 0; xf <= PLOT.maxX; xf += 50) {
+            g += '<line x1="' + px(xf).toFixed(1) + '" y1="' + PLOT.t + '" x2="' + px(xf).toFixed(1) +
+                 '" y2="' + PLOT.b + '" stroke="#2A3A7A" stroke-width="1" opacity="0.5"/>' +
+                 '<text x="' + px(xf).toFixed(1) + '" y="' + (PLOT.b + 22) +
+                 '" text-anchor="middle" fill="#8FD3FF" opacity="0.7" font-family="Inter, sans-serif" font-size="13">' + xf + '</text>';
+        }
+        for (var yf = 0; yf <= PLOT.maxY; yf += 40) {
+            g += '<line x1="' + PLOT.l + '" y1="' + py(yf).toFixed(1) + '" x2="' + PLOT.r +
+                 '" y2="' + py(yf).toFixed(1) + '" stroke="#2A3A7A" stroke-width="1" opacity="0.5"/>' +
+                 '<text x="' + (PLOT.l - 12) + '" y="' + (py(yf) + 5).toFixed(1) +
+                 '" text-anchor="end" fill="#8FD3FF" opacity="0.7" font-family="Inter, sans-serif" font-size="13">' + yf + '</text>';
+        }
+        return '' +
+        '<svg class="cannon-chart" viewBox="0 0 ' + PLOT.w + ' ' + PLOT.h + '" role="img" ' +
+             'aria-label="Flight paths for a t-shirt and a stress ball at the selected pressure and launch angle, with the front row marked at 50 feet.">' +
+            g +
+            '<line x1="' + PLOT.l + '" y1="' + PLOT.b + '" x2="' + PLOT.r + '" y2="' + PLOT.b + '" stroke="#8FD3FF" stroke-width="2"/>' +
+            '<line x1="' + PLOT.l + '" y1="' + PLOT.t + '" x2="' + PLOT.l + '" y2="' + PLOT.b + '" stroke="#8FD3FF" stroke-width="2"/>' +
+            '<line x1="' + px(50).toFixed(1) + '" y1="' + PLOT.t + '" x2="' + px(50).toFixed(1) + '" y2="' + PLOT.b +
+                '" stroke="#F4C95D" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.75"/>' +
+            '<text x="' + (px(50) + 8).toFixed(1) + '" y="' + (PLOT.t + 16) +
+                '" fill="#F4C95D" font-family="Inter, sans-serif" font-size="12.5">front row, 50 ft</text>' +
+            '<polyline id="tsc-shirt-line" fill="none" stroke="#F4C95D" stroke-width="3" stroke-linejoin="round" points=""/>' +
+            '<polyline id="tsc-ball-line" fill="none" stroke="#8FD3FF" stroke-width="2.5" stroke-dasharray="7 5" points=""/>' +
+            '<circle id="tsc-shirt-hit" r="6" fill="#F4C95D"/>' +
+            '<circle id="tsc-ball-hit" r="5" fill="#8FD3FF"/>' +
+            '<text x="' + ((PLOT.l + PLOT.r) / 2).toFixed(0) + '" y="' + (PLOT.b + 46) + '" text-anchor="middle" fill="#8FD3FF" opacity="0.7" font-family="Inter, sans-serif" font-size="12.5">distance downrange (ft)</text>' +
+            '<text x="8" y="' + (PLOT.t - 14) + '" fill="#8FD3FF" opacity="0.7" font-family="Inter, sans-serif" font-size="12.5">height (ft)</text>' +
+        '</svg>';
+    }
+
+    function cannonSection() {
+        var e = robot('tshirt-cannon');
+        var specs = e.specs.map(function (sp) { return '<li class="spec">' + sp + '</li>'; }).join('');
 
         return '' +
-        '<section id="built" class="projects">' +
+        '<section id="cannon" class="cannon">' +
             '<div class="container">' +
-                '<p class="section-kicker">Built for an audience</p>' +
-                '<h2 class="section-title">Things that had to work in front of people</h2>' +
-                '<p class="section-intro">Every one of these had a date on it, a crowd in front of it, and no second take.</p>' +
-                '<div class="showcase-grid">' + cards + '</div>' +
+                '<p class="section-kicker">Show action equipment</p>' +
+                '<h2 class="section-title">The T-shirt Cannon</h2>' +
+                '<p class="section-intro">Two friends and I built this after hours, and Koops funded it so they could take it out to community events. The range was never really the point. The point is that a hundred people all turn to look at the same moment, and then something has to land in somebody\'s hands. That is a pressure vessel and a show at the same time, and neither one gets to win.</p>' +
+                '<div class="cannon-frame">' + chartSvg() + '</div>' +
+                '<div class="cannon-controls">' +
+                    '<div class="cannon-slider">' +
+                        '<label for="tsc-psi">Pressure</label>' +
+                        '<input type="range" id="tsc-psi" min="40" max="150" step="5" value="150" aria-label="Pressure in psi">' +
+                        '<output id="tsc-psi-out">150 psi</output>' +
+                    '</div>' +
+                    '<div class="cannon-slider">' +
+                        '<label for="tsc-angle">Launch angle</label>' +
+                        '<input type="range" id="tsc-angle" min="1" max="85" step="1" value="45" aria-label="Launch angle in degrees">' +
+                        '<output id="tsc-angle-out">45&#176;</output>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="cannon-readout">' +
+                    '<div class="stat"><span class="stat-v" id="tsc-v">0</span><span class="stat-k">t-shirt muzzle speed (mph)</span></div>' +
+                    '<div class="stat"><span class="stat-v" id="tsc-range">0</span><span class="stat-k">t-shirt range (ft)</span></div>' +
+                    '<div class="stat"><span class="stat-v" id="tsc-front">0</span><span class="stat-k">speed 50 ft downrange (mph)</span></div>' +
+                    '<div class="stat"><span class="stat-v" id="tsc-ball">0</span><span class="stat-k">stress ball range (ft)</span></div>' +
+                '</div>' +
+                '<p class="cannon-note" id="tsc-note"></p>' +
+                '<h3 class="walk-route-title">What it is made of</h3>' +
+                '<ul class="cannon-specs">' + specs + '</ul>' +
+                '<p class="showctl-note">The curves come from the simulator I wrote for this thing, ported from Python so it runs here. I calibrated it on one measurement, 200 feet at 100 psi and 45 degrees. Push it to the 150 psi the cannon actually fires at and it lands on 263 feet, against the 250 plus we measured on the field. I did not tune it to do that. ' +
+                '<button type="button" class="ai-card-link" onclick="openShowcase(\'tshirt-cannon\')">CAD, build photos, and video</button>. ' +
+                'Simulator source is <a href="https://github.com/jameso107/tshirt-cannon-simulator" target="_blank" rel="noopener">on GitHub</a>.</p>' +
+            '</div>' +
+        '</section>';
+    }
+
+    /* ---------------- FIRST Robotics ---------------- */
+
+    /* Photos and highlights come straight out of content.js so there is one
+       source of truth, and the ESPN link comes from the press list. */
+    function firstPhotos() {
+        var e = robot('first-robotics');
+        var out = [], re = /<img src="([^"]+)"/g, m;
+        while ((m = re.exec(e.media)) !== null) out.push(m[1]);
+        return out;
+    }
+
+    function espnEmbed() {
+        for (var i = 0; i < C.NEWS.length; i++) {
+            var id = /[?&]v=([A-Za-z0-9_-]+)/.exec(C.NEWS[i].href || '');
+            if (id) return 'https://www.youtube-nocookie.com/embed/' + id[1];
+        }
+        return null;
+    }
+
+    function firstSection() {
+        var e = robot('first-robotics');
+
+        var highlights = e.specs.map(function (sp) {
+            return '<li class="spec">' + sp + '</li>';
+        }).join('');
+
+        var photos = firstPhotos().map(function (src) {
+            return '<img class="mosaic-tile" src="' + esc(src) +
+                '" alt="FIRST Robotics" loading="lazy">';
+        }).join('');
+
+        var espn = espnEmbed();
+        var video = espn
+            ? '<div class="first-video"><iframe src="' + esc(espn) + '" loading="lazy" ' +
+              'title="ESPN3 Robotics Gameday interview" frameborder="0" ' +
+              'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+              'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>'
+            : '';
+
+        return '' +
+        '<section id="first" class="first">' +
+            '<div class="container">' +
+                '<p class="section-kicker">Where all of this started</p>' +
+                '<h2 class="section-title">FIRST Robotics</h2>' +
+                '<p class="section-intro">I joined FTC team 8529 in 2018 and FRC team 107 not long after, and I have never really left. In high school I was captain of Team R.O.B.O.T.I.C.S. I still volunteer at events, still mentor rookie teams, and still get more out of it than I put in. This is the section that explains every other section on this page.</p>' +
+                '<blockquote class="first-quote">' +
+                    '<p>FIRST Robotics isn\'t kids building robots; it is robots building kids.</p>' +
+                    '<footer>That is the line I learned as captain, and it is still the most useful thing anybody has told me about building. My late mentor Bob Bonczyk showed me how to compete with true compassion. I miss you, Bob.</footer>' +
+                '</blockquote>' +
+                '<div class="first-grid">' +
+                    video +
+                    '<div class="first-side">' +
+                        '<h3 class="walk-route-title">' + esc(e.role) + '</h3>' +
+                        '<ul class="cannon-specs first-highlights">' + highlights + '</ul>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="first-mosaic">' + photos + '</div>' +
+                '<p class="showctl-note">The reason this matters for a job at Imagineering: eight years of FIRST is eight years of explaining a machine to somebody who does not care about machines yet, and then watching them care. I also built <a href="https://github.com/jameso107/rebuilt" target="_blank" rel="noopener">a scouting app</a> for team 107, because a team making alliance picks off memory is a team guessing. ' +
+                'West Michigan\'s FOX 17 covered what the program does for the people in it, <a href="https://www.fox17online.com/news/morning-news/community-of-creation-robotics-team-members-gain-life-skills-and-friendship" target="_blank" rel="noopener">here</a>.</p>' +
             '</div>' +
         '</section>';
     }
@@ -471,7 +577,7 @@
                         '<li><strong>I measured where people looked</strong><span>I built a gaze tracker on OpenFace 2.0 to map operator attention to regions of their screen during live Curiosity shifts. It turned an opinion into a number: a 67% gap in trust between experts and novices. <button type="button" class="ai-card-link" onclick="openCaseStudyModal(\'case-jpl-research\')">Read the study</button></span></li>' +
                         '<li><strong>I lead from underneath</strong><span>Society sees leadership as a pyramid. I think you flip it, and the leader ends up at the bottom holding everyone else up. That is how I ran a state championship soccer sideline, a pro bono consulting group, and a floor of residents.</span></li>' +
                         '<li><strong>I went and studied it on purpose</strong><span>I declared a Coaching and Leadership minor through the Marsal Family School of Education after a class called Coaching as Leading. Human robot interaction is my favorite subject in the major for the same reason.</span></li>' +
-                        '<li><strong>I have mentored a lot of beginners</strong><span>Over 70 Michigan rookie FIRST teams since 2023, plus five events as a technical advisor assistant. Teaching someone to build their first robot is very good practice for making a thing understandable to a stranger.</span></li>' +
+                        
                     '</ul>' +
                 '</div>' +
             '</div>' +
@@ -509,19 +615,6 @@
     }
 
     /* ---------------- Shared tail ---------------- */
-
-    function journey() {
-        return '' +
-        '<section id="journey" class="journey"><div class="container">' +
-            '<h2 class="section-title">My Journey</h2>' +
-            '<div class="timeline">' +
-                C.JOURNEY.map(function (j) {
-                    return '<div class="timeline-item"><div class="timeline-marker"></div>' +
-                        '<div class="timeline-content"><h3>' + j.title + '</h3><p>' + j.body + '</p></div></div>';
-                }).join('') +
-            '</div>' +
-        '</div></section>';
-    }
 
     function contact() {
         var p = C.PROFILE;
@@ -610,116 +703,81 @@
     /* Interactive behavior                                         */
     /* ============================================================ */
 
-    function initShowControl() {
-        var playBtn = document.getElementById('show-play');
-        var resetBtn = document.getElementById('show-reset');
-        var scrub = document.getElementById('show-scrub');
-        var clock = document.getElementById('show-clock');
-        var list = document.getElementById('cue-list');
-        if (!playBtn || !scrub || !list) return;
+    function initWalkthrough() {
+        var btn = document.getElementById('walk-full');
+        var frame = document.getElementById('walk-stage');
+        if (!btn || !frame) return;
+        btn.addEventListener('click', function () {
+            if (frame.requestFullscreen) frame.requestFullscreen();
+            else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
+        });
+    }
 
-        var rows = [].slice.call(list.querySelectorAll('.cue-row'));
-        var el = {};
-        ['floor', 'uv', 'portrait', 'chamber', 'ghost', 'greeter', 'scare', 'blackout', 'guests']
-            .forEach(function (k) { el[k] = document.getElementById('plan-' + k); });
-        var spk = [];
-        for (var i = 1; i <= 6; i++) spk.push(document.getElementById('spk-' + i));
+    function initCannon() {
+        var psi = document.getElementById('tsc-psi');
+        var ang = document.getElementById('tsc-angle');
+        if (!psi || !ang) return;
 
-        var t = 0, playing = false, raf = null, last = 0, lastActive = -1;
+        var shirtLine = document.getElementById('tsc-shirt-line');
+        var ballLine = document.getElementById('tsc-ball-line');
+        var shirtHit = document.getElementById('tsc-shirt-hit');
+        var ballHit = document.getElementById('tsc-ball-hit');
+        var note = document.getElementById('tsc-note');
 
-        function fmt(s) {
-            var m = Math.floor(s / 60), r = Math.floor(s % 60);
-            return m + ':' + (r < 10 ? '0' : '') + r;
-        }
-
-        function stateAt(time) {
-            var s = { corridor: 0, uv: 0, portrait: 0, chamber: 0, ghost: 0,
-                      greeter: 0, scare: 0, blackout: 0, atGlass: 0 };
-            var live = [];
-            CUES.forEach(function (c) {
-                if (c.t > time) return;
-                if (c.set) Object.keys(c.set).forEach(function (k) { s[k] = c.set[k]; });
-                if (c.spk && time - c.t < 2.2) live = live.concat(c.spk);
-            });
-            s.speakers = live;
-            return s;
+        function poly(pts) {
+            var out = [];
+            for (var i = 0; i < pts.length; i++) {
+                var xf = pts[i][0] * M_TO_FT, yf = pts[i][1] * M_TO_FT;
+                if (xf > PLOT.maxX) break;
+                out.push(px(xf).toFixed(1) + ',' + py(Math.max(0, Math.min(PLOT.maxY, yf))).toFixed(1));
+            }
+            return out.join(' ');
         }
 
         function paint() {
-            var s = stateAt(t);
-            if (el.floor) el.floor.setAttribute('fill-opacity', String(0.25 + s.corridor * 0.75));
-            if (el.uv) el.uv.setAttribute('opacity', String(s.uv * 0.4));
-            if (el.portrait) el.portrait.setAttribute('opacity', String(0.18 + s.portrait * 0.42));
-            if (el.chamber) el.chamber.setAttribute('opacity', String(0.08 + s.chamber * 0.6));
-            if (el.ghost) el.ghost.setAttribute('opacity', String(s.ghost));
-            if (el.greeter) el.greeter.setAttribute('opacity', String(0.18 + s.greeter * 0.82));
-            if (el.scare) el.scare.setAttribute('opacity', String(0.18 + s.scare * 0.82));
-            if (el.blackout) el.blackout.setAttribute('opacity', String(s.blackout * 0.88));
-            if (el.guests) el.guests.setAttribute('opacity', String(0.25 + s.corridor * 0.45));
+            var p = parseInt(psi.value, 10), a = parseInt(ang.value, 10);
+            document.getElementById('tsc-psi-out').textContent = p + ' psi';
+            document.getElementById('tsc-angle-out').textContent = a + '\u00B0';
 
-            for (var i = 0; i < 6; i++) {
-                if (!spk[i]) continue;
-                var on = s.speakers.indexOf(i + 1) !== -1;
-                spk[i].setAttribute('opacity', on ? '1' : '0.45');
-                var c = spk[i].querySelector('circle');
-                if (c) c.setAttribute('fill', on ? '#F4C95D' : '#16225E');
-            }
+            var vShirt = muzzleV(BAL.shirt.mass, p) * FRICTION.shirt;
+            var vBall = muzzleV(BAL.ball.mass, p) * FRICTION.ball;
+            var fShirt = flight(BAL.shirt, vShirt, a);
+            var fBall = flight(BAL.ball, vBall, a);
+            var atFront = flight(BAL.shirt, vShirt, a, 50 * 0.3048);
+            var front = atFront.speed || 0;
+            var frontH = (atFront.height || 0) * M_TO_FT;
 
-            var activeIdx = -1;
-            for (var j = 0; j < CUES.length; j++) if (CUES[j].t <= t) activeIdx = j;
-            rows.forEach(function (row, k) {
-                row.classList.toggle('is-active', k === activeIdx);
-                row.classList.toggle('is-past', k < activeIdx);
-            });
-            /* Only chase the active cue once it actually changes, and only once
-               the list has been laid out, or the scroll clamps to zero. */
-            if (activeIdx >= 0 && activeIdx !== lastActive && list.clientHeight > 0) {
-                lastActive = activeIdx;
-                /* Measured, not offsetTop derived, so it does not care whether
-                   the list or any ancestor happens to be positioned. */
-                var lr = list.getBoundingClientRect();
-                var rr = rows[activeIdx].getBoundingClientRect();
-                var top = list.scrollTop + (rr.top - lr.top) - (list.clientHeight - rr.height) / 2;
-                list.scrollTo({ top: Math.max(0, top), behavior: playing ? 'smooth' : 'auto' });
-            }
+            shirtLine.setAttribute('points', poly(fShirt.pts));
+            ballLine.setAttribute('points', poly(fBall.pts));
 
-            clock.textContent = fmt(t) + ' / ' + fmt(SHOW_LEN);
-            scrub.value = String(t);
-        }
+            var sr = fShirt.range * M_TO_FT, br = fBall.range * M_TO_FT;
+            shirtHit.setAttribute('cx', px(Math.min(sr, PLOT.maxX)).toFixed(1));
+            shirtHit.setAttribute('cy', py(0).toFixed(1));
+            ballHit.setAttribute('cx', px(Math.min(br, PLOT.maxX)).toFixed(1));
+            ballHit.setAttribute('cy', py(0).toFixed(1));
 
-        function tick(now) {
-            if (!playing) return;
-            var dt = (now - last) / 1000;
-            last = now;
-            t = Math.min(SHOW_LEN, t + dt);
-            paint();
-            if (t >= SHOW_LEN) { setPlaying(false); return; }
-            raf = requestAnimationFrame(tick);
-        }
+            document.getElementById('tsc-v').textContent = (vShirt * MS_TO_MPH).toFixed(0);
+            document.getElementById('tsc-range').textContent = sr.toFixed(0);
+            document.getElementById('tsc-front').textContent = (front * MS_TO_MPH).toFixed(0);
+            document.getElementById('tsc-ball').textContent = br.toFixed(0);
 
-        function setPlaying(on) {
-            if (on === playing) return;
-            playing = on;
-            playBtn.textContent = on ? 'Pause' : 'Play';
-            if (on) {
-                if (t >= SHOW_LEN) t = 0;
-                last = performance.now();
-                raf = requestAnimationFrame(tick);
-            } else if (raf) {
-                cancelAnimationFrame(raf);
-                raf = null;
+            /* Speed alone does not decide anything. What matters is how high it
+               is when it crosses the people, which is what sets the envelope. */
+            var mph = front * MS_TO_MPH;
+            if (sr < 50) {
+                note.textContent = 'It does not even reach the front row here. Fine on a bench, useless at an event.';
+            } else if (frontH < 12) {
+                note.textContent = 'It crosses the front row only ' + frontH.toFixed(0) + ' feet up, still doing ' +
+                    mph.toFixed(0) + ' mph. This is the setting you never use with people standing there.';
+            } else {
+                note.textContent = 'It crosses the front row ' + frontH.toFixed(0) + ' feet overhead at ' +
+                    mph.toFixed(0) + ' mph, then slows on the way down. Clearing the near crowd is what the elevation is for.';
             }
         }
 
-        playBtn.addEventListener('click', function () { setPlaying(!playing); });
-        resetBtn.addEventListener('click', function () { setPlaying(false); t = 0; paint(); });
-        scrub.addEventListener('input', function () { t = parseFloat(scrub.value); paint(); });
-
+        psi.addEventListener('input', paint);
+        ang.addEventListener('input', paint);
         paint();
-        /* One more pass after first layout, so a preset scrub position still
-           lands the cue list on the right row. A timer rather than rAF, because
-           rAF does not fire while the tab is in the background. */
-        setTimeout(function () { lastActive = -1; paint(); }, 0);
     }
 
     function initPepper() {
@@ -757,13 +815,14 @@
         if (!mount || !C) return;
 
         mount.innerHTML =
-            introMarkup() + nav() + hero() + why() + showSection() + pepperSection() +
-            builtSection() + peopleSection() + softwareSection() + journey() +
+            introMarkup() + nav() + hero() + why() + walkSection() + pepperSection() +
+            cannonSection() + firstSection() + peopleSection() + softwareSection() +
             contact() + footer() + caseTemplates() + modals();
 
         runIntro();
-        initShowControl();
+        initWalkthrough();
         initPepper();
+        initCannon();
     }
 
     render();
