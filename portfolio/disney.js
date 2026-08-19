@@ -201,15 +201,8 @@
                 '<div class="night-sky">' + starField(45, 'castle-star') + '</div>' +
             '</div>' +
             '<div class="hero-content">' +
-                '<p class="hero-kicker">For Walt Disney Imagineering</p>' +
                 '<h1 class="hero-title">James Oosterhouse</h1>' +
                 '<p class="hero-subtitle">Engineer. Servant Leader. Believer.</p>' +
-                '<p class="hero-description">I built a haunted house for over 200 residents with a Pepper\'s Ghost illusion, a portrait that changed while you were looking at it, and six speakers hidden in a dorm hallway. I also built the world\'s most powerful mobile robotic t-shirt cannon, and spent a summer at NASA JPL measuring how people really use the tools we hand them. Imagineering is the only place I know of where those three are the same job.</p>' +
-                '<div class="hero-cta-row">' +
-                    '<a href="#walk" class="cta-button">Walk my haunted house</a>' +
-                    '<a href="#why" class="cta-button cta-secondary">Why Imagineering</a>' +
-                '</div>' +
-                '<p class="hero-now"><strong>Now:</strong> Robotics Engineering at the University of Michigan, minoring in Coaching &amp; Leadership. <strong>Recently:</strong> NASA JPL.</p>' +
             '</div>' +
         '</section>';
     }
@@ -273,7 +266,6 @@
             '<div class="container">' +
                 '<p class="section-kicker">Concept art you can walk</p>' +
                 '<h2 class="section-title">Walk the haunted house</h2>' +
-                '<p class="section-intro">The haunt ran for one night in a dorm hallway, so I rebuilt it in a browser where it can keep running. This is not a video. It is a first-person walkthrough of the Alice Lloyd Haunt with walls you bump into, the elevator ride that opens the show, a portrait that changes when you get close, Alice arriving in the glass, and a tomb you should keep walking past. Click in and take a lap.</p>' +
                 '<div class="walk-frame">' +
                     '<iframe id="walk-stage" class="walk-stage" src="/haunt" loading="lazy" ' +
                         'allow="pointer-lock; fullscreen" ' +
@@ -479,7 +471,6 @@
                         '<div class="panel-bar">' +
                             '<span class="panel-hint">Drag to spin it, scroll to zoom. 29 by 38 inch footprint, 38 inches tall.</span>' +
                             '<button type="button" class="transport-btn" id="cad-full">Full screen</button>' +
-                            '<a class="transport-btn" href="https://cad.onshape.com/documents/4f74f3a329da239a0e884a97/w/e750e810e13841ee01e0a5a0/e/a961c01b77cf7d39ca9bd272" target="_blank" rel="noopener">Onshape</a>' +
                         '</div>' +
                     '</div>' +
                     '<div class="cannon-panel">' +
@@ -515,9 +506,6 @@
 
                 '<h3 class="walk-route-title">What it is made of</h3>' +
                 '<ul class="cannon-specs">' + specs + '</ul>' +
-                '<p class="showctl-note">The 3D view is the real Onshape assembly. Its export is 11.1 million triangles and 555 megabytes, so I decimated it by vertex clustering down to 68,683 to make it something a browser could open. The curves come from the simulator I wrote for this thing, ported from Python so it runs here. I calibrated it on one measurement, 200 feet at 100 psi and 45 degrees. Push it to the 150 psi the cannon actually fires at and it lands on 263 feet, against the 250 plus we measured on the field. I did not tune it to do that. ' +
-                '<button type="button" class="ai-card-link" onclick="openShowcase(\'tshirt-cannon\')">Build photos and video</button>. ' +
-                'Simulator source is <a href="https://github.com/jameso107/tshirt-cannon-simulator" target="_blank" rel="noopener">on GitHub</a>.</p>' +
             '</div>' +
         '</section>';
     }
@@ -526,6 +514,12 @@
 
     /* Photos and highlights come straight out of content.js so there is one
        source of truth, and the ESPN link comes from the press list. */
+    /* These tiles crop to a landscape box, so a portrait photo loses its top and
+       bottom. Anything whose subject is not near the middle gets a focal point. */
+    var PHOTO_FOCUS = {
+        '/471615613_10161969345297432_554194538844078805_n.jpg': '50% 0%'
+    };
+
     function firstPhotos() {
         var e = robot('first-robotics');
         var out = [], re = /<img src="([^"]+)"/g, m;
@@ -549,8 +543,10 @@
         }).join('');
 
         var photos = firstPhotos().map(function (src) {
-            return '<img class="mosaic-tile" src="' + esc(src) +
-                '" alt="FIRST Robotics" loading="lazy">';
+            var focus = PHOTO_FOCUS[src];
+            return '<img class="mosaic-tile" src="' + esc(src) + '"' +
+                (focus ? ' style="object-position: ' + focus + '"' : '') +
+                ' alt="FIRST Robotics" loading="lazy">';
         }).join('');
 
         var espn = espnEmbed();
@@ -579,8 +575,6 @@
                     '</div>' +
                 '</div>' +
                 '<div class="first-mosaic">' + photos + '</div>' +
-                '<p class="showctl-note">The reason this matters for a job at Imagineering: eight years of FIRST is eight years of explaining a machine to somebody who does not care about machines yet, and then watching them care. I also built <a href="https://github.com/jameso107/rebuilt" target="_blank" rel="noopener">a scouting app</a> for team 107, because a team making alliance picks off memory is a team guessing. ' +
-                'West Michigan\'s FOX 17 covered what the program does for the people in it, <a href="https://www.fox17online.com/news/morning-news/community-of-creation-robotics-team-members-gain-life-skills-and-friendship" target="_blank" rel="noopener">here</a>.</p>' +
             '</div>' +
         '</section>';
     }

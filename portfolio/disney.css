@@ -140,8 +140,6 @@
     to   { opacity: 1; }
 }
 
-.castle-arc-path { fill: none; stroke: none; }
-
 .castle-spark {
     offset-path: path('M -40 216 Q 120 -262 280 216');
     offset-distance: 0%;
@@ -170,21 +168,6 @@
     100% { opacity: 0; transform: scale(2.4); }
 }
 
-.castle-skip {
-    position: absolute;
-    bottom: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.78rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--white);
-    opacity: 0;
-    animation: castleFill 0.5s ease-out 1.9s forwards;
-}
-
-.castle-skip span { opacity: 0.45; }
-
 body.castle-running {
     overflow: hidden;
 }
@@ -193,8 +176,7 @@ body.castle-running {
 @media (prefers-reduced-motion: reduce) {
     .castle-word,
     .castle-body,
-    .castle-window,
-    .castle-skip {
+    .castle-window {
         opacity: 1;
         animation: none;
     }
@@ -230,11 +212,6 @@ body.castle-running {
     animation-duration: 4s;
 }
 
-.hero-kicker {
-    color: var(--gold);
-    border-color: rgb(var(--gold-rgb) / 0.4);
-}
-
 /* ============================================================ */
 /* Section furniture                                            */
 /* ============================================================ */
@@ -251,19 +228,6 @@ body.castle-running {
     text-transform: uppercase;
     color: var(--gold);
     margin-bottom: 0.6rem;
-}
-
-.reconstructed-badge {
-    display: inline-block;
-    padding: 0.3rem 0.85rem;
-    border-radius: 50px;
-    border: 1px solid rgb(var(--gold-rgb) / 0.45);
-    background-color: rgb(var(--gold-rgb) / 0.1);
-    color: var(--gold);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
 }
 
 /* ============================================================ */
