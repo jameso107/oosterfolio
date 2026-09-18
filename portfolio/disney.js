@@ -171,9 +171,9 @@
         ['home', 'Home'],
         ['haunt', 'Haunted house'],
         ['cannon', 'The cannon'],
-        ['first', 'FIRST'],
         ['people', 'People'],
         ['software', 'Software'],
+        ['first', 'FIRST'],
         ['contact', 'Contact']
     ];
 
@@ -525,7 +525,7 @@
 
     /* ---------------- Software ---------------- */
 
-    var SOFTWARE = ['triage', 'koopsgpt', 'specinator'];
+    var SOFTWARE = ['triage', 'clientgpt', 'specinator', 'homebase', 'trivium', 'jarvis'];
 
     function softwareSection() {
         var cards = SOFTWARE.map(function (id) {
@@ -759,7 +759,7 @@
 
         mount.innerHTML =
             introMarkup() + nav() + hero() + hauntSection() +
-            cannonSection() + firstSection() + peopleSection() + softwareSection() +
+            cannonSection() + peopleSection() + softwareSection() + firstSection() +
             contact() + footer() + caseTemplates() + modals();
 
         runIntro();

@@ -145,17 +145,17 @@
 `
         },
         {
-            id: "koopsgpt",
-            title: "KoopsGPT",
-            hook: "The LLM suite Koops still runs every day.",
+            id: "clientgpt",
+            title: "Client GPT",
+            hook: "The LLM suite a client still runs every day.",
             chips: [
                 "40+ daily users",
                 "4,000+ hours/year saved",
             ],
             caseStudy: `
         <p class="case-modal-kicker">AI Work / Case Study</p>
-        <h2 class="case-title">KoopsGPT: the tool Koops still uses</h2>
-        <p class="case-summary">An LLM suite I pitched, built, and rolled out at Koops Automation Systems. It is still running there.</p>
+        <h2 class="case-title">Client GPT: the tool the client still uses</h2>
+        <p class="case-summary">An LLM suite I pitched, built, and rolled out inside a client company. It is still running there.</p>
         <div class="chip-row">
             <span class="chip">40+ daily users</span>
             <span class="chip">4,000+ hours/year saved</span>
@@ -166,10 +166,10 @@
         </div>
         <div class="case-section">
             <h2>What I built</h2>
-            <p>It sits on top of Koops's own data. Ask it to draft a quote and it works from past wins. Hand it a contract and it tells you where this one departs from precedent. Point it at a job and it flags the risk earlier than somebody reading cold would. I trained the team myself, sat with them while they used it, and built whatever they asked for next.</p>
+            <p>It sits on top of the company’s own data. Ask it to draft a quote and it works from past wins. Hand it a contract and it tells you where this one departs from precedent. Point it at a job and it flags the risk earlier than somebody reading cold would. I trained the team myself, sat with them while they used it, and built whatever they asked for next.</p>
         </div>
         <figure class="case-figure">
-            <svg viewBox="0 0 920 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="KoopsGPT architecture: enterprise data sources feed a retrieval layer, three agents for quoting, contract review, and risk analysis draw on it, and the team works through one chat surface.">
+            <svg viewBox="0 0 920 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Client GPT architecture: enterprise data sources feed a retrieval layer, three agents for quoting, contract review, and risk analysis draw on it, and the team works through one chat surface.">
                 <defs>
                     <marker id="koops-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--maize)"/>
@@ -199,7 +199,7 @@
                 <line x1="460" y1="64" x2="460" y2="47" stroke="var(--maize)" stroke-width="2" marker-end="url(#koops-arrow-m)"/>
                 <text x="880" y="30" text-anchor="end" fill="var(--white)" opacity="0.7" font-family="Inter, sans-serif" font-size="11.5">LLM APIs power each agent</text>
             </svg>
-            <figcaption>KoopsGPT's architecture. It runs on internal company data, so there are no screenshots to show.</figcaption>
+            <figcaption>Client GPT's architecture. It runs on the client's internal data, so there are no screenshots to show.</figcaption>
         </figure>
         <div class="case-section">
             <h2>Outcome</h2>
@@ -208,6 +208,200 @@
         <div class="case-section">
             <h2>What I learned</h2>
             <p>Getting people to use it was harder than building it. Watching where somebody hesitated and then fixing that one thing did more for usage than any model upgrade I tried.</p>
+        </div>
+`
+        },
+        {
+            id: "homebase",
+            title: "Homebase",
+            hook: "The platform my consulting firm runs on.",
+            chips: [
+                "6 tools behind one sign in",
+                "Hiring through payroll in one place",
+                "One database, row level security",
+            ],
+            caseStudy: `
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">Homebase: the platform my firm runs on</h2>
+        <p class="case-summary">SYZYGY.services runs out of Homebase. It takes the shape of a modern ERP, hiring through payroll on one database, and it is where the whole company actually works rather than a dashboard we look at.</p>
+        <div class="chip-row">
+            <span class="chip">6 tools behind one sign in</span>
+            <span class="chip">Hiring through payroll in one place</span>
+            <span class="chip">One database, row level security</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>A small consulting firm accumulates tools faster than it accumulates people. Every one of them had its own login and its own copy of who our clients were, which meant the answer to a simple question depended on which tab you happened to have open.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I built</h2>
+            <p>The same span a modern ERP covers, scoped to a firm our size: hiring, the sales pipeline, project delivery, tasks, weekly timecards, and the people roster with its pay history and approval queue. Six tools, one sign in, one database underneath. A candidate becomes a person, a deal becomes a project, a project becomes hours, and hours become a pay run, without anybody retyping a name.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Homebase structure: one magic link sign in leads to six tools arranged as ERP modules, hiring, sales pipeline, project delivery, tasks, weekly timecards and the people roster, all of them reading and writing one Postgres database with row level security.">
+                <defs>
+                    <marker id="hb-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--maize)"/>
+                    </marker>
+                </defs>
+                <rect x="16" y="16" width="884" height="54" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="458" y="40" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">One magic link sign in</text>
+                <text x="458" y="60" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Every person on the platform, admins and members alike, enters here</text>
+                <line x1="458" y1="70" x2="458" y2="96" stroke="var(--maize)" stroke-width="2" marker-end="url(#hb-arrow-m)"/>
+                <rect x="16" y="102" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="156" y="136" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Hiring</text>
+                <text x="156" y="162" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Applications in, scored, tracked</text>
+                <rect x="318" y="102" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="458" y="136" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Sales pipeline</text>
+                <text x="458" y="162" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Deals, rates and terms</text>
+                <rect x="620" y="102" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="760" y="136" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Project delivery</text>
+                <text x="760" y="162" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Won work becomes projects</text>
+                <rect x="16" y="204" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="156" y="238" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Tasks</text>
+                <text x="156" y="264" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">The work itself, per project</text>
+                <rect x="318" y="204" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="458" y="238" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Weekly timecards</text>
+                <text x="458" y="264" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Hours against those tasks</text>
+                <rect x="620" y="204" width="280" height="88" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="760" y="234" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">People roster</text>
+                <text x="760" y="258" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Pay history and the</text>
+                <text x="760" y="276" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">approval queue behind a pay run</text>
+                <path d="M 156 292 L 156 330" fill="none" stroke="var(--maize)" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#hb-arrow-m)"/>
+                <path d="M 458 292 L 458 330" fill="none" stroke="var(--maize)" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#hb-arrow-m)"/>
+                <path d="M 760 292 L 760 330" fill="none" stroke="var(--maize)" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#hb-arrow-m)"/>
+                <rect x="16" y="336" width="884" height="92" rx="12" fill="var(--blue)" stroke="var(--maize)" stroke-width="2.5"/>
+                <text x="458" y="370" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="16" font-weight="600">One Postgres</text>
+                <text x="458" y="394" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12.5">Row level security enforced in the database, not in the application, so a query</text>
+                <text x="458" y="412" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12.5">cannot return a row the person is not entitled to even if the code asks for it</text>
+                <text x="458" y="454" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="12">A candidate becomes a person, a deal becomes a project, hours become a pay run</text>
+            </svg>
+            <figcaption>How Homebase fits together. It holds our own candidate, client and payroll data, so this shows the structure rather than screenshots.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>Outcome</h2>
+            <p>It is the platform the firm runs on rather than something I demoed once. Applications arrive through the careers form and by email and are scored on the way in, deals that close turn into projects, and the hours booked against those projects are what the pay run reads.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I learned</h2>
+            <p>Putting the access rules in the database rather than in the application was the decision that paid off. Every tool I added afterwards inherited them for free, so the sixth one took an afternoon instead of a day. Scoring a resume taught me the other half: I took the arithmetic away from the model and left it the judgement, because a number a person can redo themselves is a number they will argue with rather than ignore.</p>
+        </div>
+`
+        },
+        {
+            id: "trivium",
+            title: "TRIVIUM",
+            hook: "A company whose departments are agents.",
+            chips: [
+                "27 roles across 5 departments",
+                "1,614 agent runs",
+                "Zero cold emails, by design",
+            ],
+            caseStudy: `
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">TRIVIUM: an org chart where every box is an agent</h2>
+        <p class="case-summary">A trivia business run by agents rather than by staff. It has a ceo, four departments under it, and 27 runnable roles, each on its own schedule. I designed the organization and the enforcement layer around it.</p>
+        <div class="chip-row">
+            <span class="chip">27 roles across 5 departments</span>
+            <span class="chip">1,614 agent runs</span>
+            <span class="chip">Zero cold emails, by design</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>Most agent demos are one agent with a long prompt. I wanted to know what happens when you give it a structure instead: departments, directors, reports, a cadence for each one, and somewhere for the work to queue up between them. The business it runs is real, which is what makes the question worth asking.</p>
+        </div>
+        <div class="case-section">
+            <h2>The org</h2>
+            <p>Five departments. brain is leadership and oversight, marketing runs the funnel from prospecting to the website, trivia-ops makes the product, cx looks after venues and users, and biz-ops handles money and records. Directors decompose their directives into task rows, and their reports claim those rows and return an artifact. The roster grows in phases: the scheduler only wakes roles whose phase is open, so hiring into the org is a config change rather than a code change.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 582" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TRIVIUM org chart: the owner sits above a scheduler, and five peer departments run beneath it. brain holds ceo, chief-of-staff, auditor and analyst; marketing holds nine roles; trivia-ops holds five; cx holds four; biz-ops holds five. 27 runnable roles in total."><defs><marker id="tv-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--maize)"/></marker></defs><rect x="286" y="16" width="348" height="74" rx="12" fill="var(--blue)" stroke="var(--maize)" stroke-width="2.5"/><text x="460" y="44" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Owner, a human</text><text x="460" y="66" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Approval queue and kill switch.</text><text x="460" y="82" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Nothing reaches the outside world without me.</text><line x1="460" y1="90" x2="460" y2="114" stroke="var(--maize)" stroke-width="2" marker-end="url(#tv-arrow-m)"/><rect x="286" y="120" width="348" height="106" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/><text x="460" y="150" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="15" font-weight="600">Scheduler</text><text x="460" y="174" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">Each role runs on its own cadence. It only wakes</text><text x="460" y="192" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">roles whose phase is open, so hiring into the org</text><text x="460" y="210" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="12">is a config change rather than a code change.</text><path d="M 460 232 L 460 262 L 90 262 L 90 282" fill="none" stroke="var(--maize)" stroke-width="1.5" opacity="0.75" marker-end="url(#tv-arrow-m)"/><path d="M 460 232 L 460 262 L 275 262 L 275 282" fill="none" stroke="var(--maize)" stroke-width="1.5" opacity="0.75" marker-end="url(#tv-arrow-m)"/><path d="M 460 232 L 460 262 L 460 262 L 460 282" fill="none" stroke="var(--maize)" stroke-width="1.5" opacity="0.75" marker-end="url(#tv-arrow-m)"/><path d="M 460 232 L 460 262 L 645 262 L 645 282" fill="none" stroke="var(--maize)" stroke-width="1.5" opacity="0.75" marker-end="url(#tv-arrow-m)"/><path d="M 460 232 L 460 262 L 830 262 L 830 282" fill="none" stroke="var(--maize)" stroke-width="1.5" opacity="0.75" marker-end="url(#tv-arrow-m)"/><rect x="6" y="286" width="168" height="52" rx="10" fill="var(--blue)" stroke="var(--maize)" stroke-width="2"/><text x="90" y="308" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">brain</text><text x="90" y="327" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="10.5">Leadership and oversight</text><text x="90" y="362" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="11.5">ceo</text><text x="90" y="382" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">chief-of-staff</text><text x="90" y="402" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">auditor</text><text x="90" y="422" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">analyst</text><rect x="191" y="286" width="168" height="52" rx="10" fill="var(--blue)" stroke="var(--maize)" stroke-width="2"/><text x="275" y="308" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">marketing</text><text x="275" y="327" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="10.5">Funnel, top to bottom</text><text x="275" y="362" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="11.5">marketing-director</text><text x="275" y="382" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">venue-search</text><text x="275" y="402" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">lead-prospector</text><text x="275" y="422" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">venue-outreach</text><text x="275" y="442" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">social-media</text><text x="275" y="462" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">ads-recruit</text><text x="275" y="482" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">ads-outreach</text><text x="275" y="502" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">user-growth</text><text x="275" y="522" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">website-content</text><rect x="376" y="286" width="168" height="52" rx="10" fill="var(--blue)" stroke="var(--maize)" stroke-width="2"/><text x="460" y="308" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">trivia-ops</text><text x="460" y="327" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="10.5">The product itself</text><text x="460" y="362" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="11.5">trivia-ops-director</text><text x="460" y="382" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">trivia-creation</text><text x="460" y="402" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">trivia-qa</text><text x="460" y="422" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">dev-maintenance</text><text x="460" y="442" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">ads-implementation</text><rect x="561" y="286" width="168" height="52" rx="10" fill="var(--blue)" stroke="var(--maize)" stroke-width="2"/><text x="645" y="308" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">cx</text><text x="645" y="327" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="10.5">Venues and users</text><text x="645" y="362" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="11.5">cx-director</text><text x="645" y="382" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">venue-success</text><text x="645" y="402" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">user-support</text><text x="645" y="422" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">ads-support</text><rect x="746" y="286" width="168" height="52" rx="10" fill="var(--blue)" stroke="var(--maize)" stroke-width="2"/><text x="830" y="308" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">biz-ops</text><text x="830" y="327" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="10.5">Money and records</text><text x="830" y="362" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="11.5">bizops-director</text><text x="830" y="382" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">finance</text><text x="830" y="402" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">contracts</text><text x="830" y="422" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">data-steward</text><text x="830" y="442" text-anchor="middle" fill="var(--white)" opacity="0.9" font-family="Inter, sans-serif" font-size="11.5">ad-sales</text><text x="460" y="568" text-anchor="middle" fill="var(--white)" opacity="0.8" font-family="Inter, sans-serif" font-size="12">27 runnable roles. The auditor samples output across all of them and files incidents against any department.</text></svg>
+            <figcaption>The TRIVIUM org chart. Every box below the owner is an agent on its own cadence.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>How it is held to account</h2>
+            <p>A run does not count as done because the agent says so. The run contract demands an artifact per completion, and an auditor agent samples output across every department and files incidents against it. So far that is 102 incidents, 2 of them critical. Anything that would touch the outside world stops at a human approval queue instead of going out, and a kill switch stops every department at once.</p>
+        </div>
+        <div class="case-section">
+            <h2>Where it stands</h2>
+            <p>1,614 runs so far across the 27 roles, on $356 of metered inference, with 1,323 task rows passed between agents. It has sent zero cold emails: the outreach roles sit behind a code-enforced lock rather than behind a polite instruction, and that lock has held. It is paused at the moment, which is a stop rather than an ending, and I expect to bring it back up.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I learned</h2>
+            <p>The interesting number was never the run count, it was the 102 incidents. Reading them is what convinced me that the auditor, the approval queue and the artifact requirement were the parts worth building. An agent will tell you it did the work; the only useful question is what it can show you.</p>
+        </div>
+`
+        },
+        {
+            id: "jarvis",
+            title: "JARVIS",
+            hook: "A voice assistant that runs entirely on my own machine.",
+            chips: [
+                "Qwen3-30B-A3B local inference",
+                "17 tool plugins",
+                "Code-signed arm64 DMG",
+            ],
+            caseStudy: `
+        <p class="case-modal-kicker">AI Work / Case Study</p>
+        <h2 class="case-title">JARVIS: a voice assistant with nothing leaving the machine</h2>
+        <p class="case-summary">A desktop voice assistant where the speech recognition, the model, and the speech synthesis all run locally. It is shipped rather than prototyped: a code-signed arm64 DMG I install like any other application.</p>
+        <div class="chip-row">
+            <span class="chip">Qwen3-30B-A3B local inference</span>
+            <span class="chip">17 tool plugins</span>
+            <span class="chip">Code-signed arm64 DMG</span>
+        </div>
+        <div class="case-section">
+            <h2>Context</h2>
+            <p>I wanted to talk to an assistant that could act on my own machine without the audio or the transcript going anywhere. That rules out every hosted option, so the whole pipeline had to run on device and still be fast enough to hold a conversation.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I built</h2>
+            <p>faster-whisper turns speech into text, Qwen3-30B-A3B runs the inference locally, 17 tool plugins carry out the actions, and Kokoro speaks the answer back. The pieces talk over aiohttp and websockets inside an Electron shell. There is no wake word: it listens when I tell it to.</p>
+        </div>
+        <figure class="case-figure">
+            <svg viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="JARVIS pipeline running left to right on one machine: voice in with no wake word, faster-whisper speech to text, Qwen3-30B-A3B local inference, 17 tool plugins, then Kokoro text to speech. All of it sits inside an Electron shell over aiohttp and websockets.">
+                <defs>
+                    <marker id="jv-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--maize)"/>
+                    </marker>
+                </defs>
+                <rect x="10" y="56" width="160" height="120" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="90" y="100" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">Voice in</text>
+                <text x="90" y="126" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">No wake word.</text>
+                <text x="90" y="144" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">It listens when asked</text>
+                <rect x="195" y="56" width="160" height="120" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="275" y="100" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">faster-whisper</text>
+                <text x="275" y="126" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">Speech to text,</text>
+                <text x="275" y="144" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">on device</text>
+                <rect x="380" y="56" width="160" height="120" rx="12" fill="var(--blue)" stroke="var(--maize)" stroke-width="2.5"/>
+                <text x="460" y="100" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">Qwen3-30B-A3B</text>
+                <text x="460" y="126" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">Local inference.</text>
+                <text x="460" y="144" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">Nothing leaves</text>
+                <rect x="565" y="56" width="160" height="120" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="645" y="100" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">17 tool plugins</text>
+                <text x="645" y="126" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">Actions carried out</text>
+                <text x="645" y="144" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">on the machine</text>
+                <rect x="750" y="56" width="160" height="120" rx="12" fill="var(--blue-light)" stroke="var(--maize)" stroke-width="1.5"/>
+                <text x="830" y="100" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="14" font-weight="600">Kokoro</text>
+                <text x="830" y="126" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">Text to speech,</text>
+                <text x="830" y="144" text-anchor="middle" fill="var(--white)" font-family="Inter, sans-serif" font-size="11.5">spoken back</text>
+                <line x1="170" y1="116" x2="191" y2="116" stroke="var(--maize)" stroke-width="2" marker-end="url(#jv-arrow-m)"/>
+                <line x1="355" y1="116" x2="376" y2="116" stroke="var(--maize)" stroke-width="2" marker-end="url(#jv-arrow-m)"/>
+                <line x1="540" y1="116" x2="561" y2="116" stroke="var(--maize)" stroke-width="2" marker-end="url(#jv-arrow-m)"/>
+                <line x1="725" y1="116" x2="746" y2="116" stroke="var(--maize)" stroke-width="2" marker-end="url(#jv-arrow-m)"/>
+                <rect x="10" y="212" width="900" height="64" rx="12" fill="none" stroke="var(--maize)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.8"/>
+                <text x="460" y="240" text-anchor="middle" fill="var(--maize)" font-family="Inter, sans-serif" font-size="13" font-weight="600">Electron shell over aiohttp and websockets</text>
+                <text x="460" y="262" text-anchor="middle" fill="var(--white)" opacity="0.85" font-family="Inter, sans-serif" font-size="12">Shipped as a code-signed arm64 DMG</text>
+            </svg>
+            <figcaption>The JARVIS pipeline. Every stage runs on the machine, which is the point of building it this way.</figcaption>
+        </figure>
+        <div class="case-section">
+            <h2>Outcome</h2>
+            <p>It is packaged and signed, so it installs like an ordinary Mac application rather than something I have to start from a terminal. That last step is the one most side projects skip, and it is the difference between a thing I use and a thing I once built.</p>
+        </div>
+        <div class="case-section">
+            <h2>What I learned</h2>
+            <p>Running the whole stack locally forces you to be honest about latency, because there is no network to blame. Cutting the wake word removed the failure mode I disliked most, which was a microphone deciding on its own that I had been talking to it.</p>
         </div>
 `
         },
@@ -422,7 +616,7 @@
         { title: "University of Michigan - Freshmen Year", body: "Matriculating at the University of Michigan was a dream come true. I bleed maize and blue pride and have started my beloved tradition of convincing my friends to stand at the Big House gates at the crack of dawn to earn front row seats every gameday. Just as exciting as our national championship in Football, my robotics skills took flight as I dove into AI for autonomous navigation, engineering applications of linear algebra, microprocessors and toys, and so many other niche topics. I learn just as much from my classmates as I do lecture, thus I am so thankful for our collaborative environment here in Ann Arbor." },
         { title: "Koops Automation Systems - Controls Engineering", body: "Returning to Koops for a second summer, I had the pleasure of diving deeper into the world of control systems. I developed PLC logic, debugged Keyence camera systems, trained Fanuc robots, and fixed issues live at customer facilities all over the United States. I traveled away from Koops 42% of this internship, and it brought to life the combination of customer service and technical expertise I know now is so important. I continued to grow my Bot in the Lot Expo, this year reaching over 200 attendees and creating 2 new full-time hires! I also worked with my same friends to develop a T-shirt cannon robot (see featured projects)." },
         { title: "University of Michigan - Sophomore Year", body: "Although our football team took a step down, the Michigan difference was never more clear in my life. After experiencing a game-changing class called \"Coaching as Leading\", I officially declared my minor in Coaching & Leadership through the Marsal Family School of Education. I got the privilege to dive into one of my favorite topics, human-robot interaction, designing better systems for people. Meanwhile, I took a leadership role in my club, Michigan Engineering Consulting Group. As a founding member in my freshman year, I was now leading a team of 10 consultants helping real businesses solve engineering problems. I also stepped in to lead our club's finance team, growing my business acumen in addition to technical know-how." },
-        { title: "Koops Automation Systems - Business Development & AI", body: "This third summer at Koops looked a bit different, in the best way possible. On our business development and applications engineering team, I got to test the waters in sales and customer acquisition, producing professional bid packages, conceptual designs, financial justifications, and ROI analysis. I personally secured over $3 million in new automation projects, ranked 3rd of 15 on the summer sales team. I also began to recognize inefficiencies in our process, so I pitched leadership on building a custom LLM workflow to speed up quoting, and then I built it. KoopsGPT runs LLM APIs and retrieval over our own company data to help with quoting, contract review, and risk analysis, and I managed the rollout through the school year. Around 40 employees use it now, and each of them saves 2+ hours a week, which adds up to roughly 4,000+ hours a year. Bot in the Lot was back and bigger than ever, attracting over 400 students, 3 new hires, and 15 local teams!" },
+        { title: "Koops Automation Systems - Business Development & AI", body: "This third summer at Koops looked a bit different, in the best way possible. On our business development and applications engineering team, I got to test the waters in sales and customer acquisition, producing professional bid packages, conceptual designs, financial justifications, and ROI analysis. I personally secured over $3 million in new automation projects, ranked 3rd of 15 on the summer sales team. I also began to recognize inefficiencies in our process, so I pitched leadership on building a custom LLM workflow to speed up quoting, and then I built it. It runs LLM APIs and retrieval over our own company data to help with quoting, contract review, and risk analysis, and I managed the rollout through the school year. Around 40 employees use it now, and each of them saves 2+ hours a week, which adds up to roughly 4,000+ hours a year. Bot in the Lot was back and bigger than ever, attracting over 400 students, 3 new hires, and 15 local teams!" },
         { title: "SYZYGY.Services", body: "After my experience at Koops, I realized that my problem-solving skills and AI aptitude were marketable skills. Through conversations with my network, I began to consult various businesses on AI integration through auditing, prototyping, and implementation of human-in-the-loop AI systems. Today there are six of us, and we take a job from the first conversation about what is actually broken all the way through to something running in production. Every release gets scored with LLM-as-judge evaluation and trace analysis before a client ever sees it. We work with 15+ clients now, and they are seeing 30 to 40% efficiency gains across their teams. This entrepreneurial experience has helped me grow as an engineer, leader, and person, and we're not done yet." },
         { title: "University of Michigan - Junior Year", body: "As an upperclassman, it is finally time to dig deep into what makes robotics so unique. My first semester was highlighted by a full-stack robotics class, where I developed a BB-8 style ballbot (see featured project). I also got to take another Human-robot interaction class, and breadth classes like Marketing Management and Positively Leading Teams. This semester, I'm taking classes in marine robotics, wearable sensor technology, and robotics communication. I even got to build a Robot in 3 days with my FIRST alumni club (see featured project)! Finally, I also began my role as a Resident Advisor for Alice Lloyd Hall. I even got to flex my creative muscles and develop a haunted house for all of my residents, using every resource available to put on an immersive show (see feature project)." },
         { title: "NASA Jet Propulsion Laboratory", body: "The summer of 2026 took me to Pasadena as an ethnographic software engineering intern at NASA JPL. I embedded with Mars Science Laboratory downlink operations to study how expert and novice operators actually use Faro, a GenAI analysis tool, during Curiosity rover operations. To measure what people did rather than what they said, I built a gaze tracking tool on OpenFace 2.0 that maps where operators look on screen. The study proved a statistically significant mistrust of Faro among expert operators, and I delivered a 5-point recommendation plan to prepare the tool for mission-critical use. At the JPL hackathon, I solo-built TRIAGE, a root cause analysis dashboard for the Mars Sample Return helicopter that won the Mission Critical Award for the best JPL solution. JPL closed out the summer by giving me the NASA Shining Star Award, which still does not feel real. I came home thinking about trust a lot more than I think about models." },

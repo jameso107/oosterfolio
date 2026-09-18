@@ -98,7 +98,7 @@
                 items: [
                     { id: 'triage', angle: "Built at the hackathon. Rebuilt in public on open NASA data so you can run it yourself." },
                     { id: 'jpl-research', angle: "The MSL downlink study, the gaze tracker I built to run it, and the plan I left behind." },
-                    { id: 'koopsgpt', angle: "Proof the idea travels. People with deep domain knowledge chose to keep using this one." },
+                    { id: 'clientgpt', angle: "Proof the idea travels. People with deep domain knowledge chose to keep using this one." },
                     { id: 'specinator', angle: "Where I do my evaluation work: judge scoring and trace analysis before every release." }
                 ]
             },
@@ -168,7 +168,7 @@
      *           intro: 'Optional intro line.',
      *           items: [
      *               { id: 'triage', angle: 'Why this one matters to Acme.' },
-     *               { id: 'koopsgpt' },
+     *               { id: 'clientgpt' },
      *               { id: 'specinator' },
      *               { id: 'jpl-research' }
      *           ]
