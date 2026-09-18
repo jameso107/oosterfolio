@@ -1,5 +1,5 @@
 /*
- * Walt Disney Imagineering page.
+ * The Walt Disney Company page.
  *
  * Renders synchronously, before script.js, so that script.js finds a complete
  * DOM for the photo sliders, nav, scroll animations, and shared modal shell.
@@ -169,8 +169,7 @@
 
     var NAV = [
         ['home', 'Home'],
-        ['why', 'Why Imagineering'],
-        ['walk', 'The walkthrough'],
+        ['haunt', 'Haunted house'],
         ['cannon', 'The cannon'],
         ['first', 'FIRST'],
         ['people', 'People'],
@@ -207,96 +206,16 @@
         '</section>';
     }
 
-    var WHY = [
-        ['Creative', 'I already build shows',
-         'The Ghost of Alice Lloyd ran for over 200 residents on a budget of almost nothing. A Pepper\'s Ghost illusion, a living picture frame, black light, six JBL speakers, and a cast of fellow RAs I had to direct. I designed it, built it, sequenced it, and performed in it. There is a 3D walkthrough of it a little further down this page.'],
-        ['Ambitious', 'I keep building the bigger version',
-         'Nobody asked for a t-shirt cannon robot, so two friends and I built the most powerful mobile one in the world and Koops still takes it to events. Nobody asked an intern to build an LLM suite either. I pitched it, built it, and around 40 people use it every day. When I can see the better version of a thing, I have a hard time leaving it alone.'],
-        ['People centered', 'The person in the seat is the whole job',
-         'At NASA JPL I spent a summer measuring what operators did with a tool rather than what they said about it, down to where their eyes landed on the screen. I run a haunted house the same way I ran that study. Watch where people look, watch where they hesitate, then change the thing. I am also a Resident Advisor and a Coaching and Leadership minor, which is a long way of saying I like people.']
-    ];
+    /* ---------------- The haunted house ---------------- */
 
-    function why() {
+    function hauntSection() {
         return '' +
-        '<section id="why" class="about">' +
+        '<section id="haunt" class="showctl">' +
             '<div class="container">' +
-                '<h2 class="section-title">Why Imagineering</h2>' +
-                '<p class="section-intro">Imagineering is the one place where the illusion, the machine, and the person watching are all the same problem. Here is my case, in three parts.</p>' +
-                '<div class="about-grid fit-grid">' +
-                    WHY.map(function (w) {
-                        return '<div class="about-card fit-card">' +
-                            '<p class="section-kicker" style="text-align:left">' + esc(w[0]) + '</p>' +
-                            '<h3>' + esc(w[1]) + '</h3><p>' + w[2] + '</p></div>';
-                    }).join('') +
-                '</div>' +
-            '</div>' +
-        '</section>';
-    }
-
-    /* ---------------- The walkthrough ---------------- */
-
-    /* Stations transcribed from jameso107/haunted so the numbers on this page
-       match the numbered sprites you see standing in the scene. Em dashes in
-       the original descriptions are normalized, per the site's copy rule. */
-    var STATIONS = [
-        [2,  'The Strike',       'elevator ride, LED flicker, thunder, blackout'],
-        [3,  'Arrival 1950',     'banner, phonograph big band, period greeter'],
-        [4,  'The Promenade',    'period posters, dance-card table, a lurker'],
-        [5,  'Portrait Gallery', 'living portrait. Walk close to the red frame'],
-        [6,  "Dean's Office",    "rocking chair rig, ledger with tonight's names"],
-        [7,  "Pepper's Ghost",   'watch the window, she appears over the gallery'],
-        [8,  'The Bulletin',     'the radio announces her death and the lights glitch'],
-        [9,  'Whisper Hall',     'pitch dark, cheesecloth brushes past'],
-        [10, 'The Bust',         'projected face on the foam heads'],
-        [11, 'The Tomb',         'eyes forward on the tombstone, keep walking'],
-        [12, 'Back to 2026',     'fluorescent hum, check the corkboard']
-    ];
-
-    function walkSection() {
-        var stations = STATIONS.map(function (st) {
-            return '<li class="station">' +
-                '<span class="station-n">' + st[0] + '</span>' +
-                '<span class="station-copy"><strong>' + esc(st[1]) + '</strong>' +
-                '<span>' + esc(st[2]) + '</span></span>' +
-            '</li>';
-        }).join('');
-
-        return '' +
-        '<section id="walk" class="showctl">' +
-            '<div class="container">' +
-                '<p class="section-kicker">Concept art you can walk</p>' +
-                '<h2 class="section-title">Walk the haunted house</h2>' +
-                '<div class="walk-frame">' +
-                    '<iframe id="walk-stage" class="walk-stage" src="/haunt" loading="lazy" ' +
-                        'allow="pointer-lock; fullscreen" ' +
-                        'title="Alice Lloyd Haunt, first person 3D walkthrough"></iframe>' +
-                '</div>' +
-                '<div class="walk-bar">' +
-                    '<span class="walk-hint"><strong>Click inside to take the controls.</strong> ' +
-                        'W A S D to walk, mouse to look, Shift to run, Tab for a bird\'s eye view, G for the route arrows. ' +
-                        '<em>It wants a keyboard, so a laptop is the right place for it.</em></span>' +
-                    '<button type="button" class="transport-btn" id="walk-full">Full screen</button>' +
-                    '<a class="transport-btn" href="/haunt" target="_blank" rel="noopener">Open in its own tab</a>' +
-                '</div>' +
-                '<h3 class="walk-route-title">The route</h3>' +
-                '<ol class="walk-stations">' + stations + '</ol>' +
-                '<p class="showctl-note">Schematic scale, built to carry the route and the sightlines rather than to be pretty. Every sound in it is generated in the browser rather than loaded from a file. ' +
-                'Video of the night itself, all 200 plus residents of it: ' +
-                '<button type="button" class="ai-card-link" onclick="openShowcase(\'haunted-house\')">watch the walkthrough</button>. ' +
-                'Source for this one is <a href="https://github.com/jameso107/haunted" target="_blank" rel="noopener">on GitHub</a>.</p>' +
-            '</div>' +
-        '</section>';
-    }
-
-    /* ---------------- Pepper's Ghost ---------------- */
-
-    function pepperSection() {
-        return '' +
-        '<section id="pepper" class="pepper">' +
-            '<div class="container">' +
-                '<p class="section-kicker">The trick in the middle of it</p>' +
-                '<h2 class="section-title">Pepper\'s Ghost</h2>' +
-                '<p class="section-intro">Station 7 up there is this trick, and it is the same principle the Haunted Mansion ballroom runs on. A sheet of glass at 45 degrees, a chamber the guest cannot see, and a light you bring up slowly. Drag the slider and watch Alice arrive.</p>' +
+                '<p class="section-kicker">The show I built</p>' +
+                '<h2 class="section-title">The Ghost of Alice Lloyd</h2>' +
+                '<p class="section-intro">As a Resident Advisor I planned, engineered, and performed a haunted house for more than 200 residents on a budget of almost nothing: a living picture frame, black light, six JBL speakers, and a cast of fellow RAs I had to direct. Video of the night itself, all 200 plus residents of it: <button type="button" class="ai-card-link" onclick="openShowcase(\'haunted-house\')">watch the walkthrough</button>.</p>' +
+                '<p class="section-intro haunt-effect">My favorite effect in it was the Pepper\'s Ghost, the same principle the Haunted Mansion ballroom runs on. A sheet of glass at 45 degrees, a chamber the guest cannot see, and a light you bring up slowly. Drag the slider and watch Alice arrive.</p>' +
                 '<div class="pepper-frame">' +
                     '<div class="showctl-panel">' +
                         '<h3>Side elevation</h3>' +
@@ -664,7 +583,7 @@
                 '<a href="' + esc(p.demo) + '">Live demo</a>' +
                 '<a href="/">ooster.house</a>' +
             '</nav>' +
-            '<p class="footer-note">Written for Walt Disney Imagineering. An independent application page, not affiliated with or endorsed by The Walt Disney Company.</p>' +
+            '<p class="footer-note">Written for The Walt Disney Company. An independent application page, not affiliated with or endorsed by Disney.</p>' +
         '</div></footer>';
     }
 
@@ -733,8 +652,7 @@
         });
     }
 
-    function initWalkthrough() {
-        fullscreenButton('walk-full', 'walk-stage');
+    function initFrames() {
         fullscreenButton('cad-full', 'cad-stage');
     }
 
@@ -840,12 +758,12 @@
         if (!mount || !C) return;
 
         mount.innerHTML =
-            introMarkup() + nav() + hero() + why() + walkSection() + pepperSection() +
+            introMarkup() + nav() + hero() + hauntSection() +
             cannonSection() + firstSection() + peopleSection() + softwareSection() +
             contact() + footer() + caseTemplates() + modals();
 
         runIntro();
-        initWalkthrough();
+        initFrames();
         initPepper();
         initCannon();
     }

@@ -1,5 +1,5 @@
 /*
- * Walt Disney Imagineering page.
+ * The Walt Disney Company page.
  *
  * Loaded after styles.css and portfolio.css. The :root block re-skins the
  * shared components (cards, chips, timeline, modal) to a night palette, and
@@ -297,66 +297,6 @@ body.castle-running {
     color: var(--gold);
 }
 
-/* ============================================================ */
-/* The walkthrough                                              */
-/* ============================================================ */
-
-/* The embedded scene sizes itself off the iframe viewport, so the box just has
-   to be a sensible shape and get out of the way. */
-.walk-frame {
-    margin-top: 2rem;
-    border-radius: 15px;
-    overflow: hidden;
-    border: 1px solid rgb(var(--accent-rgb) / 0.28);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-    background-color: #05060A;
-}
-
-.walk-stage {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    min-height: 360px;
-    border: 0;
-}
-
-.walk-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-    padding: 0.9rem 1.2rem;
-    background-color: var(--blue-light);
-    border: 1px solid rgb(var(--accent-rgb) / 0.2);
-    border-radius: 15px;
-}
-
-.walk-hint {
-    flex: 1 1 300px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    opacity: 0.85;
-}
-
-.walk-hint strong {
-    color: var(--maize);
-    font-weight: 600;
-}
-
-.walk-hint em {
-    display: block;
-    margin-top: 0.3rem;
-    font-style: normal;
-    color: var(--gold);
-    opacity: 0.85;
-}
-
-.walk-bar .transport-btn {
-    text-decoration: none;
-    min-width: 7rem;
-}
-
 .walk-route-title {
     margin: 2.5rem 0 1.2rem;
     font-size: 0.78rem;
@@ -411,8 +351,8 @@ body.castle-running {
 /* Pepper's Ghost                                               */
 /* ============================================================ */
 
-.pepper {
-    background-color: var(--blue);
+.haunt-effect {
+    margin-top: -1rem;
 }
 
 .pepper-frame {
@@ -825,7 +765,6 @@ body.castle-running {
 
 @media (max-width: 600px) {
     .transport-btn { flex: 1 1 auto; }
-    .walk-stage { min-height: 260px; }
     .cad-stage { min-height: 280px; }
     .first-mosaic { grid-template-columns: repeat(2, 1fr); }
     .first-quote p { font-size: 1.15rem; }
