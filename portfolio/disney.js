@@ -213,10 +213,9 @@
         return '' +
         '<section id="why" class="why">' +
             '<div class="container">' +
-                '<p class="section-kicker">Why Disney</p>' +
-                '<h2 class="section-title">Engineering you feel instead of see</h2>' +
-                '<p class="section-intro">Everything I am proud of building had two jobs at once. The cannon had to be a safe pressure vessel and a show. The haunted house had to scare 200 residents on a budget of almost nothing. Software only counts if people come back to it. The creative half and the technical half never got to take turns.</p>' +
-                '<p class="section-intro">Disney is the one place that treats that tension as the whole job: serious engineering in service of a moment that feels effortless, for a six year old and their grandparents at the same time. That is the work I want to give my career to. The rest of this page is what I have built toward it so far.</p>' +
+                '<h2 class="section-title">Why Disney</h2>' +
+                '<p class="section-intro">Everything I am proud of building had two jobs. The cannon had to be both safe and a show, at the same time. The haunted house had to scare 200 residents on a budget of almost nothing. Software only counts if people actually want to use it. The creative half and the technical half play together, both in my projects and in my life.</p>' +
+                '<p class="section-intro">Disney is the one place that treats that creative tension as the mission. Serious engineering in service of a moment that feels magical, for a six-year-old and their grandparents at the same time. That is the work I want to give my career to. Thank you for considering my application!</p>' +
             '</div>' +
         '</section>';
     }
