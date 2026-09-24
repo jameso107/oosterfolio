@@ -546,7 +546,7 @@
             var w = work(id);
             var links = '<button type="button" class="ai-card-link" onclick="openCaseStudyModal(\'case-' + w.id + '\')">Case study</button>';
             if (w.demo) {
-                links += '<a href="' + esc(w.demo.href) + '" class="ai-card-link ai-card-link-demo">' + esc(w.demo.label) + '</a>';
+                links += '<button type="button" class="ai-card-link ai-card-link-demo" onclick="openDemoModal(\'' + esc(w.demo.href) + '\')">' + esc(w.demo.label) + '</button>';
             }
             return '<article class="ai-card">' +
                 '<h3><button type="button" class="ai-card-title-link" onclick="openCaseStudyModal(\'case-' + w.id + '\')">' + esc(w.title) + '</button></h3>' +
@@ -603,7 +603,9 @@
 
     function caseTemplates() {
         return C.AI_WORK.map(function (w) {
-            return '<template id="case-' + w.id + '">' + w.caseStudy + '</template>';
+            var body = w.caseStudy.replace(/<a href="(\/demo\/[^"]+)" class="([^"]*)">([\s\S]*?)<\/a>/g,
+                '<button type="button" class="$2" onclick="openDemoModal(\'$1\')">$3</button>');
+            return '<template id="case-' + w.id + '">' + body + '</template>';
         }).join('');
     }
 
@@ -616,6 +618,13 @@
             '<div class="modal-content">' +
                 '<button class="modal-close" onclick="closeProjectModal()" aria-label="Close modal">' + x + '</button>' +
                 '<div class="modal-body" id="modal-body"></div>' +
+            '</div>' +
+        '</div>' +
+        '<div id="demo-modal" class="project-modal demo-modal">' +
+            '<div class="modal-backdrop" onclick="closeDemoModal()"></div>' +
+            '<div class="modal-content">' +
+                '<button class="modal-close" onclick="closeDemoModal()" aria-label="Close demo">' + x + '</button>' +
+                '<iframe id="demo-frame" class="demo-frame" title="Live demo" allow="fullscreen"></iframe>' +
             '</div>' +
         '</div>' +
         '<div id="resume-modal" class="project-modal">' +
@@ -651,6 +660,67 @@
         var close = modal.querySelector('.modal-close');
         if (close) close.focus();
     };
+
+    /* The live demos are full pages of their own at /demo/*. Following the
+       link would drop the visitor on the main site with no way back, so
+       here they open in a pop-up instead. The demo page itself is left
+       alone: once it loads, its site nav and footer are hidden from this
+       side, and any link that would leave the demo opens in a new tab. */
+    global.openDemoModal = function (href) {
+        var modal = document.getElementById('demo-modal');
+        var frame = document.getElementById('demo-frame');
+        if (!modal || !frame) return;
+
+        var project = document.getElementById('project-modal');
+        if (project && project.classList.contains('active')) global.closeProjectModal();
+
+        frame.onload = function () { adaptDemo(frame); };
+        frame.src = href;
+        document.body.style.overflow = 'hidden';
+        modal.classList.add('active');
+        var close = modal.querySelector('.modal-close');
+        if (close) close.focus();
+    };
+
+    global.closeDemoModal = function () {
+        var modal = document.getElementById('demo-modal');
+        var frame = document.getElementById('demo-frame');
+        if (!modal || !modal.classList.contains('active')) return;
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        /* Unloading stops the 3D replay rather than leaving it rendering
+           behind a hidden modal. */
+        setTimeout(function () {
+            if (frame && !modal.classList.contains('active')) frame.removeAttribute('src');
+        }, 300);
+    };
+
+    function adaptDemo(frame) {
+        var doc;
+        try { doc = frame.contentDocument; } catch (err) { return; }
+        if (!doc || !doc.head) return;
+
+        var style = doc.createElement('style');
+        style.textContent =
+            'body > .navbar, body > .footer { display: none !important; }' +
+            '.demo-main { padding-top: 3.5rem !important; }';
+        doc.head.appendChild(style);
+
+        Array.prototype.forEach.call(doc.querySelectorAll('a[href]'), function (a) {
+            var href = a.getAttribute('href');
+            if (href.charAt(0) === '#') return;
+            a.target = '_blank';
+            a.rel = 'noopener';
+        });
+
+        doc.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') global.closeDemoModal();
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') global.closeDemoModal();
+    });
 
     /* ============================================================ */
     /* Interactive behavior                                         */
