@@ -392,7 +392,7 @@
             '<div class="container">' +
                 '<p class="section-kicker">Show action equipment</p>' +
                 '<h2 class="section-title">The T-shirt Cannon</h2>' +
-                '<p class="section-intro">Two friends and I built this after hours, and Koops funded it so they could take it out to community events. The range was never really the point. The point is that a hundred people all turn to look at the same moment, and then something has to land in somebody\'s hands. That is a pressure vessel and a show at the same time, and neither one gets to win. Three ways to look at it.</p>' +
+                '<p class="section-intro">Two friends and I built this after hours, and Koops funded it so they could take it out to community events. This experience ushered in our creativity, in combination with technical skills. The smile someone has when they catch a T-shirt from our cannon is simply amazing!</p>' +
 
                 '<div class="cannon-split">' +
                     '<div class="cannon-panel">' +
