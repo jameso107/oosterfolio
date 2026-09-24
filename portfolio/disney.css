@@ -234,7 +234,13 @@ body.castle-running {
 /* Show control                                                 */
 /* ============================================================ */
 
+/* Sits last, above contact, so it takes the lighter blue and contact
+   takes the darker one to keep the sections alternating. */
 .showctl {
+    background-color: var(--blue);
+}
+
+.disney-page .contact {
     background-color: var(--blue-dark);
 }
 
@@ -694,6 +700,22 @@ body.castle-running {
 .mosaic-tile:hover {
     filter: saturate(1.05);
     transform: translateY(-3px);
+}
+
+/* ============================================================ */
+/* Why Disney                                                   */
+/* ============================================================ */
+
+.why {
+    background-color: var(--blue-dark);
+}
+
+.why .section-intro {
+    margin-bottom: 1.1rem;
+}
+
+.why .section-intro:last-child {
+    margin-bottom: 0;
 }
 
 /* ============================================================ */
